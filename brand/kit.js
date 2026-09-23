@@ -475,6 +475,257 @@ add('promo', PW, PH, '10', 'gm-eagles', (W, H) =>
   hl('GM,\neagles.', { left: 60, top: 70, size: 170, fill: K.gold }) +
   pill('Up early. Flying together.', { left: 70, top: 420, size: 28, rot: -2 }));
 
+/* ---------- Promo posts, round two (1200×675): the eagles at work and play ---------- */
+// Props drawn in the same ink style as the art: thick outline, flat fill.
+const svgAt = (x, y, w, h, vb, inner, z) => '<svg style="position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;overflow:visible;' + (z != null ? 'z-index:' + z + ';' : '') + '" viewBox="' + vb + '">' + inner + '</svg>';
+const P = (d, fill, sw) => '<path d="' + d + '" fill="' + fill + '" stroke="' + K.ink + '" stroke-width="' + (sw || 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+const Rr = (x, y, w, h, r, fill, sw) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + r + '" fill="' + fill + '" stroke="' + K.ink + '" stroke-width="' + (sw == null ? 6 : sw) + '"/>';
+const T = (x, y, text, size, fill, o) => { o = o || {}; return '<text x="' + x + '" y="' + y + '" font-family="' + (o.font || 'Luckiest Guy') + '" font-size="' + size + '" font-weight="' + (o.weight || 400) + '" fill="' + fill + '" text-anchor="' + (o.anchor || 'start') + '"' + (o.ls ? ' letter-spacing="' + o.ls + '"' : '') + (o.stroke ? ' stroke="' + o.stroke + '" stroke-width="' + o.sw + '" paint-order="stroke" stroke-linejoin="round"' : '') + '>' + text + '</text>'; };
+
+// Candles: a wandering chart, teal up / salmon down. Shape only — no numbers, no promises.
+function candles(w, h, n, seed, o) {
+  o = o || {};
+  const R = rng(seed);
+  let v = h * (o.start || 0.6), s = '';
+  const cw = (w / n) * 0.56;
+  for (let i = 0; i < n; i++) {
+    const drift = o.drift != null ? o.drift : 0;
+    const nv = Math.max(h * 0.12, Math.min(h * 0.88, v + (R() - 0.5 - drift) * h * 0.22));
+    const up = nv < v, top = Math.min(v, nv), bot = Math.max(v, nv);
+    const cx = (i + 0.5) * (w / n);
+    const col = up ? K.teal300 : K.salmon;
+    s += '<line x1="' + cx + '" x2="' + cx + '" y1="' + (top - h * 0.05 - R() * h * 0.05) + '" y2="' + (bot + h * 0.05 + R() * h * 0.05) + '" stroke="' + col + '" stroke-width="' + Math.max(2, cw * 0.18) + '"/>';
+    s += '<rect x="' + (cx - cw / 2) + '" y="' + top + '" width="' + cw + '" height="' + Math.max(4, bot - top) + '" fill="' + col + '" rx="2"/>';
+    v = nv;
+  }
+  return s;
+}
+function monitor(x, y, w, h, seed, o) {
+  o = o || {};
+  const inner = Rr(4, 4, w - 8, h - 8, 16, K.ink, 8) + Rr(18, 18, w - 36, h - 36, 8, '#0E1A2B', 0) +
+    '<g opacity="0.25">' + [1, 2, 3].map((k) => '<line x1="18" x2="' + (w - 18) + '" y1="' + (18 + ((h - 36) * k) / 4) + '" y2="' + (18 + ((h - 36) * k) / 4) + '" stroke="#5CC8BA" stroke-width="2"/>').join('') + '</g>' +
+    '<g transform="translate(28 26)">' + candles(w - 56, h - 52, o.n || 16, seed, o) + '</g>' +
+    (o.stand === false ? '' : P('M ' + (w / 2 - 16) + ' ' + (h - 2) + ' L ' + (w / 2 - 22) + ' ' + (h + 34) + ' L ' + (w / 2 + 22) + ' ' + (h + 34) + ' L ' + (w / 2 + 16) + ' ' + (h - 2) + ' Z', '#3A3F4A', 5) + P('M ' + (w / 2 - 60) + ' ' + (h + 34) + ' L ' + (w / 2 + 60) + ' ' + (h + 34) + ' L ' + (w / 2 + 64) + ' ' + (h + 46) + ' L ' + (w / 2 - 64) + ' ' + (h + 46) + ' Z', '#3A3F4A', 5));
+  return svgAt(x, y, w, h + 46, '0 0 ' + w + ' ' + (h + 46), inner, o.z);
+}
+const desk = (x, y, w, h, z) => svgAt(x, y, w, h, '0 0 ' + w + ' ' + h, Rr(-10, 0, w + 20, 34, 10, '#8A5A36') + '<rect x="0" y="34" width="' + w + '" height="' + (h - 34) + '" fill="#5E3A20"/><line x1="0" x2="' + w + '" y1="34" y2="34" stroke="' + K.ink + '" stroke-width="6"/>' + '<path d="M 10 12 L ' + (w - 10) + ' 12" stroke="#A8744A" stroke-width="5" stroke-linecap="round"/>', z == null ? 4 : z);
+const mug = (x, y, s, z) => svgAt(x, y, 90 * s, 100 * s, '0 0 90 100', P('M 62 38 C 88 36 90 70 62 72', 'none', 8) + P('M 8 22 L 66 22 L 60 92 L 14 92 Z', K.cream) + P('M 26 44 C 34 38 42 50 50 44 L 46 66 C 40 72 30 72 24 64 Z', K.gold, 3.5) + '<path d="M 24 14 q 6 -8 0 -14 M 40 14 q 6 -8 0 -14" fill="none" stroke="' + K.cream + '" stroke-width="4" stroke-linecap="round" opacity="0.8"/>', z == null ? 5 : z);
+function laptop(x, y, w, o) {
+  o = o || {};
+  const h = w * 0.62;
+  const inner = P('M 8 0 L ' + (w - 8) + ' 0 L ' + (w - 8) + ' ' + (h * 0.8) + ' L 8 ' + (h * 0.8) + ' Z', '#3A3F4A', 5) +
+    '<rect x="18" y="10" width="' + (w - 36) + '" height="' + (h * 0.8 - 20) + '" fill="#0E1A2B"/>' + (o.chart ? '<g transform="translate(24 16)">' + candles(w - 48, h * 0.8 - 32, 10, o.seed || 3) + '</g>' : '') +
+    (o.glow ? '' : '') + P('M -6 ' + h * 0.8 + ' L ' + (w + 6) + ' ' + h * 0.8 + ' L ' + (w - 4) + ' ' + h + ' L 4 ' + h + ' Z', '#5B616D', 5);
+  return svgAt(x, y, w, h, '0 0 ' + w + ' ' + h, inner, o.z == null ? 5 : o.z);
+}
+const glowCone = (x, y, w, h, op) => svgAt(x, y, w, h, '0 0 100 100', '<path d="M 40 100 L 60 100 L 100 0 L 0 0 Z" fill="#9CE0FF" opacity="' + (op || 0.12) + '"/>', 2);
+const salmonAt = (x, y, w, rot, z) => sprite('salmon', { left: x, top: y, width: w, rot: rot, z: z });
+
+const PR = (id, name, html) => add('promo', PW, PH, id, name, html);
+
+PR('11', 'eagle-eyes-on-the-chart', (W, H) =>
+  layer('background:linear-gradient(180deg,#0A1734 0%,#14295C 100%)') +
+  svgAt(0, 0, W, H, '0 0 1200 675', '<g opacity="0.18" stroke="#5CC8BA" stroke-width="2">' + Array.from({ length: 12 }, (_, i) => '<line x1="' + i * 110 + '" y1="0" x2="' + i * 110 + '" y2="675"/>').join('') + '</g>') +
+  monitor(70, 250, 360, 230, 11, { n: 14 }) + monitor(770, 250, 360, 230, 12, { n: 14 }) +
+  char('adult-white-head', { left: 420, top: 150, width: 360, z: 3 }) +
+  desk(0, 520, W, 155) + mug(930, 440, 1) + laptop(470, 440, 260, { chart: true, seed: 9, z: 6 }) +
+  hl('Eagle eyes on the chart.', { left: 0, right: 0, top: 36, size: 82, align: 'center', fill: K.gold }) +
+  pill('Talons on the keyboard', { left: 460, top: 140, size: 24, rot: -2, css: 'z-index:7' }));
+
+PR('12', '3am-still-watching', (W, H) => {
+  let s = layer('background:#070D1C');
+  s += svgAt(900, 70, 170, 170, '0 0 170 170', '<circle cx="85" cy="85" r="76" fill="' + K.cream + '" stroke="' + K.ink + '" stroke-width="8"/><path d="M 85 85 L 85 30 M 85 85 L 118 85" stroke="' + K.ink + '" stroke-width="9" stroke-linecap="round"/>' + [0, 1, 2, 3].map((k) => '<circle cx="' + (85 + 58 * Math.cos(k * Math.PI / 2)) + '" cy="' + (85 + 58 * Math.sin(k * Math.PI / 2)) + '" r="6" fill="' + K.ink + '"/>').join(''));
+  s += glowCone(650, 180, 380, 330, 0.16);
+  s += head(0, { left: 690, top: 120, width: 300, expr: 'tired' });
+  s += desk(0, 520, W, 155) + laptop(700, 400, 280, { chart: true, seed: 33, z: 6 }) + mug(1040, 440, 0.95);
+  return s + hl('3 AM.', { left: 60, top: 70, size: 170, fill: K.gold }) + hl('Still watching\nthe river.', { left: 60, top: 250, size: 84 }) + pill('Eagles don’t sleep. They blink slowly.', { left: 64, top: 450, size: 24, rot: -2, css: 'z-index:7' });
+});
+
+PR('13', 'every-chart-is-a-river', (W, H) =>
+  layer('background:' + SKY.feast) + scene('s5-water', { left: 0, top: 260, width: W, height: 415 }) +
+  svgAt(80, 230, 1040, 330, '0 0 1040 330', candles(1040, 330, 26, 77, { start: 0.55 })) +
+  salmonAt(560, 250, 170, -35, 5) + char('diving', { left: 820, top: 30, width: 330, z: 6 }) +
+  hl('Every chart is\njust a river.', { left: 60, top: 40, size: 96 }) +
+  pill('And eagles know rivers', { left: 70, top: 250, size: 26, rot: -2, bg: K.gold, fg: K.ink, shadow: K.ink }));
+
+PR('14', 'target-acquired', (W, H) =>
+  droneScene(W, H, { hero: [860, 330, 520], flock: [[1100, 560, 120, 1], [620, 580, 110, 0], [1120, 120, 90, 0]], pos: '20% 40%' }) +
+  svgAt(250, 330, 220, 220, '0 0 220 220', '<circle cx="110" cy="110" r="88" fill="none" stroke="' + K.gold + '" stroke-width="8" stroke-dasharray="26 14"/><circle cx="110" cy="110" r="10" fill="' + K.gold + '"/><path d="M 110 0 L 110 50 M 110 170 L 110 220 M 0 110 L 50 110 M 170 110 L 220 110" stroke="' + K.gold + '" stroke-width="8" stroke-linecap="round"/>', 5) +
+  salmonAt(300, 400, 120, -60, 4) +
+  hl('Eagle vision:', { left: 60, top: 40, size: 90, fill: K.fog }) + hl('target acquired.', { left: 60, top: 140, size: 90, fill: K.gold }));
+
+PR('15', 'the-plan', (W, H) => {
+  let s = layer('background:#E8DCC6') + layer('background:repeating-linear-gradient(0deg,rgba(23,17,13,0.04) 0 2px,transparent 2px 40px)');
+  s += svgAt(60, 150, 720, 480, '0 0 720 480', Rr(4, 4, 712, 440, 18, '#FFFDF6', 10) + '<rect x="4" y="440" width="712" height="24" fill="#B7BCC4" stroke="' + K.ink + '" stroke-width="8"/>' +
+    T(50, 100, 'THE PLAN', 70, K.ink) +
+    T(50, 190, '1. LEAVE THE NEST', 46, '#2E3A4B') + T(50, 270, '2. FIND THE FLOCK', 46, '#2E3A4B') + T(50, 350, '3. EAT', 58, '#DE5A4B') +
+    '<path d="M 560 160 l 22 22 l 44 -52 M 560 240 l 22 22 l 44 -52" fill="none" stroke="' + K.teal + '" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<ellipse cx="136" cy="336" rx="110" ry="46" fill="none" stroke="#DE5A4B" stroke-width="7" transform="rotate(-4 136 336)"/>');
+  s += char('landed', { left: 770, top: 150, width: 420 });
+  return s + hl('We have a plan.', { left: 60, top: 26, size: 100, fill: K.gold });
+});
+
+PR('16', 'flock-meeting', (W, H) => {
+  let s = layer('background:' + SKY.night) + sunrise(600, 720, 200, { noSun: true, rayOp: 0.25 });
+  s += branch('M -40 560 C 300 540 800 580 1240 548', 30).replace('{W}', W).replace('{H}', H);
+  const R = rng(161);
+  [150, 370, 600, 830, 1050].forEach((cx, i) => {
+    s += perch(cx, 560, 200, { white: i % 2 === 1, flip: cx > 600 });
+    s += laptop(cx - 70, 470, 140, { chart: i % 2 === 0, seed: 20 + i, z: 5 });
+  });
+  return s + hl('Flock meeting.', { left: 0, right: 0, top: 50, size: 110, align: 'center' }) + pill('Tonight. Bring snacks. Mostly salmon.', { left: 360, top: 190, size: 26, rot: -1.5, bg: K.gold, fg: K.ink, shadow: K.ink });
+});
+
+PR('17', 'breaking-news', (W, H) => {
+  let s = layer('background:linear-gradient(180deg,#14295C,#23448F)') + layer('background:repeating-linear-gradient(90deg,rgba(255,255,255,0.05) 0 60px,transparent 60px 120px)');
+  s += sunrise(600, 300, 140, { noSun: true, rayOp: 0.22 });
+  s += char('adult-white-head', { left: 430, top: 105, width: 340, z: 3 });
+  s += svgAt(200, 400, 800, 120, '0 0 800 120', Rr(4, 4, 792, 112, 16, K.salmon, 8) + T(400, 80, 'EAGLE NEWS 24', 52, K.bone, { anchor: 'middle', stroke: K.ink, sw: 10 }), 4);
+  s += '<div style="position:absolute;left:0;right:0;top:535px;height:140px;z-index:6">' +
+    '<div style="position:absolute;left:0;top:0;padding:12px 26px 6px;background:' + K.gold + ';border:6px solid ' + K.ink + ';font:400 38px/1 Luckiest Guy;color:' + K.ink + '">BREAKING</div>' +
+    '<div style="position:absolute;left:0;right:0;top:56px;height:84px;background:' + K.ink + ';color:' + K.bone + ';font:400 46px/84px Luckiest Guy;padding-left:30px;white-space:nowrap">EAGLES STILL HUNGRY. MORE AT 11.</div></div>';
+  return s;
+});
+
+PR('18', 'forecast-100-percent-eating', (W, H) => {
+  let s = layer('background:' + SKY.sunset);
+  s += svgAt(60, 150, 560, 420, '0 0 560 420', Rr(4, 4, 552, 412, 26, '#16968E', 8) +
+    '<path d="M 120 60 C 200 140 120 220 220 300 C 290 356 260 400 300 420" fill="none" stroke="' + K.teal300 + '" stroke-width="40" stroke-linecap="round"/>' +
+    T(280, 250, '100%', 150, K.gold, { anchor: 'middle', stroke: K.ink, sw: 16 }) + T(280, 320, 'CHANCE OF EATING', 40, K.bone, { anchor: 'middle', stroke: K.ink, sw: 10 }));
+  s += svgAt(690, 120, 300, 180, '0 0 300 180', P(cloudPath(), K.cream, 7));
+  for (let i = 0; i < 5; i++) s += salmonAt(710 + i * 55, 280 + (i % 2) * 40, 80, 70, 3);
+  s += char('landed', { left: 820, top: 230, width: 380, z: 4 });
+  return s + hl('Today’s forecast:', { left: 60, top: 36, size: 84 });
+});
+function cloudPath() { return 'M 40 150 C 0 150 0 100 40 96 C 36 50 90 36 110 64 C 124 20 196 20 204 70 C 250 56 290 90 268 128 C 300 150 280 172 250 170 Z'; }
+
+PR('19', 'wanted', (W, H) => {
+  let s = layer('background:#5E3A20') + layer('background:repeating-linear-gradient(90deg,rgba(0,0,0,0.12) 0 4px,transparent 4px 90px)');
+  s += svgAt(330, 20, 540, 640, '0 0 540 640', P('M 10 14 L 530 6 L 524 120 L 534 250 L 522 400 L 532 632 L 14 626 L 22 470 L 8 320 L 18 180 Z', '#EBD6A8', 8) +
+    T(270, 110, 'WANTED', 104, '#5E3A20', { anchor: 'middle' }) + Rr(120, 140, 300, 280, 8, '#D7BE88', 6) +
+    T(270, 480, 'FOR EATING ALL', 44, '#5E3A20', { anchor: 'middle' }) + T(270, 530, 'THE SALMON', 44, '#5E3A20', { anchor: 'middle' }) + T(270, 596, 'REWARD: ONE (1) FISH', 32, '#DE5A4B', { anchor: 'middle' }), 2);
+  s += head(0, { left: 470, top: 175, width: 270, expr: 'smug', beak: 'grin', css: 'z-index:3' });
+  s += '<div style="position:absolute;left:585px;top:12px;width:30px;height:30px;border-radius:50%;background:#9AA5B1;border:5px solid ' + K.ink + ';z-index:4"></div>';
+  return s + salmonAt(60, 440, 220, -20) + salmonAt(930, 90, 200, 25);
+});
+
+PR('20', 'eagle-monthly', (W, H) => {
+  let s = layer('background:' + K.teal700);
+  s += '<div style="position:absolute;left:330px;top:18px;width:540px;height:640px;border:8px solid ' + K.ink + ';border-radius:10px;overflow:hidden;background:' + SKY.dawn + ';transform:rotate(-2deg);box-shadow:16px 16px 0 rgba(0,0,0,.35)">' +
+    sunrise(270, 420, 120, { rayOp: 0.9 }) + char('adult-white-head', { left: 130, top: 240, width: 300 }) +
+    '<div style="position:absolute;left:0;right:0;top:18px;text-align:center;font:400 88px/1 Luckiest Guy;color:' + K.gold + ';-webkit-text-stroke:3px ' + K.ink + ';text-shadow:4px 5px 0 ' + K.ink + '">EAGLE</div>' +
+    '<div style="position:absolute;left:0;right:0;top:106px;text-align:center;font:800 18px/1 Inter;letter-spacing:.5em;color:' + K.cream + '">MONTHLY</div>' +
+    '<div style="position:absolute;left:22px;top:160px;width:190px;font:400 26px/1.05 Luckiest Guy;color:' + K.bone + ';text-shadow:2px 3px 0 ' + K.ink + '">KING OF THE SKY ISSUE</div>' +
+    '<div style="position:absolute;right:22px;top:170px;width:170px;text-align:right;font:800 15px/1.3 Inter;color:' + K.cream + '">Five years of brown: a memoir</div>' +
+    '<div style="position:absolute;left:22px;bottom:84px;width:200px;font:800 15px/1.3 Inter;color:' + K.ink + ';background:' + K.gold + ';padding:6px 10px;border:3px solid ' + K.ink + ';border-radius:8px">Six to a branch: too many?</div>' +
+    '<div style="position:absolute;right:22px;bottom:22px;width:110px;height:56px;background:repeating-linear-gradient(90deg,#17110D 0 3px,#fff 3px 5px,#17110D 5px 6px,#fff 6px 10px);border:4px solid #fff"></div></div>';
+  return s + confetti(W, H, 16, 20, { min: 24, span: 18 });
+});
+
+PR('21', 'wing-day', (W, H) => {
+  let s = layer('background:#2E3A4B') + layer('background:repeating-linear-gradient(0deg,rgba(255,255,255,0.04) 0 3px,transparent 3px 60px)');
+  s += svgAt(0, 560, W, 115, '0 0 1200 115', '<rect x="0" y="0" width="1200" height="115" fill="#1B2330"/><line x1="0" x2="1200" y1="4" y2="4" stroke="' + K.ink + '" stroke-width="8"/>');
+  s += char('landed', { left: 620, top: 150, width: 440, z: 3 });
+  s += svgAt(560, 330, 560, 140, '0 0 560 140', '<rect x="20" y="62" width="520" height="16" rx="8" fill="#9AA5B1" stroke="' + K.ink + '" stroke-width="5"/>' +
+    [30, 80, 480, 430].map((x, i) => '<rect x="' + (x - (i % 2 ? 0 : 0)) + '" y="' + (i % 2 ? 22 : 6) + '" width="44" height="' + (i % 2 ? 96 : 128) + '" rx="12" fill="' + (i % 2 ? K.salmon300 : K.salmon) + '" stroke="' + K.ink + '" stroke-width="6"/>').join(''), 4);
+  return s + hl('Wing day.', { left: 60, top: 60, size: 150, fill: K.gold }) + pill('Never skip wing day', { left: 70, top: 250, size: 30, rot: -2 }) + pill('Reps: until we eat', { left: 70, top: 330, size: 30, rot: 2, bg: K.bone, fg: K.ink });
+});
+
+PR('22', 'player-2-has-joined', (W, H) => {
+  let s = layer('background:#07091A') + layer('background:repeating-linear-gradient(0deg,rgba(255,255,255,0.05) 0 2px,transparent 2px 6px)');
+  s += '<div style="position:absolute;inset:24px;border:8px solid ' + K.gold + ';border-radius:22px;box-shadow:inset 0 0 0 6px #07091A,inset 0 0 0 12px ' + K.salmon + '"></div>';
+  s += svgAt(60, 50, 1080, 60, '0 0 1080 60', T(0, 44, '1UP 00', 40, K.bone) + T(540, 44, 'FLOCK 3742', 40, K.gold, { anchor: 'middle' }) + T(1080, 44, '2UP 00', 40, K.bone, { anchor: 'end' }));
+  s += flyer(220, 330, 300, {}) + flyer(680, 300, 300, { white: true, flip: true, down: true });
+  s += svgAt(560, 350, 80, 80, '0 0 80 80', '<path d="M 40 10 L 48 32 L 70 32 L 52 46 L 60 70 L 40 56 L 20 70 L 28 46 L 10 32 L 32 32 Z" fill="' + K.gold + '" stroke="' + K.ink + '" stroke-width="5"/>');
+  return s + hl('Player 2 has\njoined the flock.', { left: 0, right: 0, top: 120, size: 88, align: 'center', fill: K.teal300 }) + pill('Press start', { left: 480, top: 560, size: 36, bg: K.gold, fg: K.ink, shadow: K.salmon });
+});
+
+PR('23', 'todays-menu', (W, H) => {
+  let s = layer('background:#5E3A20');
+  const items = [['Salmon', 'yes'], ['More salmon', 'yes'], ['Salmon (again)', 'obviously'], ['Dessert', 'salmon']];
+  s += svgAt(40, 40, 700, 595, '0 0 700 595', Rr(6, 6, 688, 583, 22, '#8A5A36', 12) + Rr(34, 34, 632, 527, 10, '#1F2A24', 6) +
+    T(350, 130, 'TODAY’S MENU', 66, K.cream, { anchor: 'middle' }) + '<path d="M 150 158 L 550 158" stroke="' + K.cream + '" stroke-width="4" stroke-dasharray="14 10"/>' +
+    items.map((it, i) => T(80, 240 + i * 80, it[0].toUpperCase(), 38, K.bone) + '<path d="M ' + (90 + it[0].length * 22) + ' ' + (230 + i * 80) + ' L ' + (600 - it[1].length * 19) + ' ' + (230 + i * 80) + '" stroke="' + K.cream + '" stroke-width="4" stroke-dasharray="4 10" stroke-linecap="round"/>' + T(620, 240 + i * 80, it[1].toUpperCase(), 38, K.gold, { anchor: 'end' })).join(''), 2);
+  s += char('eating', { left: 760, top: 170, width: 420, z: 3 });
+  return s + pill('Eagles gon eat', { left: 800, top: 70, size: 40, bg: K.gold, fg: K.ink, rot: 4, shadow: K.ink });
+});
+
+PR('24', 'loading-the-flock', (W, H) => {
+  let s = layer('background:' + SKY.midnight);
+  const R = rng(241);
+  for (let i = 0; i < 9; i++) s += flyer(40 + i * 122 + R() * 20, 160 + R() * 150, 130 + R() * 50, { white: R() < 0.45, down: R() < 0.5, op: 0.95 });
+  s += svgAt(150, 430, 900, 90, '0 0 900 90', Rr(5, 5, 890, 80, 40, '#0E1A2B', 8) + '<rect x="18" y="18" width="' + (864 * 0.87) + '" height="54" rx="27" fill="' + K.gold + '"/>' + '<g opacity="0.35">' + Array.from({ length: 22 }, (_, i) => '<path d="M ' + (30 + i * 36) + ' 72 L ' + (52 + i * 36) + ' 18" stroke="' + K.ink + '" stroke-width="10"/>').join('') + '</g>');
+  return s + hl('Loading the flock…', { left: 0, right: 0, top: 40, size: 92, align: 'center' }) +
+    '<div class="tag" style="left:0;right:0;top:545px;text-align:center;font-size:28px;color:' + K.gold200 + '">87% · 3,742 eagles on the river</div>';
+});
+
+PR('25', 'flock-card', (W, H) => {
+  let s = layer('background:' + K.teal) + sunrise(600, 340, 150, { noSun: true, rayOp: 0.25 });
+  s += '<div style="position:absolute;left:220px;top:130px;width:760px;height:460px;border-radius:34px;background:linear-gradient(135deg,#FFE28A,#FFC83A 55%,#F2991E);border:8px solid ' + K.ink + ';box-shadow:0 18px 0 rgba(23,17,13,.35);transform:rotate(-3deg);overflow:hidden">' +
+    '<div style="position:absolute;left:34px;top:30px;font:400 46px/1 Luckiest Guy;color:' + K.ink + '">EAGLES GON EAT</div>' +
+    '<div style="position:absolute;right:34px;top:36px;font:800 16px/1 Inter;letter-spacing:.3em;color:' + K.ink + '">FLOCK CARD</div>' +
+    '<div style="position:absolute;left:34px;top:110px;width:250px;height:290px;border-radius:18px;background:' + K.teal300 + ';border:6px solid ' + K.ink + ';overflow:hidden"></div>' +
+    '<div style="position:absolute;left:320px;top:120px;display:grid;gap:18px;font:800 15px/1.1 Inter;letter-spacing:.14em;color:#5E3A20">' +
+    ['NAME|Another hungry eagle', 'RANK|Flock', 'MEMBER SINCE|The nest', 'VALID UNTIL|Forever'].map((r) => { const [a, b] = r.split('|'); return '<div>' + a + '<div style="font:400 32px/1.05 Luckiest Guy;letter-spacing:.02em;text-transform:uppercase;color:' + K.ink + ';margin-top:4px">' + b + '</div></div>'; }).join('') + '</div>' +
+    '<div style="position:absolute;right:40px;bottom:36px;width:80px;height:80px;border-radius:50%;background:conic-gradient(#5CC8BA,#FFB2A4,#FFE28A,#5CC8BA);border:5px solid ' + K.ink + ';opacity:.9"></div></div>';
+  s += head(0, { left: 250, top: 270, width: 250, expr: 'happy', beak: 'grin', css: 'z-index:3;transform:rotate(-3deg)' });
+  return s + hl('Card-carrying eagle.', { left: 0, right: 0, top: 30, size: 76, align: 'center' });
+});
+
+PR('26', 'eagle-crossing', (W, H) => {
+  let s = layer('background:' + SKY.sunset);
+  s += art('s4-back', W, H, 0.56, 430);
+  s += svgAt(0, 520, W, 155, '0 0 1200 155', '<rect x="0" y="0" width="1200" height="155" fill="#4A4F5A"/><line x1="0" x2="1200" y1="4" y2="4" stroke="' + K.ink + '" stroke-width="8"/>' + Array.from({ length: 8 }, (_, i) => '<rect x="' + (20 + i * 160) + '" y="72" width="90" height="14" rx="4" fill="' + K.cream + '"/>').join(''));
+  s += svgAt(760, 60, 360, 560, '0 0 360 560', '<rect x="164" y="300" width="32" height="260" fill="#9AA5B1" stroke="' + K.ink + '" stroke-width="7"/>' + P('M 180 14 L 346 180 L 180 346 L 14 180 Z', K.gold, 10) + P('M 180 40 L 320 180 L 180 320 L 40 180 Z', 'none', 5));
+  s += flyer(830, 190, 200, { rot: -8 });
+  s += perch(250, 580, 150, {}) + perch(400, 590, 160, { white: true }) + perch(550, 585, 150, {});
+  return s + hl('Eagles\ncrossing.', { left: 60, top: 50, size: 140 }) + pill('Slow down. They’re heading to eat.', { left: 64, top: 330, size: 26, rot: -2 });
+});
+
+PR('27', 'day-1-day-1825', (W, H) => {
+  let s = '<div style="position:absolute;left:0;top:0;width:600px;height:675px;background:' + SKY.fog + ';overflow:hidden">' + img(A('scenes/s2-mud.svg'), { left: 0, top: 500, width: 600, height: 175, css: 'object-fit:cover' }) + char('scruffy', { left: 120, top: 190, width: 360 }) + '</div>';
+  s += '<div style="position:absolute;left:600px;top:0;width:600px;height:675px;background:' + SKY.dawn + ';overflow:hidden">' + sunrise(300, 420, 150, { rayOp: 0.9 }) + img(A('scenes/s7-rock.svg'), { left: 110, top: 420, width: 380 }) + char('adult-white-head', { left: 150, top: 200, width: 330 }) + '</div>';
+  s += '<div style="position:absolute;left:592px;top:0;width:16px;height:675px;background:' + K.ink + '"></div>';
+  s += pill('Day 1', { left: 60, top: 60, size: 56, bg: K.bone, fg: K.ink, rot: -3, shadow: K.ink }) + pill('Day 1,825', { left: 760, top: 60, size: 56, bg: K.gold, fg: K.ink, rot: 3, shadow: K.ink });
+  s += '<div style="position:absolute;left:0;right:0;top:548px;height:127px;background:' + K.ink + ';z-index:4"></div>';
+  return s + hl('Five years of brown.', { left: 0, right: 0, top: 572, size: 70, align: 'center', fill: K.gold });
+});
+
+PR('28', 'flock-selfie', (W, H) => {
+  let s = layer('background:' + SKY.feast) + sunrise(600, 360, 140, { noSun: true, rayOp: 0.3 });
+  const heads = [[0, 'happy', 'grin', 90, 260, 300, false], [6, 'proud', 'grin', 330, 170, 330, false], [0, 'amazed', null, 620, 190, 300, true], [6, 'happy', 'grin', 860, 250, 300, true], [0, 'smug', null, 480, 340, 280, false], [0, 'hungry', 'open', 220, 380, 250, false], [6, 'determined', null, 760, 390, 250, true]];
+  heads.forEach((h) => { s += head(h[0], { left: h[3], top: h[4], width: h[5], expr: h[1], beak: h[2] || undefined, flip: h[6] }); });
+  s += '<div style="position:absolute;inset:18px;border:10px solid ' + K.ink + ';border-radius:44px;box-shadow:inset 0 0 0 6px ' + K.bone + '"></div>';
+  s += svgAt(560, 590, 80, 80, '0 0 80 80', '<circle cx="40" cy="40" r="34" fill="' + K.bone + '" stroke="' + K.ink + '" stroke-width="7"/><circle cx="40" cy="40" r="22" fill="none" stroke="' + K.ink + '" stroke-width="4"/>', 7);
+  return s + hl('Flock selfie.', { left: 0, right: 0, top: 40, size: 110, align: 'center' });
+});
+
+PR('29', 'x-marks-the-river', (W, H) => {
+  let s = layer('background:#3A2A1C');
+  s += svgAt(40, 30, 1120, 615, '0 0 1120 615', P('M 16 20 L 1100 8 L 1108 300 L 1096 600 L 20 606 L 8 320 Z', '#EBD6A8', 10) +
+    '<path d="M 60 520 C 200 420 180 300 360 300 C 540 300 520 460 700 420 C 860 384 820 220 980 170" fill="none" stroke="#16968E" stroke-width="54" stroke-linecap="round" opacity="0.85"/>' +
+    '<path d="M 150 470 C 260 380 300 330 420 360 C 560 400 620 360 760 330 C 820 316 840 270 870 250" fill="none" stroke="#DE5A4B" stroke-width="8" stroke-dasharray="4 22" stroke-linecap="round"/>' +
+    '<path d="M 850 220 l 50 50 M 900 220 l -50 50" stroke="#DE5A4B" stroke-width="16" stroke-linecap="round"/>' +
+    [[560, 110], [480, 520], [680, 200], [940, 440], [180, 330], [1000, 330]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="26" fill="#6F7D4A" stroke="' + K.ink + '" stroke-width="5"/>').join('') +
+    '<g transform="translate(1010 520)"><circle r="54" fill="none" stroke="' + K.ink + '" stroke-width="5"/><path d="M 0 -64 L 12 0 L 0 64 L -12 0 Z" fill="' + K.ink + '"/>' + T(0, -72, 'N', 30, K.ink, { anchor: 'middle' }) + '</g>' +
+    T(120, 580, 'YOU ARE HERE', 26, '#5E3A20'), 1);
+  s += img(A('scenes/s1-nest-front.svg'), { left: 90, top: 460, width: 150, z: 2 }) + salmonAt(880, 290, 110, -20, 3);
+  return s + hl('X marks\nthe river.', { left: 90, top: 70, size: 110, fill: K.gold });
+});
+
+PR('30', 'gone-fishing', (W, H) => {
+  let s = layer('background:' + K.teal) + sunrise(900, 340, 160, { noSun: true, rayOp: 0.22 });
+  s += '<div style="position:absolute;left:80px;top:110px;width:640px;height:460px;background:' + K.bone + ';border:8px solid ' + K.ink + ';border-radius:24px;box-shadow:14px 16px 0 rgba(23,17,13,.35);font-family:Inter;color:' + K.ink + ';overflow:hidden">' +
+    '<div style="background:' + K.ink + ';color:' + K.gold + ';font:400 30px/1 Luckiest Guy;padding:18px 26px 12px">AUTO-REPLY</div>' +
+    '<div style="padding:24px 30px;display:grid;gap:10px;font-size:20px;line-height:1.45">' +
+    '<div style="font-weight:800;color:#7A6A5A;font-size:15px;letter-spacing:.14em">FROM: EVERY EAGLE · SUBJECT: OUT OF OFFICE</div>' +
+    '<div style="font:400 58px/1 Luckiest Guy;margin-block:6px;text-transform:uppercase">Gone fishing.</div>' +
+    '<div>We’re at the river with the whole flock. We’ll reply when we’ve eaten.</div>' +
+    '<div style="font-weight:800">Probably not soon.</div></div></div>';
+  s += char('diving', { left: 720, top: 90, width: 440, z: 3 }) + sprite('splash', { left: 820, top: 480, width: 300, z: 2 });
+  return s + pill('Eagles gon eat', { left: 90, top: 40, size: 34, bg: K.gold, fg: K.ink, rot: -2, shadow: K.ink });
+});
+
 /* ---------- Telegram (1080×1080 posts, stickers, welcome card) ---------- */
 const TW = 1080, TH = 1080;
 add('telegram', TW, TH, '01', 'welcome-to-the-flock', (W, H) =>

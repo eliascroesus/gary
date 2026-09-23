@@ -140,6 +140,146 @@
   "name": "gm-eagles"
  },
  {
+  "set": "promo",
+  "file": "out/promo/11-eagle-eyes-on-the-chart-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "eagle-eyes-on-the-chart"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/12-3am-still-watching-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "3am-still-watching"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/13-every-chart-is-a-river-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "every-chart-is-a-river"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/14-target-acquired-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "target-acquired"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/15-the-plan-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "the-plan"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/16-flock-meeting-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "flock-meeting"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/17-breaking-news-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "breaking-news"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/18-forecast-100-percent-eating-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "forecast-100-percent-eating"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/19-wanted-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "wanted"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/20-eagle-monthly-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "eagle-monthly"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/21-wing-day-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "wing-day"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/22-player-2-has-joined-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "player-2-has-joined"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/23-todays-menu-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "todays-menu"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/24-loading-the-flock-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "loading-the-flock"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/25-flock-card-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "flock-card"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/26-eagle-crossing-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "eagle-crossing"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/27-day-1-day-1825-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "day-1-day-1825"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/28-flock-selfie-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "flock-selfie"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/29-x-marks-the-river-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "x-marks-the-river"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/30-gone-fishing-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "gone-fishing"
+ },
+ {
   "set": "telegram",
   "file": "out/telegram/01-welcome-to-the-flock-1080x1080@2x.png",
   "w": 1080,
