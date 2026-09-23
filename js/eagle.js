@@ -900,6 +900,50 @@
     );
   }
 
+
+  // ---------------------------------------------------------------------------
+  // TOP-DOWN EAGLE — the drone's-eye view for Scene 3. Facing up the screen.
+  // opts: { hero: true } adds mottling, the signature feather and tracking
+  // pupils (.td-pupils); { white: true } gives a grown white head.
+  // ---------------------------------------------------------------------------
+  function renderTopDown(o) {
+    o = o || {};
+    const hero = !!o.hero, white = !!o.white;
+    const uid = o.uid || 'td' + (++counter).toString(36);
+    const body = white ? C.chocolate : C.brown;
+    const dark = white ? '#3A2011' : C.brownDark;
+    const wingL = smooth([[-18, -14], [-60, -40], [-112, -46], [-168, -26], [-196, -6, 'c'], [-178, 4, 'c'], [-194, 20, 'c'], [-172, 26, 'c'], [-184, 44, 'c'], [-160, 44, 'c'], [-164, 62, 'c'], [-138, 56, 'c'], [-110, 60], [-60, 50], [-20, 34]]);
+    const wingR = wingL.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (m, x, y) => r1(-parseFloat(x)) + ' ' + y);
+    const tail = smooth([[-20, 70], [-38, 132, 'c'], [-22, 124, 'c'], [-12, 146, 'c'], [0, 128, 'c'], [12, 146, 'c'], [22, 124, 'c'], [38, 132, 'c'], [20, 70]]);
+    const ctx = { uid: uid, defs: [], canonical: false, plumage: 0 };
+    let wingDetail = '';
+    if (hero) wingDetail = mottles(401, 9, [-190, -50, 180, 110], 6, 12, dark) + scallops(-120, -10, 5, 18, 9, dark) + '<path d="M -150 20 L -118 16 M -140 40 L -110 30"' + stroke(LINE_S) + '/>';
+    const wing = (side, d) => '<g class="td-wing td-wing-' + side + '">' + (hero ? shape(ctx, 'w' + side, d, body, side === 'l' ? wingDetail : wingDetail.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (m, x, y) => r1(-parseFloat(x)) + ' ' + y)) : '<path d="' + d + '" fill="' + body + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>') + '</g>';
+    const part = o.part || 'all'; // 'wings' | 'body' | 'all' — split so wings can flap on the compositor
+    let s = '<path d="' + tail + '" fill="' + (white ? C.white : dark) + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>';
+    if (hero && !white) s += '<path d="M -26 100 L 26 100 L 30 112 L -30 112 Z" fill="' + C.tan + '"/>';
+    const wings = wing('l', wingL) + wing('r', wingR);
+    if (part === 'wings') s = wings;
+    else if (part === 'all') s += wings;
+    if (part !== 'wings') {
+      const bodyD = 'M 0 -40 C 26 -40 36 -6 34 30 C 32 64 18 86 0 86 C -18 86 -32 64 -34 30 C -36 -6 -26 -40 0 -40 Z';
+      s += hero ? shape(ctx, 'b', bodyD, body, mottles(402, 5, [-30, -30, 60, 110], 6, 10, dark)) : '<path d="' + bodyD + '" fill="' + body + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>';
+      // head, beak pointing up the screen, eyes on either side
+      const headFill = white ? C.white : body;
+      s += '<g class="td-head">';
+      s += '<path d="M 0 -94 C 22 -94 32 -78 32 -60 C 32 -42 20 -32 0 -32 C -20 -32 -32 -42 -32 -60 C -32 -78 -22 -94 0 -94 Z" fill="' + headFill + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>';
+      s += '<path d="M -12 -90 C -10 -108 -4 -120 0 -126 C 4 -120 10 -108 12 -90 C 6 -84 -6 -84 -12 -90 Z" fill="' + (white ? C.beakAdult : C.beakJuv) + '" stroke="' + C.ink + '" stroke-width="' + LINE_M + '" stroke-linejoin="round"/>';
+      const eyes = '<ellipse cx="-19" cy="-70" rx="10" ry="12" fill="#fff" stroke="' + C.ink + '" stroke-width="3.5"/><ellipse cx="19" cy="-70" rx="10" ry="12" fill="#fff" stroke="' + C.ink + '" stroke-width="3.5"/>';
+      const pupils = '<circle cx="-19" cy="-72" r="5.5" fill="' + C.ink + '"/><circle cx="19" cy="-72" r="5.5" fill="' + C.ink + '"/><circle cx="-17" cy="-75" r="1.8" fill="#fff"/><circle cx="21" cy="-75" r="1.8" fill="#fff"/>';
+      s += '<g class="td-eyes">' + eyes + '<g class="td-pupils">' + pupils + '</g></g>';
+      // signature feather: one stray white feather sticking out of the nape
+      if (hero) s += '<path d="M 18 -44 C 30 -44 46 -36 58 -22 C 44 -24 30 -30 16 -36 Z" fill="' + C.white + '" stroke="' + C.ink + '" stroke-width="3.5" stroke-linejoin="round"/><path d="M 20 -40 L 52 -25"' + stroke(2.5) + '/>';
+      s += '</g>';
+    }
+    const title = o.title || '';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-205 -135 410 290"' + (o.intrinsic ? ' width="410" height="290"' : '') + ' class="eagle-topdown" role="' + (title ? 'img' : 'presentation') + '"' + (title ? ' aria-label="' + title + '"' : ' aria-hidden="true"') + '>' + (title ? '<title>' + title + '</title>' : '') + '<defs>' + ctx.defs.join('') + '</defs>' + s + '</svg>';
+  }
+
   // Head only — plumage icons for the milestone timeline (stage 0-6).
   function renderHead(stage, opts) {
     opts = opts || {};
@@ -1250,6 +1294,7 @@
     },
     render: render,
     renderHead: renderHead,
+    renderTopDown: renderTopDown,
     // shared drawing vocabulary (used by tools/export-scenes.js)
     draw: { smooth: smooth, blob: blob, fluff: fluff, rng: rng, mottles: mottles, tuft: tuft, claw: claw, r1: r1 },
     // live rig (browser only): EagleRig.mount(el, 'scruffy', { canonicalIds, plumage })

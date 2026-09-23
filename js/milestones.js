@@ -123,7 +123,7 @@
           '</div></li>';
       });
       root.innerHTML =
-        '<div class="ms-track" aria-hidden="true">' + dots + '<img class="ms-rider" src="assets/sprites/speck.svg" alt="" width="64" height="36"></div>' +
+        '<div class="ms-track" aria-hidden="true">' + dots + '<img class="ms-rider" src="assets/sprites/speck.svg" alt="" width="160" height="110"></div>' +
         '<ol class="ms-list">' + items + '</ol>';
       box = null;
       reached = new Array(n).fill(false);

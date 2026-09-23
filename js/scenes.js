@@ -23,43 +23,88 @@
   // Scene assets that are built by script
   // --------------------------------------------------------------------------
 
-  // Scene 3 flock: brown specks on every horizon, all flying the same way.
-  const BANDS = {
-    far: { y: [22, 56], w: [18, 26], n: [22, 52], flap: [0.5, 0.8] },
-    mid: { y: [30, 70], w: [28, 42], n: [18, 48], flap: [0.45, 0.7] },
-    near: { y: [10, 86], w: [48, 72], n: [9, 24], flap: [0.35, 0.55] },
-  };
-
   function seeded(seed) {
     let s = seed >>> 0 || 1;
     return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
   }
 
-  function buildSpecks(scene) {
-    const all = [];
-    const small = mobile();
-    Object.keys(BANDS).forEach((band, bi) => {
-      const host = $('.specks[data-band="' + band + '"]', scene);
-      if (!host || host.childElementCount) return;
-      const B = BANDS[band];
-      const R = seeded(97 + bi * 31);
-      const n = small ? B.n[0] : B.n[1];
-      for (let i = 0; i < n; i++) {
-        const el = document.createElement('span');
-        el.className = 'speck';
-        const w = B.w[0] + R() * (B.w[1] - B.w[0]);
-        el.style.cssText =
-          'left:' + (3 + R() * 90).toFixed(1) + '%;top:' + (B.y[0] + R() * (B.y[1] - B.y[0])).toFixed(1) + '%;--w:' + w.toFixed(0) + 'px;' +
-          '--flap:' + (B.flap[0] + R() * (B.flap[1] - B.flap[0])).toFixed(2) + 's;--delay:-' + (R() * 1).toFixed(2) + 's';
-        el.innerHTML = '<img src="assets/sprites/speck.svg" alt="" width="64" height="36">';
-        host.appendChild(el);
-        all.push({ el: el, order: R(), band: band });
-      }
-    });
-    // one by one: shuffle across every horizon, not band by band
-    return all.sort((a, b) => a.order - b.order).map((s) => s.el);
+  // A side-view flying eagle: body + wing images, the wing flaps on the compositor.
+  function makeFlyer(parent, css, white, cls) {
+    const el = document.createElement('span');
+    const k = white ? 'white' : 'brown';
+    el.className = 'flyer' + (cls ? ' ' + cls : '');
+    el.style.cssText = css || '';
+    el.innerHTML = '<img src="assets/sprites/fly-' + k + '-body.svg" alt="" width="160" height="110"><img class="flyer__wing" src="assets/sprites/fly-' + k + '-wing.svg" alt="" width="160" height="110">';
+    parent.appendChild(el);
+    return el;
   }
 
+  // Scene 3 (drone shot): the flock below him, all flying up the same river.
+  // [left %, top %, size (× his width), white head]. Listed in the order they appear.
+  const FLOCK = [
+    [20, 83, 0.3, 0], [80, 85, 0.3, 1], [9, 50, 0.24, 0], [91, 46, 0.24, 1], [50, 94, 0.24, 0],
+    [8, 72, 0.2, 1], [92, 70, 0.2, 0], [66, 97, 0.18, 0], [34, 97, 0.18, 1],
+    [4, 28, 0.17, 0], [96, 25, 0.17, 1], [17, 63, 0.16, 0], [83, 61, 0.16, 1], [29, 49, 0.14, 1], [71, 51, 0.14, 0],
+  ];
+
+  function buildFlock(scene) {
+    const host = $('.s3-flock', scene);
+    if (!host) return [];
+    if (host.childElementCount) return Array.from(host.children);
+    const R = seeded(313);
+    return FLOCK.slice(0, mobile() ? 9 : FLOCK.length).map((f) => {
+      const el = document.createElement('span');
+      const k = f[3] ? 'white' : 'brown';
+      el.className = 'td-bird';
+      el.style.cssText = 'left:' + f[0] + '%;top:' + f[1] + '%;--s:' + f[2] + ';--r:' + ((R() - 0.5) * 18).toFixed(1) + 'deg;--flap:' + (0.5 + R() * 0.35).toFixed(2) + 's;--d:-' + (R() * 3).toFixed(2) + 's';
+      el.innerHTML = '<span><img class="td-wings" src="assets/sprites/topdown-wings-' + k + '.svg" alt="" width="410" height="290"><img src="assets/sprites/topdown-body-' + k + '.svg" alt="" width="410" height="290"></span>';
+      host.appendChild(el);
+      return el;
+    });
+  }
+
+  // Scene 3 hero, drawn from above: inline SVG split into wings (CSS flap) and
+  // body (head turns, pupils follow the cursor). The <img> stays as the fallback.
+  function buildTopDownHero(host) {
+    if (!host || !window.EagleRig || !EagleRig.renderTopDown) return null;
+    if (host.__td) return host.__td;
+    const img = host.querySelector('img');
+    const title = img ? img.alt : '';
+    host.innerHTML =
+      '<div class="td td--wings">' + EagleRig.renderTopDown({ hero: true, part: 'wings', uid: 'tdw' }) + '</div>' +
+      '<div class="td td--body">' + EagleRig.renderTopDown({ hero: true, part: 'body', uid: 'tdb', title: title }) + '</div>';
+    const td = { head: $('.td-head', host), pupils: $('.td-pupils', host) };
+    // pupils follow the pointer while he's on screen
+    if (td.pupils && window.matchMedia('(pointer: fine)').matches) {
+      window.addEventListener('pointermove', (e) => {
+        if (EGE.currentScene && EGE.currentScene() !== 3) return;
+        const r = host.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height * 0.25);
+        const len = Math.hypot(dx, dy) || 1;
+        td.pupils.setAttribute('transform', 'translate(' + ((dx / len) * 3.5).toFixed(2) + ' ' + ((dy / len) * 3.5).toFixed(2) + ')');
+      }, { passive: true });
+    }
+    host.__td = td;
+    return td;
+  }
+
+  // Scene 5 splash: drops are added here; crown and rings are in the markup.
+  function buildSplash(scene) {
+    const host = $('.s5-splash', scene);
+    if (!host) return null;
+    if (host.__sp) return host.__sp;
+    const drops = [];
+    for (let i = 0; i < (mobile() ? 6 : 9); i++) {
+      const img = document.createElement('img');
+      img.src = 'assets/sprites/splash-drop.svg';
+      img.alt = '';
+      img.className = 'splash__drop';
+      host.appendChild(img);
+      drops.push(img);
+    }
+    host.__sp = { crown: $('.splash__crown', host), rings: $$('.splash__ring', host), drops: drops, w: () => host.offsetWidth || 300 };
+    return host.__sp;
+  }
 
   // Scene 4: the council tree — drawn here so perches and branches share one geometry.
   const COUNCIL = {
@@ -100,25 +145,28 @@
     const branches = narrow ? COUNCIL.narrow : COUNCIL.wide;
     host.innerHTML = treeSVG(branches);
     const R = seeded(404);
-    const bw = narrow ? 84 : 108; // bird width in tree units (of 1000)
+    const bw = narrow ? 74 : 88; // bird width in tree units (of 1000)
     const rows = [];
     const hero = $('.perch--hero', scene);
     branches.forEach((br, bi) => {
       const row = [];
       for (let i = 0; i < PER_BRANCH; i++) {
-        const t = 0.2 + i * (0.72 / (PER_BRANCH - 1));
+        const t = 0.14 + i * (0.8 / (PER_BRANCH - 1));
         const pt = branchPoint(br, t);
         const isHero = bi === 0 && i === 2;
-        const w = isHero ? bw * 1.9 : bw * (0.9 + R() * 0.18);
+        const w = isHero ? bw * 1.8 : bw * (0.9 + R() * 0.18);
         let el;
         if (isHero && hero) {
           el = hero;
           host.appendChild(el);
         } else {
           el = document.createElement('span');
-          el.className = 'perch' + (R() < 0.5 ? ' is-flipped' : '');
+          // on his branch everyone turns to face him; elsewhere, any old way
+          const flip = bi === 0 ? i < 2 : R() < 0.5;
+          el.className = 'perch' + (flip ? ' is-flipped' : '');
           const white = R() < 0.4;
-          el.innerHTML = '<img src="assets/sprites/crowd-' + (white ? 'white' : 'brown') + '.svg" alt="" width="130" height="140">';
+          el.innerHTML = '<img class="perch__sit" src="assets/sprites/crowd-' + (white ? 'white' : 'brown') + '.svg" alt="" width="130" height="140">';
+          makeFlyer(el, '', white, 'perch__fly');
           host.appendChild(el);
         }
         el.style.left = ((pt[0] - w / 2) / 10).toFixed(2) + '%';
@@ -156,12 +204,12 @@
     for (let i = 0; i < (small ? 4 : 8); i++) salmon.push(add(feast, 'assets/sprites/salmon.svg', 'left:' + (8 + R() * 80).toFixed(1) + '%;bottom:' + (18 + R() * 24).toFixed(1) + '%;width:' + (7 + R() * 5).toFixed(1) + 'vh;opacity:0'));
     const over = $('.overhead', scene);
     const flyers = [];
-    for (let i = 0; i < (small ? 5 : 11); i++) {
+    for (let i = 0; i < (small ? 5 : 10); i++) {
       const big = R() < 0.45;
-      flyers.push(add(over, 'assets/sprites/speck.svg', 'left:-18%;top:' + (4 + R() * 30).toFixed(1) + '%;width:' + (big ? 8 + R() * 5 : 4 + R() * 3).toFixed(1) + (small ? 'vw' : 'vh')));
+      flyers.push(makeFlyer(over, 'left:-18%;top:' + (4 + R() * 30).toFixed(1) + '%;width:' + (big ? 9 + R() * 5 : 5 + R() * 3).toFixed(1) + (small ? 'vw' : 'vh') + ';--flap:' + (0.3 + R() * 0.2).toFixed(2) + 's;--d:-' + R().toFixed(2) + 's', R() < 0.4));
     }
     const divers = [];
-    for (let i = 0; i < (small ? 2 : 3); i++) divers.push(add(over, 'assets/sprites/speck.svg', 'left:' + (18 + i * 30) + '%;top:-20%;width:' + (9 + i * 2) + (small ? 'vw' : 'vh') + ';rotate:50deg'));
+    for (let i = 0; i < (small ? 2 : 3); i++) divers.push(makeFlyer(over, 'left:' + (18 + i * 30) + '%;top:-20%;width:' + (10 + i * 2) + (small ? 'vw' : 'vh') + ';rotate:50deg;--flap:0.9s', i === 1));
     const conf = $('.confetti', scene);
     const feathers = [];
     const cols = ['white', 'brown', 'gold'];
@@ -252,8 +300,14 @@
     document.documentElement.classList.add('is-static');
     scenes.forEach((scene) => {
       mountRigs(scene, {});
-      if (scene.dataset.scene === '3') buildSpecks(scene);
+      if (scene.dataset.scene === '3') {
+        buildFlock(scene);
+        const h3 = $('.s3-eagle', scene);
+        buildTopDownHero(h3);
+        h3.classList.add('is-driven');
+      }
       if (scene.dataset.scene === '4') buildCouncil(scene);
+      if (scene.dataset.scene === '5') buildSplash(scene);
       if (scene.dataset.scene === '6') {
         const birds = buildRiverEagles(scene);
         const hero = $('.s6-hero', scene);
@@ -278,8 +332,6 @@
       visible.forEach((v, k) => { if (v > r) { r = v; best = k; } });
       return best;
     };
-    const s3 = $('.scene--3 [data-live-pose]');
-    if (s3 && s3.__eagleRig) s3.__eagleRig.setPose('flying-determined');
     // simple fades as each frame arrives
     if ('IntersectionObserver' in window) {
       scenes.forEach((s) => s.classList.add('fade-ready'));
@@ -302,14 +354,12 @@
       runt: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
       sib: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
       scruffy: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
-      flyer: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
       closeup: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0, wingL: 0 },
       home: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0, wingL: 0 },
     };
     $('.chick--runt').setAttribute('data-proxy', 'runt');
     $('.chick--sib').setAttribute('data-proxy', 'sib');
     $('.s2-eagle').setAttribute('data-proxy', 'scruffy');
-    $('.s3-eagle').setAttribute('data-proxy', 'flyer');
     $('.s6-hero').setAttribute('data-proxy', 'closeup');
     $('.s7-hero').setAttribute('data-proxy', 'home');
     $('.s7-hero').setAttribute('data-plumage', '6');
@@ -381,41 +431,51 @@
     const t3 = (S[3] = t2 + 2.3);
     const D3 = 5.0;
     const cam3 = q(s3, '.scene__cam');
+    const POSE_TURN = t3 + 2.45; // second wind: he sees them, and speeds up
     tl.to(s3, { autoAlpha: 1, duration: 0.3 }, t3);
-    tl.fromTo(cam3, { scale: 1.1 }, { scale: 0.96, duration: D3, ease: 'power1.inOut' }, t3);
-    // Side-scrolling parallax: each strip is one viewport + one tile wide and is
-    // wrapped by its tile width, so the layers stay small however far he flies.
-    const strips = [['.strip--clouds', 0.35], ['.strip--far', 0.7], ['.strip--mid', 1.6], ['.strip--front', 3.2]].map(([sel, k]) => ({ el: q(s3, sel), k: k }));
-    const setStrips = (t) => {
+    tl.fromTo(cam3, { scale: 1.12 }, { scale: 1, duration: D3, ease: 'power1.inOut' }, t3);
+    // A drone shot: the valley scrolls down the screen while he flies up it.
+    // The ground is one tile that repeats, wrapped here by its own height.
+    const ground = q(s3, '.s3-ground'), wisps = q(s3, '.s3-wisps');
+    const tileH = () => Math.max(1.16 * W(), 820) * 0.625; // matches --tw in the CSS
+    const turnP = (POSE_TURN - t3) / D3;
+    const setGround = (t) => {
       const p = Math.max(0, Math.min(1, (t - t3) / D3));
-      strips.forEach((st) => {
-        const tile = s3.offsetHeight * 1.6 || 1;
-        const dist = st.k * W() * (0.6 + 0.4 * m) * p;
-        st.el.style.transform = 'translate3d(' + (-(dist % tile)).toFixed(1) + 'px,0,0)';
-      });
+      const d = p < turnP ? p : turnP + (p - turnP) * 2; // twice as fast after the turn
+      const tile = tileH();
+      const dist = d * 2.2 * tile * (0.7 + 0.3 * m);
+      ground.style.transform = 'translate3d(0,' + (dist % tile).toFixed(1) + 'px,0)';
+      wisps.style.transform = 'translate3d(0,' + ((dist * 1.7) % tile).toFixed(1) + 'px,0)';
     };
-    const flyer = q(s3, '.s3-eagle');
-    tl.fromTo(flyer, { x: () => -0.55 * W() }, { x: 0, duration: 0.7, ease: 'power2.out' }, t3);
-    tl.to(proxies.flyer, { y: 30, rot: 6, duration: 1.4, ease: 'sine.inOut' }, t3 + 0.6); // sagging
+    const hero3 = q(s3, '.s3-eagle');
+    const td = buildTopDownHero(hero3);
+    tl.fromTo(hero3, { y: () => 0.65 * H(), rotation: 0 }, { y: 0, duration: 0.8, ease: 'power2.out' }, t3);
+    tl.to(hero3, { y: () => 0.07 * H(), rotation: 5, duration: 1.3, ease: 'sine.inOut' }, t3 + 0.8); // tired, slipping back
     wordsIn(tl, words(s3, 0), t3 + 0.35, 0.6);
-    // the emotional turn: brown specks, one by one, on every horizon
-    const specks = buildSpecks(s3);
-    const n = specks.length;
-    const f0 = t3 + 1.15, span = 2.7;
-    specks.forEach((el, i) => {
-      const at = f0 + span * Math.pow(i / n, 0.55);
-      tl.fromTo(el, { opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1, duration: 0.14, ease: 'back.out(3)' }, at);
+    // the turn: one by one, eagles appear below him, all heading upriver
+    const flock = buildFlock(s3);
+    flock.forEach((el, i) => {
+      const at = t3 + 1.1 + 1.3 * (i / flock.length);
+      tl.fromTo(el, { opacity: 0, scale: 0.5, y: () => 0.14 * H() }, { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'back.out(2)' }, at);
     });
-    [['far', 0.05], ['mid', 0.09], ['near', 0.16]].forEach(([b, k]) => {
-      tl.fromTo(q(s3, '.specks--' + b), { x: 0 }, { x: () => k * W(), duration: D3 - 1, ease: 'sine.inOut' }, t3 + 1);
-    });
-    tl.to(proxies.flyer, { y: -20, rot: -6, duration: 0.8, ease: 'power2.out' }, t3 + 2.4); // second wind
-    wordsIn(tl, words(s3, 1), t3 + 2.9, 0.6);
-    tl.fromTo(q(s3, '.scene__glow'), { opacity: 0 }, { opacity: 1, duration: 1.8 }, t3 + 3.1);
-    wordsOut(tl, words(s3), t3 + 4.55, 0.4);
-    tl.to(proxies.flyer, { x: 700, y: -160, duration: 0.5, ease: 'power2.in' }, t3 + 4.5);
-    ranges.push([s3, t3, t3 + D3, ['flyer']]);
-    const POSE_TURN = t3 + 2.45;
+    wordsIn(tl, words(s3, 1), t3 + 1.3, 0.6);
+    // he looks down at them, left... right...
+    if (td && td.head) {
+      tl.to(td.head, { rotation: -28, svgOrigin: '0 -36', duration: 0.25, ease: 'sine.inOut' }, t3 + 1.55)
+        .to(td.head, { rotation: 26, svgOrigin: '0 -36', duration: 0.4, ease: 'sine.inOut' }, t3 + 1.85)
+        .to(td.head, { rotation: 0, svgOrigin: '0 -36', duration: 0.2, ease: 'sine.inOut' }, t3 + 2.3);
+    }
+    // ...and gets his second wind. They all speed up together.
+    tl.to(hero3, { y: () => -0.05 * H(), rotation: -2, duration: 0.6, ease: 'power2.out' }, POSE_TURN);
+    tl.to(flock, { y: () => -0.04 * H(), duration: 0.8, ease: 'power2.out', stagger: 0.02 }, POSE_TURN + 0.05);
+    const sub3 = q(s3, '[data-sub]');
+    tl.fromTo(sub3, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, t3 + 2.7);
+    tl.fromTo(q(s3, '.scene__glow'), { opacity: 0 }, { opacity: 1, duration: 1.6 }, t3 + 2.9);
+    wordsOut(tl, words(s3), t3 + 4.45, 0.35);
+    tl.to(sub3, { opacity: 0, duration: 0.25 }, t3 + 4.45);
+    tl.to(hero3, { y: () => -0.95 * H(), duration: 0.55, ease: 'power2.in' }, t3 + 4.35);
+    tl.to(flock, { y: () => -1.1 * H(), duration: 0.6, ease: 'power2.in', stagger: 0.012 }, t3 + 4.38);
+    ranges.push([s3, t3, t3 + D3, []]);
 
 
     /* ---------------- SCENE 4 — THE COUNCIL GROUNDS (warm) ---------------- */
@@ -441,18 +501,33 @@
     // eagles land one after another and stack up, six to a branch
     const landers = [];
     council.rows.forEach((row) => row.forEach((el) => { if (el !== council.hero) landers.push(el); }));
+    // each one arrives flying, wings going, then sits down with a squash
     landers.forEach((el, i) => {
-      const at = t4 + 0.55 + i * (1.9 / landers.length);
-      const fromLeft = i % 2 ? 1 : -1;
-      tl.fromTo(el, { x: () => fromLeft * (0.15 + (i % 3) * 0.08) * W(), y: () => -(0.45 + (i % 4) * 0.08) * H(), rotation: fromLeft * 22, opacity: 0 }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.26, ease: 'power3.out' }, at);
-      tl.to(el, { scaleY: 0.8, scaleX: 1.12, duration: 0.04 }, at + 0.26).to(el, { scaleY: 1, scaleX: 1, duration: 0.12, ease: 'back.out(3)' }, at + 0.3);
+      const at = t4 + 0.55 + i * (1.7 / landers.length);
+      const fromLeft = i % 2 ? 1 : -1; // 1 = comes in from the right
+      const fly = q(el, '.perch__fly'), sit = q(el, '.perch__sit');
+      if (fly && fromLeft > 0) fly.classList.add('is-left');
+      tl.fromTo(el, { x: () => fromLeft * (0.15 + (i % 3) * 0.08) * W(), y: () => -(0.45 + (i % 4) * 0.08) * H(), rotation: -fromLeft * 10, opacity: 0 }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.28, ease: 'power3.out' }, at);
+      if (fly && sit) {
+        tl.fromTo(fly, { opacity: 1 }, { opacity: 0, duration: 0.02 }, at + 0.26);
+        tl.fromTo(sit, { opacity: 0 }, { opacity: 1, duration: 0.02 }, at + 0.26);
+      }
+      tl.to(el, { scaleY: 0.8, scaleX: 1.12, duration: 0.04 }, at + 0.28).to(el, { scaleY: 1, scaleX: 1, duration: 0.12, ease: 'back.out(3)' }, at + 0.32);
     });
     wordsIn(tl, words(s4), t4 + 1.15, 0.55);
-    wordsOut(tl, words(s4), t4 + 2.5, 0.3);
-    ranges.push([s4, t4, t4 + 3.1, []]);
+    const sub4 = q(s4, '[data-sub]');
+    tl.fromTo(sub4, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, t4 + 1.7);
+    // the whole tree hops at once — a wave from his branch outward
+    landers.concat(council.hero ? [council.hero] : []).forEach((el, i) => {
+      const at = t4 + 2.45 + (i % PER_BRANCH) * 0.025;
+      tl.to(el, { y: () => -0.03 * H(), duration: 0.07, ease: 'power2.out' }, at).to(el, { y: 0, duration: 0.14, ease: 'bounce.out' }, at + 0.07);
+    });
+    wordsOut(tl, words(s4), t4 + 2.8, 0.3);
+    tl.to(sub4, { opacity: 0, duration: 0.2 }, t4 + 2.8);
+    ranges.push([s4, t4, t4 + 3.45, []]);
 
     /* ---------------- SCENE 5 — EAGLES GON EAT (the loudest moment) ---------------- */
-    const t5 = (S[5] = t4 + 2.75);
+    const t5 = (S[5] = t4 + 3.1);
     const D5 = 3.8;
     const cam5 = q(s5, '.scene__cam');
     const feast = buildFeast(s5);
@@ -484,12 +559,25 @@
     });
     // the hero: dive... miss... dive... EAT
     const hero5 = q(s5, '.s5-hero');
-    const splash = q(s5, '.s5-splash');
+    const sp = buildSplash(s5);
     tl.fromTo(hero5, { x: () => -0.38 * W(), y: () => -0.62 * H() }, { x: 0, y: 0, duration: 0.5, ease: 'power2.in' }, t5 + 0.25);
-    const splashAt = (at) => tl.fromTo(splash, { opacity: 1, scale: 0.3 }, { opacity: 0, scale: 1.25, duration: 0.35, ease: 'power2.out' }, at);
-    splashAt(t5 + 0.75);
+    // a crown of water, rings on the surface, droplets thrown out and falling back
+    const splashAt = (at, k, first) => {
+      const ir = { immediateRender: first };
+      tl.fromTo(sp.crown, { opacity: 1, scaleY: 0.12, scaleX: 0.6 }, { scaleY: k, scaleX: 1, duration: 0.16, ease: 'power2.out', ...ir }, at);
+      tl.to(sp.crown, { scaleY: 0.1, opacity: 0, duration: 0.3, ease: 'power1.in' }, at + 0.2);
+      sp.rings.forEach((r, j) => tl.fromTo(r, { opacity: 1, scale: 0.25 }, { opacity: 0, scale: 1.4 + j * 0.35, duration: 0.6, ease: 'power1.out', ...ir }, at + j * 0.1));
+      const n = sp.drops.length;
+      sp.drops.forEach((d, j) => {
+        const a = (j / (n - 1)) * 2 - 1;
+        tl.fromTo(d, { opacity: 1, x: 0, rotation: a * 20 }, { x: () => a * 0.55 * sp.w(), rotation: a * 80, duration: 0.5, ease: 'none', ...ir }, at);
+        tl.fromTo(d, { y: 0 }, { y: () => -(0.75 - 0.4 * Math.abs(a)) * sp.w() * k, duration: 0.22, ease: 'power2.out', ...ir }, at).to(d, { y: () => 0.1 * sp.w(), duration: 0.28, ease: 'power2.in' }, at + 0.22);
+        tl.to(d, { opacity: 0, duration: 0.06 }, at + 0.44);
+      });
+    };
+    if (sp) splashAt(t5 + 0.75, 0.85, true);
     tl.to(hero5, { y: () => -0.22 * H(), duration: 0.2, ease: 'power2.out' }, t5 + 1.5).to(hero5, { y: 0, duration: 0.18, ease: 'power2.in' }, t5 + 1.7);
-    splashAt(t5 + 1.88);
+    if (sp) splashAt(t5 + 1.88, 1.25, false);
     // climax: headline slams in with a chromatic flash, the screen shakes, feathers everywhere
     const CLIMAX = t5 + 1.9;
     wordsIn(tl, words(s5), CLIMAX, 0.35);
@@ -521,6 +609,7 @@
     counterEl.textContent = '0';
     tl.fromTo(q(s5, '.counter'), { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.2, ease: 'back.out(2.5)' }, CLIMAX + 0.2);
     tl.to(count, { v: target, duration: 0.9, ease: 'power2.out', onUpdate: () => { counterEl.textContent = Math.round(count.v).toLocaleString('en-US'); } }, CLIMAX + 0.25);
+    tl.fromTo(q(s5, '[data-sub]'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, CLIMAX + 0.55);
     ranges.push([s5, t5, t5 + D5, ['feaster']]);
     const HERO5 = [[t5 + 0.75, 'diving'], [t5 + 1.5, 'missing'], [t5 + 1.86, 'diving'], [Infinity, 'eating']];
 
@@ -577,6 +666,7 @@
     tl.to(home, { opacity: 0, duration: 0.5 }, t7 + 2.8);
     tl.fromTo(pano, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
     wordsIn(tl, words(s7), t7 + 2.9, 0.7);
+    tl.fromTo(q(s7, '[data-sub]'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, t7 + 3.55);
     ranges.push([s7, t7, t7 + 4.6, ['home']]);
     const HERO7_LAND = t7 + 0.97;
 
@@ -590,10 +680,16 @@
       mountRigs(sc, proxies);
     }
     mountScene(s1);
-    let lastPose = null;
+    const bar = $('.story-progress__bar');
+    const barWrap = $('.story-progress');
     function sync() {
       const t = tl.time();
-      if (t > t3 - 0.1) setStrips(t);
+      if (t > t3 - 0.1 && t < t3 + D3 + 0.5) setGround(t);
+      hero3.classList.toggle('is-driven', t >= POSE_TURN);
+      if (bar) {
+        bar.style.transform = 'scaleX(' + (t / tl.duration()).toFixed(4) + ')';
+        barWrap.classList.toggle('is-on', t > 0.05 && t < tl.duration() - 0.02);
+      }
       ranges.forEach(([sc, a, b]) => {
         if (t > a - 1.2) mountScene(sc);
         const on = t >= a - 0.05 && t <= b + 0.05;
@@ -608,11 +704,6 @@
       if (h7) {
         const want7 = t < HERO7_LAND ? 'flying-determined' : 'adult-white-head';
         if (want7 !== h7.pose && !h7.pendingPose) h7.setPose(want7);
-      }
-      const fh = flyer.__eagleRig;
-      if (fh) {
-        const want = t >= POSE_TURN ? 'flying-determined' : 'flying-tired';
-        if (want !== lastPose) { lastPose = want; fh.setPose(want); }
       }
     }
     tl.eventCallback('onUpdate', sync);

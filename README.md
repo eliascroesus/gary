@@ -45,7 +45,7 @@ you replace it, the dashed styling disappears on its own.
 | Placeholder | What goes there | Where |
 | --- | --- | --- |
 | `{{TICKER}}` | The ticker, without the `$` (e.g. `EAGLE`) | `index.html` (title, intro badge, how-to-buy, FAQ, disclaimer), `design-system.html` |
-| `{{CONTRACT_ADDRESS}}` | The token contract address | `index.html` (intro, how-to-buy step 3, footer — the text **and** each `data-contract="…"`), `design-system.html` |
+| `{{CONTRACT_ADDRESS}}` | The token contract address | `index.html` (intro, the fixed top-right Copy contract button, how-to-buy step 3, footer — the text **and** each `data-contract="…"`), `design-system.html` |
 | `{{CHAIN_NAME}}` | The network the token lives on, in plain words | `index.html` — how-to-buy steps 1–2 |
 | `{{DEX_URL}}` | Link to the trading pair on the DEX | `index.html` — how-to-buy step 4, footer |
 | `{{X_URL}}` | Official X account | `index.html` — Post Your Flight button, footer |
@@ -117,7 +117,7 @@ own it fills the path as you scroll (see the design system for an example).
 | `js/main.js` | Shared UI: headline outlines, elastic buttons, copy contract, smooth scroll, reveals, cursor feathers, sound, the “EAT” egg |
 | `js/scenes.js` | The story: one pinned stage, one scroll-scrubbed GSAP timeline |
 | `js/milestones.js` | **Milestone data (edit this)** + the timeline component |
-| `assets/characters/` | The 9 poses, the big sibling and plumage heads 0–6, exported from `js/eagle.js` |
+| `assets/characters/` | The 9 poses, the big sibling, the top-down flight view and plumage heads 0–6, exported from `js/eagle.js` |
 | `assets/scenes/`, `assets/sprites/` | Scene layers, crowd/flock sprites, salmon, feathers, how-to-buy art |
 | `assets/og-card.png` | 1200×630 share image, rendered from the site's own art |
 | `tools/` | Node scripts that regenerate the SVG art (not needed to run the site) |
@@ -126,7 +126,9 @@ own it fills the path as you scroll (see the design system for an example).
 scrubbed by scroll, with Lenis smooth-scroll on top. Timeline units are screens
 (1 unit = one viewport of scrolling), and each scene's block in `js/scenes.js`
 says where it starts. Scenes hand over by colour and camera — a cross-fade plus a
-camera move — never a hard cut. Each scene has three depth layers. Eagles,
+camera move — never a hard cut. Each scene has three depth layers. Scene 3 is a
+drone shot looking straight down on the river: the valley tile scrolls down the
+screen while he — and, one by one, the flock below him — fly up it. Eagles,
 flocks and crowds are mounted just before their scene and paused when it's off
 stage.
 
@@ -156,7 +158,10 @@ node tools/export-scenes.js       # scene layers, sprites, how-to-buy art
 **Feel.**
 - Cursor: four tiny feathers trail the pointer (mouse and trackpad only).
 - Buttons: scale on hover, squash on press, elastic spring on release.
-- COPY CONTRACT: feather burst and “COPIED. WE EATING.”
+- COPY CONTRACT: always one tap away in the top-right corner (“Copy CA” on
+  phones); feather burst and “COPIED. WE EATING.”
+- Scrolling: a “Scroll to follow him” pill on the first screen that bows out as
+  soon as you scroll, and a thin gold progress bar along the top during the story.
 - Sound: **muted by default**, one corner toggle, never autoplays. It is
   synthesised live with Web Audio — there are no audio files: wind in scenes 1–3,
   the river and eagle calls in 4–5.

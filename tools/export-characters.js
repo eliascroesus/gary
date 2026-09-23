@@ -37,6 +37,10 @@ for (let stage = 0; stage <= 6; stage++) {
   count++;
 }
 
+// Scene 3's drone shot: him from directly above, flying up the screen.
+fs.writeFileSync(path.join(outDir, 'flying-topdown.svg'), header('flying, seen from above') + EagleRig.renderTopDown({ uid: 't', hero: true, intrinsic: true }) + '\n');
+count++;
+
 // Favicon: the stage-0 head, the way everyone first meets him.
 fs.writeFileSync(path.join(root, 'assets', 'favicon.svg'), EagleRig.renderHead(0, { uid: 'f', title: 'EAGLES GON EAT', intrinsic: true }) + '\n');
 count++;

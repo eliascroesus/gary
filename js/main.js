@@ -381,7 +381,7 @@
     const gsap = window.gsap;
     if (gsap && !reduceMotion.matches) {
       const vh = window.innerHeight, vw = window.innerWidth;
-      const birds = Array.from(document.querySelectorAll('.perch:not(.perch--hero), .feast img, .speck, .s7-young, .river-eagles img, .ms-rider, .step__art, .post__head img, .site-foot__brand img')).filter((el) => {
+      const birds = Array.from(document.querySelectorAll('.perch:not(.perch--hero), .feast img, .td-bird, .overhead .flyer, .s7-young, .river-eagles img, .ms-rider, .step__art, .post__head img, .site-foot__brand img')).filter((el) => {
         const r = el.getBoundingClientRect();
         return r.width && r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw;
       });
@@ -403,6 +403,20 @@
     });
   };
 
+  /* The scroll hint: a big pill at the bottom of the first screen that bows out
+     as soon as scrolling starts (and comes back if you return to the top). */
+  EGE.initHint = function () {
+    const hint = document.querySelector('.scroll-hint');
+    if (!hint) return;
+    let gone = null;
+    const update = () => {
+      const g = window.scrollY > 40;
+      if (g !== gone) hint.classList.toggle('is-gone', (gone = g));
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  };
+
   EGE.initUI = function (root) {
     EGE.settlePlaceholders(root);
     EGE.splitHeadlines(root);
@@ -413,6 +427,7 @@
   function boot() {
     EGE.initUI();
     EGE.initScroll();
+    EGE.initHint();
     if (EGE.scenes && EGE.scenes.init) EGE.scenes.init();
     EGE.initReveal();
     EGE.initCursor();

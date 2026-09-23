@@ -128,13 +128,13 @@ const files = {};
   nf += sticks([[-10, 150, 90, 120], [410, 116, 510, 84], [200, 216, 150, 250]], '#6B4B33', 8); // wrong-angle sticks
   files['scenes/s1-nest-front.svg'] = svg(500, 260, nf, ' overflow="visible"');
 
-  // Rain — seamless diagonal tile
+  // Rain — seamless diagonal tile: thin, soft streaks (the layer's opacity does the rest)
   let rain = '';
   const RR = rng(21);
-  for (let i = 0; i < 10; i++) {
-    const x = RR() * 240, y = RR() * 240, L = 40 + RR() * 50;
+  for (let i = 0; i < 14; i++) {
+    const x = RR() * 240, y = RR() * 240, L = 34 + RR() * 40, w = 1.6 + RR() * 1.2;
     for (const ox of [-240, 0, 240]) for (const oy of [-240, 0, 240]) {
-      rain += line('M ' + r1(x + ox) + ' ' + r1(y + oy) + ' l ' + r1(-L * 0.3) + ' ' + r1(L), T.fog100, 3.5, 0.7);
+      rain += line('M ' + r1(x + ox) + ' ' + r1(y + oy) + ' l ' + r1(-L * 0.3) + ' ' + r1(L), T.fog100, r1(w), r1(0.45 + RR() * 0.35));
     }
   }
   files['scenes/s1-rain.svg'] = svg(240, 240, rain);
@@ -195,23 +195,107 @@ const files = {};
   files['scenes/s2-front.svg'] = svg(1600, 1000, fr, ' preserveAspectRatio="xMidYMax slice"');
 }
 
-/* ------------------------------------------------------------------ SCENE 3 (tiles horizontally) */
+/* ------------------------------------------------------------------ SCENE 3 — the drone shot (tiles vertically) */
 {
-  const W = 1600;
-  files['scenes/s3-clouds.svg'] = svg(W, 1000, [[260, 200, 400, 110], [900, 130, 480, 130], [1400, 250, 340, 100], [620, 380, 300, 80]].map((c, i) => fillInk(cloud(c[0], c[1], c[2], c[3], 300 + i), '#8A93A4', 5)).join(''));
-  files['scenes/s3-far.svg'] = svg(W, 1000, fillInk(ridge(W, 560, [70, 40, 20], 41, true, 1010, -40, W + 40), '#5F6A7E', 6) + fillInk(ridge(W, 660, [50, 30, 14], 42, true, 1010, -40, W + 40), '#4C566A', 6));
-  let mid = fillInk(ridge(W, 790, [34, 20, 10], 43, false, 1010, -40, W + 40), T.mud500, 6);
-  const R = rng(44);
-  const trees = [];
-  for (let i = 0; i < 9; i++) trees.push.apply(trees, bareTree(80 + i * 170 + R() * 60, 790 - Math.sin(i) * 10, 0.8 + R() * 0.5, 45 + i));
-  mid += sticks(trees, T.mud700, 5);
-  files['scenes/s3-mid.svg'] = svg(W, 1000, mid);
-  let fr = fillInk(ridge(W, 930, [20, 10], 46, false, 1010, -40, W + 40), '#3F3831', 6);
-  for (let i = 0; i < 20; i++) {
-    const x = 40 + i * 80 + R() * 30, y = 925 - Math.sin(i * 0.7) * 8;
-    fr += line('M ' + r1(x) + ' ' + r1(y) + ' q -4 -24 -14 -30 M ' + r1(x) + ' ' + r1(y) + ' q 4 -28 12 -34', INK, 8) + line('M ' + r1(x) + ' ' + r1(y) + ' q -4 -24 -14 -30 M ' + r1(x) + ' ' + r1(y) + ' q 4 -28 12 -34', T.mud300, 3.5);
+  // Looking straight down at a river valley at dusk. The tile is periodic in y,
+  // so scenes.js scrolls it downward forever while he flies up the screen.
+  const S = 1000, SW = 1600; // periodic in y (S); wide enough that it never repeats sideways
+  const P = {
+    land: '#6E7257', landDark: '#5B5F47', landLight: '#838769', sand: '#B59A7C', sandDark: '#9A8166',
+    river: '#3F6F79', deep: '#335E68', ripple: '#9CC3C2', foam: '#E9EEF2',
+    tree: '#48543F', treeDark: '#3A4533', treeHi: '#62704F', rock: '#7D8A9A',
+    fish: '#E98470', fishDark: '#B85A4C',
+  };
+  const TAU = Math.PI * 2;
+  const cx = (y) => 800 + 105 * Math.sin((TAU * y) / S) + 32 * Math.sin((2 * TAU * y) / S + 1.1);
+  const half = (y) => 84 + 16 * Math.sin((2 * TAU * y) / S + 0.5);
+  const band = (extra) => {
+    const L = [], R = [];
+    for (let y = -60; y <= S + 60; y += 10) {
+      L.push(r1(cx(y) - half(y) - extra) + ' ' + y);
+      R.push(r1(cx(y) + half(y) + extra) + ' ' + y);
+    }
+    return 'M ' + L.join(' L ') + ' L ' + R.reverse().join(' L ') + ' Z';
+  };
+  const wrap = (y, fn) => [-S, 0, S].map((o) => (y + o > -120 && y + o < S + 120 ? fn(y + o) : '')).join('');
+  const R = rng(303);
+  let g = '<rect x="0" y="0" width="' + SW + '" height="' + S + '" fill="' + P.land + '"/>';
+  // fields and meadows
+  for (let i = 0; i < 26; i++) {
+    const x = R() * SW, y = R() * S, w = 60 + R() * 120, h = 40 + R() * 90, c = i % 3 ? P.landDark : P.landLight, seed = 330 + i;
+    g += wrap(y, (yy) => flat(blob(x, yy, w, h, 9, 0.2, seed), c, 0.7));
   }
-  files['scenes/s3-front.svg'] = svg(W, 1000, fr);
+  // grass tufts
+  let tufts = '';
+  for (let i = 0; i < 110; i++) {
+    const x = R() * SW, y = R() * S;
+    if (Math.abs(x - cx(y)) < half(y) + 40) continue;
+    tufts += wrap(y, (yy) => 'M ' + r1(x) + ' ' + r1(yy) + ' l -5 -9 M ' + r1(x + 5) + ' ' + r1(yy) + ' l 0 -11 M ' + r1(x + 10) + ' ' + r1(yy) + ' l 5 -9 ');
+  }
+  g += line(tufts, P.landDark, 3);
+  // sandbanks, then the river with a deeper channel
+  g += fillInk(band(26), P.sand, 5) + flat(band(14), P.sandDark, 0.35);
+  g += fillInk(band(0), P.river, 5);
+  const ch = [];
+  for (let y = -60; y <= S + 60; y += 10) ch.push(r1(cx(y) + 10 * Math.sin((TAU * y) / S * 3)) + ' ' + y);
+  g += line('M ' + ch.join(' L '), P.deep, 46, 0.8);
+  // ripples across the current
+  let rip = '';
+  for (let y = 10; y < S; y += 34) {
+    const x = cx(y) + (R() - 0.5) * half(y) * 1.1, w = 16 + R() * 20;
+    rip += wrap(y, (yy) => 'M ' + r1(x - w) + ' ' + r1(yy) + ' q ' + r1(w / 2) + ' -7 ' + r1(w) + ' 0 q ' + r1(w / 2) + ' 7 ' + r1(w) + ' 0 ');
+  }
+  g += line(rip, P.ripple, 3, 0.75);
+  // rocks with foam
+  [[0.12, -0.55], [0.47, 0.5], [0.81, -0.35]].forEach((k, i) => {
+    const y = k[0] * S, x = cx(y) + k[1] * half(y);
+    g += wrap(y, (yy) => line('M ' + r1(x - 22) + ' ' + r1(yy + 18) + ' q 22 -34 44 0', P.foam, 5, 0.9) + fillInk(blob(x, yy, 16, 12, 7, 0.2, 360 + i), P.rock, 4));
+  });
+  // salmon heading upriver — the same way he is
+  const fish = (x, y, s, a) =>
+    '<g transform="translate(' + r1(x) + ' ' + r1(y) + ') rotate(' + r1(a) + ') scale(' + s + ')">' +
+    line('M -12 30 l 12 -10 l 12 10', P.ripple, 3, 0.9) +
+    fillInk('M 0 -22 C 9 -22 11 -6 9 6 C 8 14 4 18 0 20 C -4 18 -8 14 -9 6 C -11 -6 -9 -22 0 -22 Z', P.fish, 3) +
+    fillInk('M 0 18 L -10 32 L 0 28 L 10 32 Z', P.fishDark, 3) +
+    flat('M 0 -18 C 3 -10 3 4 0 14 C -3 4 -3 -10 0 -18 Z', P.fishDark, 0.6) +
+    '</g>';
+  for (let i = 0; i < 14; i++) {
+    const y = (i + R() * 0.6) * (S / 14), x = cx(y) + (R() - 0.5) * half(y) * 1.2;
+    const slope = cx(y - 10) - cx(y + 10);
+    const a = (Math.atan2(slope, 20) * 180) / Math.PI + (R() - 0.5) * 16;
+    g += wrap(y, (yy) => fish(x, yy, 1.25 + R() * 0.4, a));
+  }
+  // trees seen from above: round crowns with a highlight, clumped along the banks
+  const crowns = [];
+  let tries = 0;
+  while (crowns.length < 90 && tries++ < 4000) {
+    const y = R() * S, side = R() < 0.5 ? -1 : 1, off = half(y) + 56 + Math.pow(R(), 1.4) * 700;
+    const x = cx(y) + side * off, r = 20 + R() * 20;
+    if (x < -20 || x > SW + 20) continue;
+    if (crowns.some((c) => Math.hypot(c[0] - x, c[1] - y) < c[2] + r - 6)) continue;
+    crowns.push([x, y, r, 380 + crowns.length]);
+  }
+  crowns.sort((a, b) => a[1] - b[1]).forEach((c) => {
+    g += wrap(c[1], (yy) => fillInk(fluff(c[0], yy, c[2], c[2], 7, 0.18, c[3]), c[2] > 32 ? P.treeDark : P.tree, 4) + flat(blob(c[0] - c[2] * 0.25, yy - c[2] * 0.25, c[2] * 0.45, c[2] * 0.35, 6, 0.2, c[3] + 50), P.treeHi, 0.8));
+  });
+  files['scenes/s3-ground.svg'] = svg(SW, S, g);
+
+  // Cloud wisps drifting below him — soft, no outline, tile vertically.
+  let wisps = '';
+  [[260, 160, 190, 60], [1240, 420, 240, 70], [420, 720, 170, 50], [1380, 900, 150, 46]].forEach((c, i) => {
+    wisps += wrap(c[1], (yy) => flat(fluff(c[0], yy, c[2], c[3], 8, 0.2, 390 + i), '#EEF1F4', 0.9) + flat(fluff(c[0] + c[2] * 0.3, yy + c[3] * 0.5, c[2] * 0.6, c[3] * 0.6, 7, 0.2, 395 + i), '#FFFFFF', 0.6));
+  });
+  files['scenes/s3-wisps.svg'] = svg(SW, S, wisps);
+
+  // The flock from above: wings and body are separate files so the wings can
+  // flap on the compositor (scaleX) while the body stays still.
+  const TD = require('../js/eagle.js').renderTopDown;
+  const strip = (x) => x.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+  const tdFile = (o) => svg(410, 290, '<g transform="translate(205 135)">' + strip(TD(o)) + '</g>');
+  files['sprites/topdown-wings-brown.svg'] = tdFile({ part: 'wings' });
+  files['sprites/topdown-wings-white.svg'] = tdFile({ part: 'wings', white: true });
+  files['sprites/topdown-body-brown.svg'] = tdFile({ part: 'body' });
+  files['sprites/topdown-body-white.svg'] = tdFile({ part: 'body', white: true });
 }
 
 
@@ -326,13 +410,30 @@ function crowdTree(x, y, s, seed, whiteShare) {
 
 /* ------------------------------------------------------------------ SPRITES */
 {
-  // A far-off eagle: brown, wings up, flying right. Readable at 24px.
-  const body = 'M 14 24 C 22 18 40 18 50 22 C 54 23 58 25 60 27 C 54 29 48 30 42 30 C 32 32 20 30 14 24 Z';
-  const wingUp = 'M 30 22 C 26 12 20 4 10 2 C 16 8 18 14 22 22 Z M 38 22 C 40 12 46 4 56 2 C 50 10 46 16 44 22 Z';
-  files['sprites/speck.svg'] = svg(64, 36, fillInk(wingUp, '#5A3A24', 3) + fillInk(body, '#6B4128', 3) + fillInk('M 6 22 L 16 20 L 16 28 Z', '#4A2E1C', 2.5));
-  const wingDown = 'M 30 24 C 26 32 20 36 12 36 C 18 32 22 28 24 24 Z M 38 24 C 42 32 48 36 56 36 C 50 32 46 28 44 24 Z';
-  files['sprites/speck-down.svg'] = svg(64, 40, fillInk(body, '#6B4128', 3) + fillInk(wingDown, '#5A3A24', 3) + fillInk('M 6 22 L 16 20 L 16 28 Z', '#4A2E1C', 2.5));
-
+  // A flying eagle seen from the side, facing right. Wing and body are separate
+  // files so the wing can flap on the compositor (scaleY about the shoulder,
+  // which sits at 44% 56% of the 160×110 box). speck.svg is the two combined.
+  const flyer = (white) => {
+    const bodyC = white ? '#4A2916' : '#7B4A2A', headC = white ? '#FFFDF6' : '#7B4A2A';
+    const tailC = white ? '#FFFDF6' : '#55301A', beakC = white ? '#FFBE1A' : '#5C534F';
+    let body = fillInk('M 34 52 L 4 40 L 10 54 L 2 66 L 36 62 Z', tailC, 4);
+    body += fillInk('M 28 56 C 40 42 88 40 106 48 C 114 52 114 62 106 66 C 88 72 44 72 28 56 Z', bodyC, 4.5);
+    body += flat('M 50 62 C 66 66 86 66 100 62 C 88 70 62 70 50 62 Z', white ? '#633A21' : '#C99A5E');
+    body += fillInk('M 70 68 l 6 8 l 4 -6 M 80 68 l 6 8 l 4 -6', '#F5B82E', 3);
+    body += fillInk('M 116 30 C 128 30 136 38 136 48 C 136 58 128 64 116 64 C 104 64 98 56 98 46 C 98 36 106 30 116 30 Z', headC, 4.5);
+    body += fillInk('M 130 40 C 144 38 154 46 152 56 C 150 61 146 60 144 56 C 140 53 136 52 132 52 Z', beakC, 4);
+    body += '<ellipse cx="121" cy="43" rx="6" ry="7" fill="#fff" stroke="' + INK + '" stroke-width="3"/><circle cx="123" cy="44" r="3.4" fill="' + INK + '"/>';
+    const wingD = 'M 50 56 C 44 42 32 28 14 16 L 28 15 L 18 5 L 34 8 L 30 -2 L 46 5 L 48 -4 C 62 8 78 28 88 54 Z';
+    const wing = fillInk(wingD, white ? '#3A2011' : '#5E3A20', 4.5) + line('M 62 46 C 56 36 48 28 38 22 M 74 46 C 70 34 64 24 56 16', INK, 2.5);
+    return { body: body, wing: wing };
+  };
+  ['brown', 'white'].forEach((k) => {
+    const f = flyer(k === 'white');
+    const g = (x) => '<g transform="translate(0 8)">' + x + '</g>';
+    files['sprites/fly-' + k + '-body.svg'] = svg(160, 110, g(f.body));
+    files['sprites/fly-' + k + '-wing.svg'] = svg(160, 110, g(f.wing));
+    if (k === 'brown') files['sprites/speck.svg'] = svg(160, 110, g(f.body + f.wing));
+  });
 
   // Crowd eagles — deliberately simple (≈15 shapes) so dozens stay cheap.
   // No signature feather: only the hero has one.
@@ -392,7 +493,14 @@ function crowdTree(x, y, s, seed, whiteShare) {
   files['sprites/feather-white.svg'] = quill(WARM.cream);
   files['sprites/feather-brown.svg'] = quill('#7B4A2A');
   files['sprites/feather-gold.svg'] = quill(WARM.gold);
-  files['sprites/splash.svg'] = svg(160, 90, fillInk('M 10 86 C 20 50 30 40 40 20 C 46 44 52 50 60 34 C 66 54 72 58 80 8 C 88 58 94 54 100 34 C 108 50 114 44 120 20 C 130 40 140 50 150 86 Z', WARM.cream, 5) + line('M 30 70 l 0 -10 M 80 60 l 0 -14 M 128 70 l 0 -10', WARM.teal300, 4));
+  // The splash: a crown of water, a ring on the surface and droplets (animated apart in scenes.js)
+  let crown = fillInk('M 14 132 C 26 104 18 76 32 50 C 42 76 50 88 60 76 C 62 54 62 32 76 10 C 86 38 88 62 98 70 C 102 50 106 30 112 4 C 120 30 124 52 132 68 C 142 60 146 40 150 16 C 160 42 160 66 162 80 C 172 72 180 58 190 46 C 198 72 194 104 206 132 Z', WARM.teal300, 5);
+  crown += flat('M 36 132 C 44 110 40 92 46 80 C 54 96 64 100 74 92 C 78 78 78 58 84 44 C 90 66 96 84 108 88 C 114 72 116 54 118 40 C 124 62 130 80 140 88 C 150 86 156 76 164 70 C 170 90 170 112 184 132 Z', WARM.cream);
+  crown += line('M 60 116 l 0 -14 M 110 112 l 0 -18 M 156 116 l 0 -14', WARM.teal300, 5);
+  [[36, 30, 6], [76, -6 + 10, 5], [112, -4 + 6, 7], [152, 2, 5], [192, 30, 6]].forEach((d) => { crown += '<circle cx="' + d[0] + '" cy="' + d[1] + '" r="' + d[2] + '" fill="' + WARM.cream + '" stroke="' + INK + '" stroke-width="3.5"/>'; });
+  files['sprites/splash.svg'] = svg(220, 140, crown, ' overflow="visible"');
+  files['sprites/splash-ring.svg'] = svg(240, 60, '<ellipse cx="120" cy="30" rx="112" ry="22" fill="none" stroke="' + INK + '" stroke-width="10"/><ellipse cx="120" cy="30" rx="112" ry="22" fill="none" stroke="' + WARM.cream + '" stroke-width="5"/>');
+  files['sprites/splash-drop.svg'] = svg(24, 32, fillInk('M 12 3 C 18 12 21 18 21 22 C 21 27 17 30 12 30 C 7 30 3 27 3 22 C 3 18 6 12 12 3 Z', WARM.cream, 3.5) + flat('M 8 20 C 8 17 10 15 11 14 C 11 18 10 21 8 22 Z', WARM.teal300));
 }
 
 let n = 0;
