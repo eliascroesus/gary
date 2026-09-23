@@ -55,6 +55,7 @@ you replace it, the dashed styling disappears on its own.
 | `{{TOTAL_SUPPLY}}` | Total supply | `index.html` — The Flock |
 | `{{LIQUIDITY_STATUS}}` | `locked` or `burned` (and until when, if locked) | `index.html` — The Flock |
 | `{{LIQUIDITY_PROOF_URL}}` | Link to the lock/burn proof | `index.html` — The Flock |
+| `{{MILESTONE_1_MCAP}}` … `{{MILESTONE_6_MCAP}}` | The market cap when that milestone was reached (e.g. `$1M`) — shown only once it's unlocked | `js/milestones.js` |
 | `{{MILESTONE_1_DATE}}` … `{{MILESTONE_6_DATE}}` | The date each milestone was unlocked | `js/milestones.js` |
 
 Replace one everywhere from the project folder (on macOS use `sed -i ''`):
@@ -83,18 +84,22 @@ at the top:
 {
   id: 'leave-the-nest',               // unique, lowercase-with-dashes
   label: 'Leave the nest',            // the step, shown as the title
+  marketCap: '{{MILESTONE_1_MCAP}}',  // market cap when reached, shown once unlocked
   timestamp: '{{MILESTONE_1_DATE}}',  // shown once unlocked
   state: 'unlocked',                  // 'locked' | 'unlocked'
   plumageStage: 1,                    // 1–6: how white his head is here
 },
 ```
 
-- **To unlock one:** change its `state` to `'unlocked'` and fill in its date.
+- **To unlock one:** change its `state` to `'unlocked'` and fill in its date and
+  the market cap it was reached at.
   In Scene 6 the flight path now reaches it, his head turns one stage whiter,
   and one more eagle lands on the river.
 - **To add one:** add an entry to the array. The timeline re-spaces itself;
   keep `plumageStage` climbing from 1 to 6 (6 = the full white head).
-- Keep them story beats — never prices, targets or returns.
+- Market cap appears only on milestones already reached, as a record of what
+  happened. Locked milestones show no number: a future market cap reads as a
+  price target, which the site never makes.
 
 The component is reusable anywhere with `EGE.Milestones.mount(element)`. On its
 own it fills the path as you scroll (see the design system for an example).

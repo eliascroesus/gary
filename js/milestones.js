@@ -6,6 +6,8 @@
  * │ Each entry:                                                          │
  * │   id           unique, lowercase-with-dashes                         │
  * │   label        the step, shown as the title (keep it short)          │
+ * │   marketCap    the market cap when it was reached (e.g. "$1M"),      │
+ * │                shown once unlocked — a record, never a target        │
  * │   timestamp    shown once unlocked (e.g. "12 Oct 2026")              │
  * │   state        'locked' | 'unlocked'                                 │
  * │   plumageStage 1–6: how white the head is at this milestone          │
@@ -19,6 +21,7 @@
     {
       id: 'leave-the-nest',
       label: 'Leave the nest',
+      marketCap: '{{MILESTONE_1_MCAP}}',
       timestamp: '{{MILESTONE_1_DATE}}',
       state: 'unlocked',
       plumageStage: 1,
@@ -26,6 +29,7 @@
     {
       id: 'find-the-flock',
       label: 'Find the flock',
+      marketCap: '{{MILESTONE_2_MCAP}}',
       timestamp: '{{MILESTONE_2_DATE}}',
       state: 'unlocked',
       plumageStage: 2,
@@ -33,6 +37,7 @@
     {
       id: 'reach-the-river',
       label: 'Reach the river',
+      marketCap: '{{MILESTONE_3_MCAP}}',
       timestamp: '{{MILESTONE_3_DATE}}',
       state: 'unlocked',
       plumageStage: 3,
@@ -40,6 +45,7 @@
     {
       id: 'take-your-branch',
       label: 'Take your branch',
+      marketCap: '{{MILESTONE_4_MCAP}}',
       timestamp: '{{MILESTONE_4_DATE}}',
       state: 'locked',
       plumageStage: 4,
@@ -47,6 +53,7 @@
     {
       id: 'eat-together',
       label: 'Eat together',
+      marketCap: '{{MILESTONE_5_MCAP}}',
       timestamp: '{{MILESTONE_5_DATE}}',
       state: 'locked',
       plumageStage: 5,
@@ -54,6 +61,7 @@
     {
       id: 'white-head',
       label: 'Earn the white head',
+      marketCap: '{{MILESTONE_6_MCAP}}',
       timestamp: '{{MILESTONE_6_DATE}}',
       state: 'locked',
       plumageStage: 6,
@@ -110,6 +118,8 @@
           '<div class="ms__card">' +
           '<span class="ms__time">' + (open ? esc(m.timestamp) : 'Locked') + '</span>' +
           '<h3 class="ms__label">' + esc(m.label) + '</h3>' +
+          // market cap only for milestones already reached: a record, never a target
+          (open && m.marketCap ? '<span class="ms__mcap">' + esc(m.marketCap) + ' <small>market cap</small></span>' : '') +
           (m.caption ? '<p class="ms__cap">' + esc(m.caption) + '</p>' : '') +
           '<span class="visually-hidden">' + (open ? 'Unlocked. Plumage stage ' + m.plumageStage + ' of 6.' : 'Locked.') + '</span>' +
           '</div></li>';

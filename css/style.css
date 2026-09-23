@@ -1098,6 +1098,21 @@ html.lenis, html.lenis body { height: auto; }
 .ms.is-locked .ms__card { opacity: 0.55; }
 .ms.is-locked .ms__cap { filter: blur(3px); user-select: none; }
 .ms.is-locked .ms__time { color: var(--storm-300); }
+.ms__mcap {
+  justify-self: center;
+  margin-top: 3px;
+  padding: 0.28em 0.7em 0.2em;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--gold-400);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.ms__mcap small { font-size: 0.62em; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* vertical — phones */
 .ms-timeline.is-vertical .ms__node { width: 50px; height: 50px; left: -25px; top: -25px; }
@@ -1106,6 +1121,7 @@ html.lenis, html.lenis body { height: auto; }
 .ms-timeline.is-vertical .ms__cap { font-size: 0.72rem; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 .ms-timeline.is-vertical .ms.is-locked .ms__cap { display: none; }
 .ms-timeline.is-vertical .ms__label { font-size: 1rem; }
+.ms-timeline.is-vertical .ms__mcap { justify-self: start; font-size: 0.8rem; }
 
 /* ---------------------------------------------------------------- scene 6 — the head turns */
 .river-eagles { position: absolute; inset: 0; }
