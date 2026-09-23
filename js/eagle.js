@@ -914,6 +914,322 @@
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // LIVE RIG — browser only. One shared animation loop drives every mounted
+  // eagle that is on screen: blink, breathing, head tilt + pupils toward the
+  // cursor, feather lag/overshoot, hops, pose swaps, plumage changes.
+  // Writes SVG transform attributes only; nothing runs under reduced motion.
+  // ---------------------------------------------------------------------------
+
+  // Per-pose motion: wing flap [amplitude deg, period s], body bob, airborne.
+  const MOTION = {
+    runt: { flap: [4, 0.18], bob: 0, shiver: 1.2 },
+    scruffy: { flap: [1.6, 2], bob: 0 },
+    diving: { flap: [3, 0.22], bob: 3, air: true },
+    missing: { flap: [2.5, 2], bob: 0 },
+    'flying-tired': { flap: [13, 1.7], bob: 8, air: true, sync: true },
+    'flying-determined': { flap: [20, 0.75], bob: 5, air: true, sync: true },
+    landed: { flap: [5, 1.1], bob: 0 },
+    eating: { flap: [3, 0.9], bob: 0, chew: true },
+    'adult-white-head': { flap: [1.4, 2], bob: 0 },
+    sibling: { flap: [0, 2], bob: 0 },
+  };
+
+  const LiveRuntime = (function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return null;
+
+    const rigs = new Set();
+    const pointer = { x: window.innerWidth / 2, y: window.innerHeight * 0.35, seen: false, at: 0 };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let raf = 0;
+    let lastT = 0;
+    let io = null;
+
+    const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+    const f3 = (n) => Math.round(n * 1000) / 1000;
+    const onPointer = (e) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.seen = true;
+      pointer.at = performance.now();
+    };
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('pointerdown', onPointer, { passive: true });
+
+    function setTf(el, p, x, y, r, sx, sy) {
+      if (!el) return;
+      el.setAttribute(
+        'transform',
+        'translate(' + f3(x + p[0]) + ' ' + f3(y + p[1]) + ') rotate(' + f3(r) + ') scale(' + f3(sx) + ' ' + f3(sy) + ') translate(' + -p[0] + ' ' + -p[1] + ')'
+      );
+    }
+
+    // Damped spring — underdamped on purpose, so feathers overshoot.
+    function spring(s, target, k, c, dt) {
+      const a = -k * (s.x - target) - c * s.v;
+      s.v += a * dt;
+      s.x += s.v * dt;
+      return s.x;
+    }
+
+    function running() {
+      return !reduce.matches && !document.hidden;
+    }
+
+    function ensureLoop() {
+      if (raf || !running()) return;
+      for (const r of rigs) if (r.visible) { lastT = performance.now(); raf = requestAnimationFrame(frame); return; }
+    }
+
+    function frame(now) {
+      raf = 0;
+      const dt = Math.min(0.05, (now - lastT) / 1000) || 0.016;
+      lastT = now;
+      let any = false;
+      for (const r of rigs) if (r.visible) { r.step(now, dt); any = true; }
+      if (any && running()) raf = requestAnimationFrame(frame);
+    }
+
+    document.addEventListener('visibilitychange', ensureLoop);
+    reduce.addEventListener && reduce.addEventListener('change', () => {
+      for (const r of rigs) r.rest();
+      ensureLoop();
+    });
+
+    function observe(rig) {
+      if (!('IntersectionObserver' in window)) { rig.visible = true; return; }
+      if (!io) {
+        io = new IntersectionObserver((entries) => {
+          entries.forEach((en) => { if (en.target.__eagleRig) en.target.__eagleRig.visible = en.isIntersecting; });
+          ensureLoop();
+        }, { rootMargin: '120px' });
+      }
+      io.observe(rig.host);
+    }
+
+    let uidN = 0;
+
+    function LiveRig(host, pose, opts) {
+      this.host = host;
+      this.opts = opts || {};
+      this.pose = pose;
+      this.uid = this.opts.uid || 'lr' + (++uidN).toString(36);
+      const p = POSES[pose] || CAST[pose];
+      this.plumage = this.opts.plumage != null ? this.opts.plumage : (p && p.plumage) || 0;
+      this.visible = false;
+      this.blinkAt = performance.now() + 1200 + Math.random() * 2500;
+      this.blinkStart = -1;
+      this.hopStart = -1;
+      this.popStart = -1;
+      this.swapStart = -1;
+      this.pendingPose = null;
+      this.phase = Math.random() * 10;
+      this.head = { x: 0, v: 0 };
+      this.gaze = { x: { x: 0, v: 0 }, y: { x: 0, v: 0 } };
+      this.prevHead = 0;
+      this.prevY = 0;
+      host.__eagleRig = this;
+      this.build();
+      rigs.add(this);
+      observe(this);
+      ensureLoop();
+    }
+
+    LiveRig.prototype.build = function () {
+      this.host.innerHTML = render(this.pose, {
+        uid: this.uid,
+        canonicalIds: !!this.opts.canonicalIds,
+        plumage: this.plumage,
+        intrinsic: this.opts.intrinsic !== false,
+        className: this.opts.className,
+        title: this.opts.title,
+      });
+      const svg = (this.svg = this.host.querySelector('svg'));
+      const q = (n) => svg.querySelector('[data-part="' + n + '"]');
+      const pv = (el) => (el && el.getAttribute('data-pivot') ? el.getAttribute('data-pivot').split(' ').map(Number) : [0, 0]);
+      const P = (this.parts = {});
+      ['rig', 'head', 'eyes', 'pupils', 'wing-l', 'wing-r', 'body', 'tail', 'signature-feather'].forEach((n) => {
+        const el = q(n);
+        P[n] = el ? { el: el, p: pv(el) } : null;
+      });
+      this.headWrap = P.head ? P.head.el.parentNode : null;
+      this.feathers = [];
+      svg.querySelectorAll('.scruff').forEach((el) => {
+        this.feathers.push({ el: el, p: pv(el), s: { x: 0, v: 0 }, inHead: !!el.closest('[data-part="head"]'), gain: 0.6 + Math.random() * 0.6, ph: Math.random() * 6 });
+      });
+      if (P['signature-feather']) this.feathers.push({ el: P['signature-feather'].el, p: P['signature-feather'].p, s: { x: 0, v: 0 }, inHead: true, gain: 1.5, ph: 0, sig: true });
+      this.motion = MOTION[this.pose] || MOTION.scruffy;
+      this.applyPlumage(false);
+    };
+
+    // Pointer → head-local coordinates (via the head's static placement group).
+    LiveRig.prototype.localPointer = function () {
+      if (!this.headWrap || !this.headWrap.getScreenCTM) return null;
+      const m = this.headWrap.getScreenCTM();
+      if (!m) return null;
+      const inv = m.inverse();
+      return { x: inv.a * pointer.x + inv.c * pointer.y + inv.e, y: inv.b * pointer.x + inv.d * pointer.y + inv.f };
+    };
+
+    LiveRig.prototype.step = function (now, dt) {
+      const P = this.parts;
+      const M = this.motion;
+      const t = now / 1000 + this.phase;
+
+      // 1. Whole body: breathing (2s), airborne bob, hop, pose-swap squash, shiver.
+      const br = Math.sin((t * Math.PI * 2) / 2);
+      let y = M.air ? Math.sin(t * Math.PI * 2 / (M.flap[1] * 1.0)) * M.bob : 0;
+      let sx = 1 - 0.008 * br;
+      let sy = 1 + 0.016 * br;
+      let rx = M.shiver ? Math.sin(t * 60) * M.shiver : 0;
+      if (this.hopStart >= 0) {
+        const u = (now - this.hopStart) / 560;
+        if (u >= 1) this.hopStart = -1;
+        else if (u < 0.14) { const k = u / 0.14; sy *= 1 - 0.12 * k; sx *= 1 + 0.08 * k; }
+        else if (u < 0.72) { const k = (u - 0.14) / 0.58; y -= 46 * Math.sin(Math.PI * k); sy *= 1.06; sx *= 0.96; }
+        else { const k = (u - 0.72) / 0.28; const d = Math.sin(Math.PI * k) * (1 - k); sy *= 1 - 0.14 * d; sx *= 1 + 0.1 * d; }
+      }
+      if (this.swapStart >= 0) {
+        const u = (now - this.swapStart) / 420;
+        if (u < 0.3) { sy *= 1 - 0.18 * (u / 0.3); sx *= 1 + 0.1 * (u / 0.3); }
+        else if (this.pendingPose) { this.pose = this.pendingPose; this.pendingPose = null; this.build(); }
+        else if (u < 1) { const k = (u - 0.3) / 0.7; const e = Math.exp(-5 * k) * Math.cos(k * 11); sy *= 1 + 0.16 * e; sx *= 1 - 0.1 * e; }
+        else this.swapStart = -1;
+      }
+      const P2 = this.parts;
+      if (P2.rig) setTf(P2.rig.el, P2.rig.p, rx, y, 0, sx, sy);
+      const velY = (y - this.prevY) / dt;
+      this.prevY = y;
+
+      // 2. Wings: breathing sway when standing, a real flap in the air.
+      const [amp, per] = M.flap;
+      const w = Math.sin((t * Math.PI * 2) / per);
+      if (P2['wing-l']) setTf(P2['wing-l'].el, P2['wing-l'].p, 0, 0, M.sync ? w * amp : w * amp, 1, M.sync ? 1 - 0.12 * Math.abs(w) : 1);
+      if (P2['wing-r']) setTf(P2['wing-r'].el, P2['wing-r'].p, 0, 0, M.sync ? Math.sin((t - 0.06) * Math.PI * 2 / per) * amp * 0.9 : -w * amp, 1, 1);
+
+      // 3. Head: tilt toward the cursor (idle wander when there is none), bob, milestone pop.
+      const lp = this.localPointer();
+      const idle = !pointer.seen || now - pointer.at > 5000 || this.opts.follow === false;
+      let gx, gy, tilt;
+      if (idle || !lp) {
+        gx = Math.sin(t * 0.37) * 0.8 + Math.sin(t * 0.13) * 0.3;
+        gy = Math.sin(t * 0.29 + 1) * 0.5;
+        tilt = Math.sin(t * 0.21) * 3;
+      } else {
+        const dx = lp.x - 10, dy = lp.y + 10;
+        const len = Math.hypot(dx, dy) || 1;
+        const reach = clamp(len / 160, 0, 1);
+        gx = (dx / len) * reach;
+        gy = (dy / len) * reach;
+        tilt = clamp(clamp(dy / 320, -1, 1) * 9 + clamp(dx / 520, -1, 1) * 3, -11, 11);
+      }
+      const hr = spring(this.head, tilt, 55, 11, dt);
+      const hVel = (hr - this.prevHead) / dt;
+      this.prevHead = hr;
+      let hs = 1;
+      if (this.popStart >= 0) {
+        const u = (now - this.popStart) / 700;
+        if (u >= 1) this.popStart = -1;
+        else hs = 1 + 0.14 * Math.exp(-4.5 * u) * Math.cos(u * 14);
+      }
+      const chew = M.chew ? Math.max(0, Math.sin(t * 9)) * 2.5 : 0;
+      if (P2.head) setTf(P2.head.el, P2.head.p, 0, br * 1.4 + chew, hr, hs, hs);
+
+      // 4. Pupils: ease toward the gaze, clipped to the whites.
+      const px = spring(this.gaze.x, gx * 7, 90, 16, dt);
+      const py = spring(this.gaze.y, gy * 6, 90, 16, dt);
+      if (P2.pupils) setTf(P2.pupils.el, P2.pupils.p, px, py, 0, 1, 1);
+
+      // 5. Blink every 3–5s, sometimes twice.
+      if (this.blinkStart < 0 && now >= this.blinkAt) this.blinkStart = now;
+      let bs = 1;
+      if (this.blinkStart >= 0) {
+        const u = (now - this.blinkStart) / 150;
+        if (u >= 1) {
+          this.blinkStart = -1;
+          this.blinkAt = now + (Math.random() < 0.15 ? 110 : 3000 + Math.random() * 2000);
+        } else bs = 1 - 0.92 * Math.sin(Math.PI * u);
+      }
+      if (P2.eyes) setTf(P2.eyes.el, P2.eyes.p, 0, 0, 0, 1, bs);
+
+      // 6. Secondary motion: every loose feather lags behind and overshoots.
+      for (const f of this.feathers) {
+        const drive = (f.inHead ? -hVel * 0.12 : 0) - velY * 0.05 * f.gain + (f.sig ? Math.sin(t * 1.3) * 2.5 : Math.sin(t * 1.7 + f.ph) * 1.2);
+        const a = spring(f.s, clamp(drive * f.gain, -24, 24), 140, 7, dt);
+        setTf(f.el, f.p, 0, 0, a, 1, 1);
+      }
+    };
+
+    // Clear every animated transform (reduced motion / static).
+    LiveRig.prototype.rest = function () {
+      if (!this.svg) return;
+      Object.values(this.parts).forEach((p) => p && p.el.removeAttribute('transform'));
+      this.feathers.forEach((f) => f.el.removeAttribute('transform'));
+    };
+
+    LiveRig.prototype.applyPlumage = function (animate) {
+      const stage = this.plumage;
+      const svg = this.svg;
+      svg.setAttribute('data-plumage', stage);
+      if ((POSES[this.pose] || {}).plumage === 6) return; // the adult is already white
+      const fade = animate && !reduce.matches ? 'opacity 0.7s cubic-bezier(.22,1,.36,1)' : 'none';
+      for (let n = 1; n <= 6; n++) {
+        svg.querySelectorAll('.hf-' + n).forEach((el) => {
+          el.style.transition = fade;
+          el.style.opacity = stage >= n ? 1 : 0;
+        });
+      }
+      svg.querySelectorAll('.beak-adult').forEach((el) => {
+        el.style.transition = fade;
+        el.style.opacity = clamp((stage - 2) / 4, 0, 1);
+      });
+    };
+
+    LiveRig.prototype.setPlumage = function (stage, animate) {
+      stage = clamp(Math.round(stage), 0, 6);
+      const up = stage > this.plumage;
+      this.plumage = stage;
+      this.applyPlumage(animate !== false);
+      if (up && animate !== false) {
+        this.popStart = performance.now();
+        const sig = this.feathers.find((f) => f.sig);
+        if (sig) sig.s.v -= 220;
+      }
+      ensureLoop();
+    };
+
+    LiveRig.prototype.setPose = function (pose) {
+      if (!(POSES[pose] || CAST[pose]) || pose === this.pose) return;
+      if (reduce.matches || !this.visible) { this.pose = pose; this.build(); return; }
+      this.pendingPose = pose;
+      this.swapStart = performance.now();
+      ensureLoop();
+    };
+
+    LiveRig.prototype.hop = function (delay) {
+      if (reduce.matches) return;
+      const go = () => { this.hopStart = performance.now(); ensureLoop(); };
+      delay ? setTimeout(go, delay) : go();
+    };
+
+    LiveRig.prototype.blink = function () {
+      this.blinkAt = performance.now();
+      ensureLoop();
+    };
+
+    LiveRig.prototype.destroy = function () {
+      rigs.delete(this);
+      if (io) io.unobserve(this.host);
+      this.host.__eagleRig = null;
+    };
+
+    return {
+      mount: (host, pose, opts) => new LiveRig(host, pose, opts),
+      hopAll: () => { let i = 0; for (const r of rigs) if (r.visible) r.hop(i++ * 45); },
+      instances: () => Array.from(rigs),
+    };
+  })();
+
   return {
     COLORS: C,
     LINE: LINE,
@@ -925,5 +1241,9 @@
     },
     render: render,
     renderHead: renderHead,
+    // live rig (browser only): EagleRig.mount(el, 'scruffy', { canonicalIds, plumage })
+    mount: LiveRuntime ? LiveRuntime.mount : null,
+    hopAll: LiveRuntime ? LiveRuntime.hopAll : function () {},
+    instances: LiveRuntime ? LiveRuntime.instances : function () { return []; },
   };
 });

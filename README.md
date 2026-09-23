@@ -4,7 +4,7 @@ A single-page, scroll-driven cartoon story about a scruffy young eagle who can't
 catch a thing on his own — until he finds the river where thousands of eagles
 gather and everybody eats. Vanilla HTML/CSS/JS, no build step.
 
-> **Status: Stage 1 of 7 — design system, for review.**
+> **Status: Stage 2 of 7 — design system + live character rig, for review.**
 > The full README (deploy, placeholders, adding a milestone) lands with stage 7.
 
 ## Preview
@@ -22,7 +22,7 @@ npx serve .            # or: python3 -m http.server 8000
 | --- | --- |
 | `design-system.html` | Colour tokens, type scale, button states, the full model sheet |
 | `css/style.css` | Every token and shared component — the site will use this file |
-| `js/eagle.js` | The character rig: every pose built from the same named SVG parts |
+| `js/eagle.js` | The character: every pose built from the same named SVG parts, plus the live rig |
 | `js/main.js` | Shared UI behaviour (headline outlines, squash-and-stretch buttons) |
 | `assets/characters/*.svg` | The 9 poses + the big sibling, exported from `js/eagle.js` |
 | `assets/characters/plumage/` | Head icons for plumage stages 0–6 (milestone timeline) |
@@ -34,6 +34,21 @@ never drift. After editing the art, run:
 ```sh
 node tools/export-characters.js
 ```
+
+## The live rig
+
+```js
+const rig = EagleRig.mount(element, 'scruffy', { canonicalIds: true, plumage: 0 });
+rig.setPose('flying-determined'); // squash, swap, spring back
+rig.setPlumage(3);                // 0–6: one white patch per milestone
+rig.hop();                        // EagleRig.hopAll() hops every eagle on screen
+```
+
+Always on: random blink every 3–5s, 2s breathing loop, head tilt and pupils toward
+the cursor (idle wander on touch), feathers that lag and overshoot. One shared
+animation loop runs only while a rig is on screen; under `prefers-reduced-motion`
+nothing moves. Only one rig per page should use `canonicalIds` (`#eagle-body`, …);
+every rig carries `data-part` and `data-pivot` on each group.
 
 ## Placeholders used so far
 

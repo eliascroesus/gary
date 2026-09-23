@@ -40,10 +40,10 @@
     .ds-hero__lead { color: var(--cream-100); max-width: 30em; }
     .ds-hero__cast { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: clamp(0px, 1vw, 16px); min-height: 100%; padding-top: var(--s-6); }
     .ds-hero__cast figure { margin: 0; display: grid; justify-items: center; gap: var(--s-2); position: relative; z-index: 1; }
-    .ds-hero__cast img { width: auto; }
-    .ds-hero__cast .c-runt img { height: clamp(90px, 13vw, 150px); }
-    .ds-hero__cast .c-juv img { height: clamp(170px, 25vw, 320px); }
-    .ds-hero__cast .c-adult img { height: clamp(176px, 26vw, 334px); }
+    .rig-host > img, .rig-host > svg { display: block; height: 100%; width: auto; max-width: 100%; }
+    .ds-hero__cast .c-runt .rig-host { height: clamp(90px, 13vw, 150px); }
+    .ds-hero__cast .c-juv .rig-host { height: clamp(170px, 25vw, 320px); }
+    .ds-hero__cast .c-adult .rig-host { height: clamp(176px, 26vw, 334px); }
     .ds-hero__cast figcaption { font-size: var(--fs-micro); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); padding-bottom: var(--s-3); }
     .ds-hero__ground { position: absolute; left: -10%; right: -10%; bottom: 0; height: 64px; background: var(--cream-300); border-top: var(--line) solid var(--ink); border-radius: 50% 50% 0 0 / 34px 34px 0 0; }
 
@@ -145,7 +145,7 @@
     .pose__stage::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: var(--ground, var(--mud-500)); border-top: 4px solid var(--ink); }
     .pose__stage.is-air { align-items: center; padding-bottom: 12px; }
     .pose__stage.is-air::after { display: none; }
-    .pose__stage img { position: relative; z-index: 1; width: auto; height: calc(var(--vbh) * var(--scale, 1) * var(--k) * 1px); max-width: 100%; object-fit: contain; object-position: bottom; }
+    .pose__stage .rig-host { position: relative; z-index: 1; height: calc(var(--vbh) * var(--scale, 1) * var(--k) * 1px); max-width: 100%; display: flex; justify-content: center; }
     .pose__stage.is-perch { padding-bottom: 0; }
     .pose__stage.is-perch::after { display: none; }
     .pose__meta { padding: var(--s-5); display: grid; gap: var(--s-2); align-content: start; }
@@ -169,6 +169,30 @@
     .parts li { display: grid; grid-template-columns: 230px 1fr; gap: var(--s-3); align-items: baseline; font-size: var(--fs-small); }
     .parts .chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .parts code { justify-self: start; white-space: nowrap; padding: 0.15em 0.55em; border: 2px solid var(--ink); border-radius: var(--radius-pill); background: var(--gold-200); }
+
+    /* live rig panel */
+    .rig-panel { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); overflow: hidden; }
+    .rig-stage { position: relative; min-height: 460px; background: var(--sky); border-right: var(--line) solid var(--ink); display: flex; align-items: flex-end; justify-content: center; padding: var(--s-5) var(--s-5) 30px; overflow: hidden; }
+    .rig-stage::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 30px; background: var(--ground, var(--mud-500)); border-top: 4px solid var(--ink); }
+    .rig-stage.is-air { align-items: center; padding-bottom: var(--s-5); }
+    .rig-stage.is-air::after, .rig-stage.is-perch::after { display: none; }
+    .rig-stage.is-perch { padding-bottom: 0; }
+    .rig-stage .rig-host { position: relative; z-index: 1; height: 400px; max-width: 100%; }
+    .rig-stage .rig-host.is-runt { height: 240px; }
+    .rig-controls { padding: var(--s-6); display: grid; gap: var(--s-5); align-content: start; }
+    .rig-controls fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+    .rig-controls legend, .rig-controls label { font-size: var(--fs-micro); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 0; margin-bottom: var(--s-2); }
+    .pose-picks { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+    .pose-picks .btn { font-size: 0.85rem; min-height: 38px; padding: 0.6em 0.9em 0.48em; box-shadow: 0 3px 0 var(--btn-drop); }
+    .pose-picks .btn[aria-pressed='true'] { --btn-bg: var(--ink); --btn-fg: var(--gold-400); --btn-drop: var(--gold-400); }
+    .plumage-range { display: grid; gap: var(--s-2); }
+    .plumage-range output { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; }
+    .plumage-range input { width: 100%; accent-color: var(--ink); height: 28px; }
+    .plumage-range .ds-note[hidden] { display: none; }
+    .rig-actions { display: flex; flex-wrap: wrap; gap: var(--s-4); }
+    .behaviours { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-2); font-size: var(--fs-small); }
+    .behaviours li { padding-left: 1.4em; position: relative; }
+    .behaviours li::before { content: '★'; position: absolute; left: 0; color: var(--salmon-500); }
 
     /* texture + line */
     .texture { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
@@ -206,7 +230,10 @@
       .journey li { min-height: 110px; }
       .journey li:nth-child(5) { border-left: 0; }
       .journey li:nth-child(n + 5) { border-top: var(--line) solid var(--ink); }
-      .rules, .type-pair, .playground, .components, .supporting, .anatomy { grid-template-columns: minmax(0, 1fr); }
+      .rules, .type-pair, .playground, .components, .supporting, .anatomy, .rig-panel { grid-template-columns: minmax(0, 1fr); }
+      .rig-stage { border-right: 0; border-bottom: var(--line) solid var(--ink); min-height: 360px; }
+      .rig-stage .rig-host { height: 310px; }
+      .rig-stage .rig-host.is-runt { height: 190px; }
       .plumage { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .scale__row { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
     }
@@ -253,9 +280,9 @@
       </div>
       <div class="ds-hero__cast" aria-label="The young eagle across the story: runt, juvenile, adult">
         <div class="ds-hero__ground" aria-hidden="true"></div>
-        <figure class="c-runt"><img src="assets/characters/runt.svg" width="300" height="320" alt="The young eagle as a tiny, shivering runt chick"><figcaption>Scene 1</figcaption></figure>
-        <figure class="c-juv"><img src="assets/characters/scruffy.svg" width="420" height="450" alt="The young eagle as a scruffy brown juvenile with one white feather"><figcaption>Scene 2</figcaption></figure>
-        <figure class="c-adult"><img src="assets/characters/adult-white-head.svg" width="420" height="460" alt="The young eagle grown up, with a white head, still a little goofy"><figcaption>Scene 6</figcaption></figure>
+        <figure class="c-runt"><div class="rig-host" data-live-pose="runt"><img src="assets/characters/runt.svg" width="300" height="320" alt="The young eagle as a tiny, shivering runt chick"></div><figcaption>Scene 1</figcaption></figure>
+        <figure class="c-juv"><div class="rig-host" data-live-pose="scruffy"><img src="assets/characters/scruffy.svg" width="420" height="450" alt="The young eagle as a scruffy brown juvenile with one white feather"></div><figcaption>Scene 2</figcaption></figure>
+        <figure class="c-adult"><div class="rig-host" data-live-pose="adult-white-head"><img src="assets/characters/adult-white-head.svg" width="420" height="460" alt="The young eagle grown up, with a white head, still a little goofy"></div><figcaption>Scene 6</figcaption></figure>
       </div>
     </div>
   </section>
@@ -541,42 +568,82 @@
           <p class="t-lead">A juvenile bald eagle: mottled brown all over, feathers sticking out at wrong angles, talons clearly too big for him, a permanently hungry stare. One white feather from the very first frame.</p>
         </div>
 
-        <div class="ds-sub"><h3 class="t-h3">Model sheet</h3><p>Nine poses in story order, all at one world scale — the runt really is that small. Each sits on the sky of the scene it lives in.</p></div>
+        <div class="ds-sub"><h3 class="t-h3">Live rig</h3><p>The real thing: one inline SVG with the canonical <code>#eagle-*</code> ids. Move your cursor — he watches it. Switch poses, turn his head white, make him hop.</p></div>
+        <div class="ds-card rig-panel">
+          <div class="rig-stage" id="rig-stage" style="--sky: var(--sky-2); --ground: var(--mud-500)">
+            <div class="rig-host" id="hero-rig"><img src="assets/characters/scruffy.svg" width="420" height="450" alt="The young eagle, scruffy pose"></div>
+          </div>
+          <div class="rig-controls">
+            <fieldset>
+              <legend>Pose</legend>
+              <div class="pose-picks" id="pose-picks">
+                <button class="btn btn--secondary" type="button" data-pose="runt" aria-pressed="false">Runt</button>
+                <button class="btn btn--secondary" type="button" data-pose="scruffy" aria-pressed="true">Scruffy</button>
+                <button class="btn btn--secondary" type="button" data-pose="flying-tired" aria-pressed="false">Tired</button>
+                <button class="btn btn--secondary" type="button" data-pose="flying-determined" aria-pressed="false">Determined</button>
+                <button class="btn btn--secondary" type="button" data-pose="landed" aria-pressed="false">Landed</button>
+                <button class="btn btn--secondary" type="button" data-pose="diving" aria-pressed="false">Diving</button>
+                <button class="btn btn--secondary" type="button" data-pose="missing" aria-pressed="false">Missing</button>
+                <button class="btn btn--secondary" type="button" data-pose="eating" aria-pressed="false">Eating</button>
+                <button class="btn btn--secondary" type="button" data-pose="adult-white-head" aria-pressed="false">Adult</button>
+              </div>
+            </fieldset>
+            <div class="plumage-range">
+              <label for="plumage-stage">Plumage stage · milestones unlocked</label>
+              <output id="plumage-out" for="plumage-stage">0 / 6</output>
+              <input type="range" id="plumage-stage" min="0" max="6" step="1" value="0">
+              <p class="ds-note" id="plumage-note" hidden>The adult pose is always fully white.</p>
+            </div>
+            <div class="rig-actions">
+              <button class="btn btn--small" type="button" id="rig-hop">Hop</button>
+              <button class="btn btn--small btn--secondary" type="button" id="rig-blink">Blink</button>
+            </div>
+            <ul class="behaviours">
+              <li>Blinks at random every 3–5s, sometimes twice.</li>
+              <li>2s breathing loop; wings sway, or flap when airborne.</li>
+              <li>Head tilts and pupils track the cursor; idle wander on touch.</li>
+              <li>Loose feathers lag and overshoot on every move.</li>
+              <li>Only rigs on screen animate. Reduced motion: he holds still.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Model sheet</h3><p>Nine poses in story order, all at one world scale — the runt really is that small. Each sits on the sky of the scene it lives in, and every one of them is alive.</p></div>
         <div class="sheet">
           <figure class="pose">
-            <div class="pose__stage" style="--sky: var(--sky-1); --ground: var(--mud-700)"><img src="assets/characters/runt.svg" width="300" height="320" style="--vbh: 320; --scale: 0.62" alt="Runt pose"></div>
+            <div class="pose__stage" style="--sky: var(--sky-1); --ground: var(--mud-700)"><div class="rig-host" data-live-pose="runt" style="--vbh: 320; --scale: 0.62"><img src="assets/characters/runt.svg" width="300" height="320" alt="Runt pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Runt</h3><p class="t-micro">Scene 1 · The Nest</p><p>Hunched, tiny, hugging himself against the storm. Shivering.</p><code>assets/<wbr>characters/<wbr>runt.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage" style="--sky: var(--sky-2); --ground: var(--mud-500)"><img src="assets/characters/scruffy.svg" width="420" height="450" style="--vbh: 450" alt="Scruffy pose"></div>
+            <div class="pose__stage" style="--sky: var(--sky-2); --ground: var(--mud-500)"><div class="rig-host" data-live-pose="scruffy" style="--vbh: 450"><img src="assets/characters/scruffy.svg" width="420" height="450" alt="Scruffy pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Scruffy</h3><p class="t-micro">Scene 2 · The Scraps</p><p>Standing, sunken shoulders, drooling a little. Permanently hungry.</p><code>assets/<wbr>characters/<wbr>scruffy.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage is-air" style="--sky: var(--sky-3)"><img src="assets/characters/flying-tired.svg" width="460" height="400" style="--vbh: 400" alt="Flying, tired pose"></div>
+            <div class="pose__stage is-air" style="--sky: var(--sky-3)"><div class="rig-host" data-live-pose="flying-tired" style="--vbh: 400"><img src="assets/characters/flying-tired.svg" width="460" height="400" alt="Flying, tired pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Flying — tired</h3><p class="t-micro">Scene 3 · The Long Flight</p><p>Wings heavy, legs dangling, tongue out. Losing feathers.</p><code>assets/<wbr>characters/<wbr>flying-tired.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage is-air" style="--sky: var(--sky-3)"><img src="assets/characters/flying-determined.svg" width="460" height="360" style="--vbh: 360" alt="Flying, determined pose"></div>
+            <div class="pose__stage is-air" style="--sky: var(--sky-3)"><div class="rig-host" data-live-pose="flying-determined" style="--vbh: 360"><img src="assets/characters/flying-determined.svg" width="460" height="360" alt="Flying, determined pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Flying — determined</h3><p class="t-micro">Scenes 3 + 7</p><p>Second wind. Big up-stroke, talons tucked, eyes on the horizon.</p><code>assets/<wbr>characters/<wbr>flying-determined.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage is-perch" style="--sky: var(--sky-4)"><img src="assets/characters/landed.svg" width="460" height="470" style="--vbh: 470" alt="Landed pose"></div>
+            <div class="pose__stage is-perch" style="--sky: var(--sky-4)"><div class="rig-host" data-live-pose="landed" style="--vbh: 470"><img src="assets/characters/landed.svg" width="460" height="470" alt="Landed pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Landed</h3><p class="t-micro">Scene 4 · The Council Grounds</p><p>First branch. Wings still settling, can’t believe how many of them there are.</p><code>assets/<wbr>characters/<wbr>landed.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage is-air" style="--sky: var(--sky-5)"><img src="assets/characters/diving.svg" width="520" height="470" style="--vbh: 470" alt="Diving pose"></div>
+            <div class="pose__stage is-air" style="--sky: var(--sky-5)"><div class="rig-host" data-live-pose="diving" style="--vbh: 470"><img src="assets/characters/diving.svg" width="520" height="470" alt="Diving pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Diving</h3><p class="t-micro">Scene 5 · Eagles Gon Eat</p><p>Locked on. Wings swept back, talons thrown forward.</p><code>assets/<wbr>characters/<wbr>diving.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage" style="--sky: var(--sky-5); --ground: var(--teal-500)"><img src="assets/characters/missing.svg" width="420" height="450" style="--vbh: 450" alt="Missing pose"></div>
+            <div class="pose__stage" style="--sky: var(--sky-5); --ground: var(--teal-500)"><div class="rig-host" data-live-pose="missing" style="--vbh: 450"><img src="assets/characters/missing.svg" width="420" height="450" alt="Missing pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Missing</h3><p class="t-micro">Scene 5 · Eagles Gon Eat</p><p>Empty talons, dripping. Annoyed. Going again.</p><code>assets/<wbr>characters/<wbr>missing.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage" style="--sky: var(--sky-5); --ground: var(--teal-500)"><img src="assets/characters/eating.svg" width="440" height="450" style="--vbh: 450" alt="Eating pose"></div>
+            <div class="pose__stage" style="--sky: var(--sky-5); --ground: var(--teal-500)"><div class="rig-host" data-live-pose="eating" style="--vbh: 450"><img src="assets/characters/eating.svg" width="440" height="450" alt="Eating pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Eating</h3><p class="t-micro">Scene 5 · Eagles Gon Eat</p><p>Mouth full, cheeks pink, happiest bird on the river.</p><code>assets/<wbr>characters/<wbr>eating.svg</code></figcaption>
           </figure>
           <figure class="pose">
-            <div class="pose__stage" style="--sky: var(--sky-6); --ground: var(--cream-300)"><img src="assets/characters/adult-white-head.svg" width="420" height="460" style="--vbh: 460; --scale: 1.04" alt="Adult with white head pose"></div>
+            <div class="pose__stage" style="--sky: var(--sky-6); --ground: var(--cream-300)"><div class="rig-host" data-live-pose="adult-white-head" style="--vbh: 460; --scale: 1.04"><img src="assets/characters/adult-white-head.svg" width="420" height="460" alt="Adult with white head pose"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Adult — white head</h3><p class="t-micro">Scenes 6 + 7</p><p>Proud, chest out — still a little goofy. Grew into the talons. Kept the feather.</p><code>assets/<wbr>characters/<wbr>adult-white-head.svg</code></figcaption>
           </figure>
         </div>
@@ -594,7 +661,7 @@
 
         <div class="supporting" style="margin-top: var(--s-6)">
           <figure class="pose">
-            <div class="pose__stage" style="--sky: var(--sky-1); --ground: var(--mud-700); height: 260px"><img src="assets/characters/sibling.svg" width="320" height="320" style="--vbh: 320; --scale: 0.78" alt="The big sibling chick"></div>
+            <div class="pose__stage" style="--sky: var(--sky-1); --ground: var(--mud-700); height: 260px"><div class="rig-host" data-live-pose="sibling" style="--vbh: 320; --scale: 0.78"><img src="assets/characters/sibling.svg" width="320" height="320" alt="The big sibling chick"></div></div>
             <figcaption class="pose__meta"><h3 class="t-h3">Big sibling</h3><p class="t-micro">Supporting cast · Scene 1</p><p>Bigger, fluffier, smug. No white feather. The flock sprites for scenes 3–7 follow in stage 3.</p></figcaption>
           </figure>
           <div class="ds-card">
@@ -613,7 +680,7 @@
           </div>
         </div>
 
-        <div class="ds-sub"><h3 class="t-h3">Rig anatomy</h3><p>Every pose is built from the same named, layered SVG groups in <code>js/eagle.js</code>. Each group carries <code>data-part</code> and its hinge in <code>data-pivot</code>. Blink, breathing, head tilt, pupil tracking and feather lag get wired in stage 2.</p></div>
+        <div class="ds-sub"><h3 class="t-h3">Rig anatomy</h3><p>Every pose is built from the same named, layered SVG groups in <code>js/eagle.js</code>. Each group carries <code>data-part</code> and its hinge in <code>data-pivot</code>. The live rig above animates exactly these groups.</p></div>
         <div class="ds-card anatomy">
           <img src="assets/characters/scruffy.svg" width="420" height="450" alt="The scruffy pose, used as the rig reference">
           <ul class="parts">
@@ -683,6 +750,52 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="js/eagle.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    /* Design-system page only: bring the cast to life and wire the rig panel. */
+    (function () {
+      if (!window.EagleRig || !EagleRig.mount) return;
+      document.querySelectorAll('[data-live-pose]').forEach(function (host) {
+        EagleRig.mount(host, host.getAttribute('data-live-pose'));
+      });
+
+      var SCENE = {
+        runt: ['var(--sky-1)', 'var(--mud-700)', ''], scruffy: ['var(--sky-2)', 'var(--mud-500)', ''],
+        'flying-tired': ['var(--sky-3)', '', 'is-air'], 'flying-determined': ['var(--sky-3)', '', 'is-air'],
+        landed: ['var(--sky-4)', '', 'is-perch'], diving: ['var(--sky-5)', '', 'is-air'],
+        missing: ['var(--sky-5)', 'var(--teal-500)', ''], eating: ['var(--sky-5)', 'var(--teal-500)', ''],
+        'adult-white-head': ['var(--sky-6)', 'var(--cream-300)', '']
+      };
+      var host = document.getElementById('hero-rig');
+      var stage = document.getElementById('rig-stage');
+      var range = document.getElementById('plumage-stage');
+      var out = document.getElementById('plumage-out');
+      var note = document.getElementById('plumage-note');
+      var rig = EagleRig.mount(host, 'scruffy', { canonicalIds: true, plumage: 0 });
+
+      document.getElementById('pose-picks').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-pose]');
+        if (!b) return;
+        var pose = b.getAttribute('data-pose');
+        this.querySelectorAll('[data-pose]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        var sc = SCENE[pose];
+        stage.style.setProperty('--sky', sc[0]);
+        if (sc[1]) stage.style.setProperty('--ground', sc[1]);
+        stage.className = 'rig-stage ' + sc[2];
+        host.classList.toggle('is-runt', pose === 'runt');
+        var adult = pose === 'adult-white-head';
+        range.disabled = adult;
+        note.hidden = !adult;
+        rig.setPose(pose);
+      });
+      range.addEventListener('input', function () {
+        out.textContent = range.value + ' / 6';
+        rig.setPlumage(+range.value);
+      });
+      document.getElementById('rig-hop').addEventListener('click', function () { rig.hop(); });
+      document.getElementById('rig-blink').addEventListener('click', function () { rig.blink(); });
+    })();
+  </script>
 </body>
 </html>
