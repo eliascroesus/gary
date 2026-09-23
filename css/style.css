@@ -1314,6 +1314,25 @@ html.lenis, html.lenis body { height: auto; }
   pointer-events: none;
 }
 
+
+/* ---------------------------------------------------------------- sound toggle + cursor feathers */
+.sound-toggle {
+  position: fixed;
+  z-index: 70;
+  right: calc(var(--s-4) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+}
+
+.sound-toggle__on { display: none; }
+.sound-toggle.is-on { --btn-bg: var(--gold-400); }
+.sound-toggle.is-on .sound-toggle__on { display: block; }
+.sound-toggle.is-on .sound-toggle__off { display: none; }
+
+.cursor-feathers { position: fixed; inset: 0; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; }
+.cursor-feathers.is-on { opacity: 1; }
+.cursor-feather { position: absolute; left: 0; top: 0; width: 26px; height: 26px; margin: -13px 0 0 -13px; will-change: transform; filter: drop-shadow(1px 2px 0 rgba(23, 17, 13, 0.35)); }
+.cursor-feather svg { width: 100%; height: 100%; }
+
 /* ---------------------------------------------------------------- small screens: simpler parallax */
 @media (max-width: 700px) {
   .s1-cliff {

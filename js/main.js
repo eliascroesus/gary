@@ -1,8 +1,8 @@
 /*!
  * EAGLES GON EAT — js/main.js
- * Shared UI behaviour used by every page (index.html and design-system.html).
- * Later stages add the story boot (Lenis + ScrollTrigger scenes), cursor
- * feathers, copy-contract, sound and the "EAT" easter egg here.
+ * Shared UI behaviour used by every page (index.html and design-system.html):
+ * outlined headlines, elastic buttons, copy contract + toast + feather burst,
+ * smooth scroll, section reveals, cursor feathers, sound, and the "EAT" egg.
  */
 (function () {
   'use strict';
@@ -208,7 +208,203 @@
     });
   };
 
+
+  /* ------------------------------------------------------------------------
+     Cursor feathers — four tiny feathers trail the pointer with staggered lag.
+     Mouse/trackpad only; nothing under reduced motion. The real cursor stays.
+     ------------------------------------------------------------------------ */
+  EGE.initCursor = function () {
+    if (reduceMotion.matches || !window.matchMedia('(pointer: fine)').matches) return;
+    const layer = document.createElement('div');
+    layer.className = 'cursor-feathers';
+    layer.setAttribute('aria-hidden', 'true');
+    const LAG = [0.34, 0.24, 0.17, 0.12];
+    const feathers = LAG.map((k, i) => {
+      const f = document.createElement('span');
+      f.className = 'cursor-feather';
+      f.innerHTML = FEATHER;
+      f.style.setProperty('--s', (1 - i * 0.16).toFixed(2));
+      layer.appendChild(f);
+      return { el: f, k: k, x: -100, y: -100, r: 0 };
+    });
+    document.body.appendChild(layer);
+    let tx = -100, ty = -100, raf = 0, idle = 0;
+    function tick() {
+      raf = 0;
+      let moving = false;
+      let px = tx, py = ty;
+      feathers.forEach((f, i) => {
+        const dx = px - f.x, dy = py - f.y;
+        f.x += dx * f.k;
+        f.y += dy * f.k;
+        const target = Math.max(-60, Math.min(60, dx * 1.2)) + (i % 2 ? 18 : -18);
+        f.r += (target - f.r) * 0.2;
+        f.el.style.transform = 'translate3d(' + (f.x + 10 + i * 3).toFixed(1) + 'px,' + (f.y + 14 + i * 4).toFixed(1) + 'px,0) rotate(' + f.r.toFixed(1) + 'deg) scale(var(--s))';
+        if (Math.abs(dx) + Math.abs(dy) > 0.4) moving = true;
+        px = f.x; py = f.y;
+      });
+      if (moving) raf = requestAnimationFrame(tick);
+    }
+    window.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      tx = e.clientX; ty = e.clientY;
+      layer.classList.add('is-on');
+      clearTimeout(idle);
+      idle = setTimeout(() => layer.classList.remove('is-on'), 1400);
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+    document.documentElement.addEventListener('mouseleave', () => layer.classList.remove('is-on'));
+  };
+
+  /* ------------------------------------------------------------------------
+     Sound — muted by default, one corner toggle, never autoplays.
+     Synthesised with Web Audio (no files): wind for scenes 1–3, the river and
+     eagle calls for scenes 4–5, a soft breeze everywhere else.
+     ------------------------------------------------------------------------ */
+  const Sound = (EGE.sound = { on: false, ctx: null });
+
+  function buildAudio() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    const ctx = new AC();
+    const len = ctx.sampleRate * 3;
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    let b = 0;
+    for (let i = 0; i < len; i++) { b = (b + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = b * 3.5; } // brown-ish noise
+    const noise = () => { const s = ctx.createBufferSource(); s.buffer = buf; s.loop = true; s.start(0, Math.random() * 2); return s; };
+    const master = ctx.createGain();
+    master.gain.value = 0;
+    master.connect(ctx.destination);
+
+    // wind: noise through a slowly wandering band-pass
+    const wind = ctx.createGain(); wind.gain.value = 0;
+    const wf = ctx.createBiquadFilter(); wf.type = 'bandpass'; wf.frequency.value = 500; wf.Q.value = 0.8;
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.13;
+    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = 320;
+    lfo.connect(lfoAmt); lfoAmt.connect(wf.frequency); lfo.start();
+    noise().connect(wf); wf.connect(wind); wind.connect(master);
+
+    // river: low rush + a brighter babble
+    const river = ctx.createGain(); river.gain.value = 0;
+    const rl = ctx.createBiquadFilter(); rl.type = 'lowpass'; rl.frequency.value = 900;
+    const rb = ctx.createBiquadFilter(); rb.type = 'bandpass'; rb.frequency.value = 1900; rb.Q.value = 1.6;
+    const rbg = ctx.createGain(); rbg.gain.value = 0.35;
+    const n2 = noise();
+    n2.connect(rl); rl.connect(river);
+    n2.connect(rb); rb.connect(rbg); rbg.connect(river);
+    river.connect(master);
+
+    return { ctx: ctx, master: master, wind: wind, river: river };
+  }
+
+  // A high, slightly squeaky eagle chirp: "kleek-kik-ik-ik".
+  function chirp(a) {
+    const t0 = a.ctx.currentTime + 0.02;
+    const n = 3 + Math.floor(Math.random() * 3);
+    const base = 2300 + Math.random() * 500;
+    for (let i = 0; i < n; i++) {
+      const t = t0 + i * (0.13 + Math.random() * 0.03);
+      const o = a.ctx.createOscillator();
+      const g = a.ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(base * (i ? 0.92 : 1.08), t);
+      o.frequency.exponentialRampToValueAtTime(base * 0.72, t + 0.1);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.09, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+      o.connect(g); g.connect(a.master);
+      o.start(t); o.stop(t + 0.13);
+    }
+  }
+
+  let soundTimer = 0, chirpAt = 0;
+  function soundUpdate() {
+    const a = Sound.audio;
+    if (!a || !Sound.on) return;
+    const scene = EGE.currentScene ? EGE.currentScene() : 0;
+    const t = a.ctx.currentTime;
+    const cold = scene >= 1 && scene <= 3, warm = scene === 4 || scene === 5;
+    a.wind.gain.setTargetAtTime(cold ? 0.55 : 0.08, t, 0.8);
+    a.river.gain.setTargetAtTime(warm ? 0.5 : scene >= 6 ? 0.08 : 0, t, 0.8);
+    if (warm && performance.now() > chirpAt) {
+      chirp(a);
+      chirpAt = performance.now() + 2500 + Math.random() * 4500;
+    }
+  }
+
+  Sound.set = function (on) {
+    Sound.on = on;
+    if (on && !Sound.audio) Sound.audio = buildAudio();
+    const a = Sound.audio;
+    if (a) {
+      if (on && a.ctx.state === 'suspended') a.ctx.resume();
+      a.master.gain.setTargetAtTime(on ? 0.6 : 0, a.ctx.currentTime, 0.25);
+    }
+    clearInterval(soundTimer);
+    if (on) { soundUpdate(); soundTimer = setInterval(soundUpdate, 300); }
+    document.querySelectorAll('[data-sound-toggle]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(on));
+      b.setAttribute('aria-label', on ? 'Sound is on — turn it off' : 'Sound is off — turn it on');
+      b.classList.toggle('is-on', on);
+    });
+  };
+
+  EGE.initSound = function () {
+    document.querySelectorAll('[data-sound-toggle]').forEach((b) => b.addEventListener('click', () => Sound.set(!Sound.on)));
+    document.addEventListener('visibilitychange', () => {
+      const a = Sound.audio;
+      if (!a) return;
+      if (document.hidden) a.ctx.suspend();
+      else if (Sound.on) a.ctx.resume();
+    });
+  };
+
+  /* ------------------------------------------------------------------------
+     Easter egg — type "EAT" anywhere and every eagle on screen does a hop.
+     ------------------------------------------------------------------------ */
+  EGE.initEgg = function () {
+    let typed = '';
+    document.addEventListener('keydown', (e) => {
+      const tag = (e.target && e.target.tagName) || '';
+      if (/INPUT|TEXTAREA|SELECT/.test(tag) || e.target.isContentEditable || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+      typed = (typed + e.key.toUpperCase()).slice(-3);
+      if (typed !== 'EAT') return;
+      typed = '';
+      EGE.hopEverybody();
+    });
+  };
+
+  EGE.hopEverybody = function () {
+    if (window.EagleRig && EagleRig.hopAll) EagleRig.hopAll();
+    const gsap = window.gsap;
+    if (gsap && !reduceMotion.matches) {
+      const vh = window.innerHeight, vw = window.innerWidth;
+      const birds = Array.from(document.querySelectorAll('.perch:not(.perch--hero), .feast img, .speck, .s7-young, .river-eagles img, .ms-rider, .step__art, .post__head img, .site-foot__brand img')).filter((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width && r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw;
+      });
+      birds.slice(0, 120).forEach((el, i) => {
+        gsap.timeline({ delay: (i % 12) * 0.03 })
+          .to(el, { y: '-=' + (14 + (i % 3) * 6), duration: 0.16, ease: 'power2.out' })
+          .to(el, { y: '+=' + (14 + (i % 3) * 6), duration: 0.22, ease: 'bounce.out' });
+      });
+    }
+    EGE.toast('Everybody eats.');
+    if (Sound.on && Sound.audio) chirp(Sound.audio);
+  };
+
+  /* Placeholders: once a {{VALUE}} has been replaced with the real thing, drop
+     its dashed "placeholder" styling automatically. */
+  EGE.settlePlaceholders = function (root) {
+    (root || document).querySelectorAll('.ph').forEach((el) => {
+      if (el.textContent.indexOf('{{') === -1) el.classList.remove('ph');
+    });
+  };
+
   EGE.initUI = function (root) {
+    EGE.settlePlaceholders(root);
     EGE.splitHeadlines(root);
     EGE.bindButtons(root);
     EGE.bindCopy(root);
@@ -219,6 +415,9 @@
     EGE.initScroll();
     if (EGE.scenes && EGE.scenes.init) EGE.scenes.init();
     EGE.initReveal();
+    EGE.initCursor();
+    EGE.initSound();
+    EGE.initEgg();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

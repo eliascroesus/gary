@@ -267,6 +267,17 @@
         f.salmon.forEach((el, i) => { el.style.opacity = i % 2 ? 0 : 1; el.style.transform = 'translateY(-60%) rotate(-20deg)'; });
       }
     });
+    // Which scene is on screen — used by sound.
+    const visible = new Map();
+    if ('IntersectionObserver' in window) {
+      const vio = new IntersectionObserver((es) => es.forEach((e) => visible.set(+e.target.dataset.scene, e.intersectionRatio)), { threshold: [0, 0.5, 1] });
+      scenes.forEach((s) => vio.observe(s));
+    }
+    EGE.currentScene = () => {
+      let best = 0, r = 0.3;
+      visible.forEach((v, k) => { if (v > r) { r = v; best = k; } });
+      return best;
+    };
     const s3 = $('.scene--3 [data-live-pose]');
     if (s3 && s3.__eagleRig) s3.__eagleRig.setPose('flying-determined');
     // simple fades as each frame arrives
@@ -619,6 +630,14 @@
     sync();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ST.refresh());
     EGE.story = { timeline: tl, trigger: st, starts: S };
+    // Which scene is on stage (0 once the story has scrolled away) — used by sound.
+    EGE.currentScene = () => {
+      if (!st.isActive && st.progress >= 1) return 0;
+      const t = tl.time();
+      let n = 1;
+      Object.keys(S).forEach((k) => { if (t >= S[k] - 0.1) n = +k; });
+      return n;
+    };
   }
 
   EGE.scenes = {
