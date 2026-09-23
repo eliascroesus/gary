@@ -1,0 +1,422 @@
+[
+ {
+  "set": "x-header",
+  "file": "out/x-header/01-king-of-the-sky-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "king-of-the-sky"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/02-we-eat-together-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "we-eat-together"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/03-eagles-gon-eat-feast-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "eagles-gon-eat-feast"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/04-same-river-same-way-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "same-river-same-way"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/05-most-of-us-dont-make-it-out-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "most-of-us-dont-make-it-out"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/06-wordmark-gold-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "wordmark-gold"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/07-nobody-finds-the-run-alone-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "nobody-finds-the-run-alone"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/08-the-whole-story-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "the-whole-story"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/09-tape-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "tape"
+ },
+ {
+  "set": "x-header",
+  "file": "out/x-header/10-premium-dark-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "premium-dark"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/01-eagles-gon-eat-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "eagles-gon-eat"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/02-we-eat-together-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "we-eat-together"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/03-king-of-the-sky-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "king-of-the-sky"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/04-your-turn-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "your-turn"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/05-most-of-us-dont-make-it-out-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "most-of-us-dont-make-it-out"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/06-nobody-finds-the-run-alone-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "nobody-finds-the-run-alone"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/07-we-aint-eaten-yet-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "we-aint-eaten-yet"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/08-same-river-same-way-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "same-river-same-way"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/09-join-the-flock-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "join-the-flock"
+ },
+ {
+  "set": "promo",
+  "file": "out/promo/10-gm-eagles-1200x675@2x.png",
+  "w": 1200,
+  "h": 675,
+  "name": "gm-eagles"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/01-welcome-to-the-flock-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "welcome-to-the-flock"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/02-gm-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "gm"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/03-gn-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "gn"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/04-eagles-gon-eat-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "eagles-gon-eat"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/05-we-eat-together-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "we-eat-together"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/06-missed-dive-again-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "missed-dive-again"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/07-king-of-the-sky-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "king-of-the-sky"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/08-nobody-sits-alone-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "nobody-sits-alone"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/09-flock-up-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "flock-up"
+ },
+ {
+  "set": "telegram",
+  "file": "out/telegram/10-your-turn-1080x1080@2x.png",
+  "w": 1080,
+  "h": 1080,
+  "name": "your-turn"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/01-king-center-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "king-center"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/02-wordmark-gold-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "wordmark-gold"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/03-feast-wide-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "feast-wide"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/04-drone-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "drone"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/05-flock-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "flock"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/06-premium-dark-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "premium-dark"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/07-branch-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "branch"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/08-sunrise-wordmark-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "sunrise-wordmark"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/09-tape-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "tape"
+ },
+ {
+  "set": "dexscreener",
+  "file": "out/dexscreener/10-the-story-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "the-story"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/01-giant-type-feast-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "giant-type-feast"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/02-we-eat-together-bold-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "we-eat-together-bold"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/03-king-bold-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "king-bold"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/04-dive-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "dive"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/05-nobody-alone-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "nobody-alone"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/06-head-burst-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "head-burst"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/07-we-aint-eaten-yet-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "we-aint-eaten-yet"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/08-your-turn-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "your-turn"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/09-drone-bold-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "drone-bold"
+ },
+ {
+  "set": "fomo",
+  "file": "out/fomo/10-sticker-wall-1500x500@2x.png",
+  "w": 1500,
+  "h": 500,
+  "name": "sticker-wall"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/01-king-badge-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "king-badge"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/02-scruffy-badge-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "scruffy-badge"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/03-stacked-lockup-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "stacked-lockup"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/04-sticker-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "sticker"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/05-sunrise-badge-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "sunrise-badge"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/06-wordmark-horizontal-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "wordmark-horizontal"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/07-round-seal-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "round-seal"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/08-fish-badge-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "fish-badge"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/09-app-icon-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "app-icon"
+ },
+ {
+  "set": "logo",
+  "file": "out/logo/10-drone-badge-1000x1000@2x.png",
+  "w": 1000,
+  "h": 1000,
+  "name": "drone-badge"
+ }
+]
