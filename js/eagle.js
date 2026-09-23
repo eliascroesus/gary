@@ -1030,7 +1030,7 @@
       this.prevY = 0;
       this.paused = false;
       // scroll-driven offsets (tweened by scenes.js): body x/y, head rotation/drop
-      this.extra = { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 };
+      this.extra = { x: 0, y: 0, rot: 0, headRot: 0, headY: 0, wingL: 0 };
       host.__eagleRig = this;
       this.build();
       rigs.add(this);
@@ -1108,7 +1108,7 @@
       // 2. Wings: breathing sway when standing, a real flap in the air.
       const [amp, per] = M.flap;
       const w = Math.sin((t * Math.PI * 2) / per);
-      if (P2['wing-l']) setTf(P2['wing-l'].el, P2['wing-l'].p, 0, 0, M.sync ? w * amp : w * amp, 1, M.sync ? 1 - 0.12 * Math.abs(w) : 1);
+      if (P2['wing-l']) setTf(P2['wing-l'].el, P2['wing-l'].p, 0, 0, w * amp + (this.extra.wingL || 0), 1, M.sync ? 1 - 0.12 * Math.abs(w) : 1);
       if (P2['wing-r']) setTf(P2['wing-r'].el, P2['wing-r'].p, 0, 0, M.sync ? Math.sin((t - 0.06) * Math.PI * 2 / per) * amp * 0.9 : -w * amp, 1, 1);
 
       // 3. Head: tilt toward the cursor (idle wander when there is none), bob, milestone pop.

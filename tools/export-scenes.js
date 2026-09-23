@@ -278,6 +278,52 @@ function crowdTree(x, y, s, seed, whiteShare) {
   files['scenes/s5-water.svg'] = svg(1600, 1000, w, ' preserveAspectRatio="xMidYMax slice"');
 }
 
+
+/* ------------------------------------------------------------------ SCENES 6 + 7 (home) */
+{
+  const HOME = { deep900: '#0A1734', deep700: '#14295C', deep500: '#23448F', cream: '#FBE2B6', bone: '#FFFDF6', teal: '#16968E', tealDark: '#0D5C5A' };
+  // SCENE 6: the valley below at first light — the river he'll come back to
+  let b = fillInk(ridge(1600, 560, [40, 20, 10], 101, false, 1010, -40, 1640), '#1D3A73', 6);
+  b += fillInk(ridge(1600, 650, [30, 16], 102, false, 1010, -40, 1640), HOME.deep700, 6);
+  b += fillInk('M -20 760 C 300 720 520 800 800 770 C 1080 740 1300 790 1620 752 L 1620 850 C 1300 880 1080 830 800 860 C 520 890 300 812 -20 846 Z', HOME.teal, 6);
+  b += line('M 120 790 l 160 0 M 620 808 l 200 0 M 1120 786 l 180 0', HOME.cream, 6);
+  b += fillInk(ridge(1600, 900, [18, 10], 103, false, 1010, -40, 1640), HOME.deep900, 6);
+  // lifted so the river (and the eagles that land on it) sits above the docked timeline
+  b = '<g transform="translate(0 -250)">' + b + '</g>' + fillInk('M -20 740 L 1620 740 L 1620 1010 L -20 1010 Z', HOME.deep900, 6);
+  files['scenes/s6-back.svg'] = svg(1600, 1000, b, ' preserveAspectRatio="xMidYMax slice"');
+
+  // SCENE 7: the whole river at sunrise — thousands of them
+  const R = rng(111);
+  let pano = fillInk(ridge(1600, 470, [26, 14], 112, false, 1010, -40, 1640), '#E7B98C', 5);
+  pano += fillInk(ridge(1600, 520, [20, 10], 113, false, 1010, -40, 1640), '#C98E66', 5);
+  // the river, wide at the front, thin at the horizon
+  pano += fillInk('M 700 530 C 760 560 690 600 640 640 C 560 700 420 760 380 840 C 350 900 380 960 420 1010 L 1240 1010 C 1100 940 1040 880 1000 820 C 940 740 860 690 820 640 C 790 600 820 560 760 530 Z', HOME.teal, 5);
+  pano += line('M 700 600 l 50 0 M 620 700 l 90 0 M 540 800 l 140 0 M 620 900 l 200 0 M 820 760 l 90 0', HOME.bone, 5);
+  // banks, packed: tiny eagles everywhere, smaller toward the horizon
+  const banks = [[380, 1000, 130, 540, 1], [1240, 1000, 1500, 560, -1]];
+  let dots = '';
+  for (let i = 0; i < 1100; i++) {
+    const depth = Math.pow(R(), 0.8);            // 0 = horizon, 1 = foreground
+    const y = 540 + depth * 450;
+    const side = R() < 0.5 ? -1 : 1;
+    const riverHalf = 20 + depth * 420;
+    const x = 760 + side * (riverHalf + R() * (60 + depth * 520)) + (R() - 0.5) * 40;
+    const sc = 0.35 + depth * 1.6;
+    const white = R() < 0.4;
+    dots += '<ellipse cx="' + r1(x) + '" cy="' + r1(y) + '" rx="' + r1(3.4 * sc) + '" ry="' + r1(5 * sc) + '" fill="#5A3A24"/>';
+    dots += '<circle cx="' + r1(x + 0.6 * sc) + '" cy="' + r1(y - 5.4 * sc) + '" r="' + r1(2.6 * sc) + '" fill="' + (white ? HOME.bone : '#6B4128') + '"/>';
+  }
+  pano += '<g stroke="' + INK + '" stroke-width="1.2">' + dots + '</g>';
+  // and the sky full of them
+  let sky = '';
+  for (let i = 0; i < 420; i++) {
+    const x = R() * 1600, y = 40 + Math.pow(R(), 1.3) * 440, sc = 0.4 + R() * 1.1;
+    sky += '<path d="M ' + r1(x - 8 * sc) + ' ' + r1(y - 4 * sc) + ' q ' + r1(4 * sc) + ' ' + r1(5 * sc) + ' ' + r1(8 * sc) + ' ' + r1(4 * sc) + ' q ' + r1(4 * sc) + ' ' + r1(-1 * sc) + ' ' + r1(8 * sc) + ' ' + r1(-4 * sc) + '"/>';
+  }
+  pano += '<g fill="none" stroke="#4A2E1C" stroke-width="2.4" stroke-linecap="round">' + sky + '</g>';
+  files['scenes/s7-panorama.svg'] = svg(1600, 1000, pano, ' preserveAspectRatio="xMidYMax slice"');
+}
+
 /* ------------------------------------------------------------------ SPRITES */
 {
   // A far-off eagle: brown, wings up, flying right. Readable at 24px.

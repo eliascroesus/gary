@@ -187,11 +187,40 @@
     });
   }
 
+
+  // Scene 6: one more eagle lands on the river for every unlocked milestone.
+  const RIVER_SLOTS = [[6, 51], [16, 54], [27, 50.5], [38, 53], [49, 55], [58, 51]];
+  function buildRiverEagles(scene) {
+    const host = $('.river-eagles', scene);
+    if (!host || host.childElementCount) return host ? Array.from(host.children) : [];
+    return RIVER_SLOTS.map((p, i) => {
+      const img = document.createElement('img');
+      img.src = 'assets/sprites/crowd-' + (i % 2 ? 'white' : 'brown') + '.svg';
+      img.alt = '';
+      img.style.left = p[0] + '%';
+      img.style.top = (mobile() ? p[1] - 13 : p[1]) + '%';
+      host.appendChild(img);
+      return img;
+    });
+  }
+
+  function mountTimeline(scene, controlled, onChange) {
+    const host = $('[data-milestones]', scene);
+    if (!host || !EGE.Milestones) return null;
+    if (host.__ms) return host.__ms;
+    host.__ms = EGE.Milestones.mount(host, { controlled: controlled, onChange: onChange });
+    return host.__ms;
+  }
+
   function mountRigs(scene, proxies) {
     if (!window.EagleRig || !EagleRig.mount) return [];
     return $$('[data-live-pose]', scene).map((host) => {
       if (host.__eagleRig) return host.__eagleRig;
-      const rig = EagleRig.mount(host, host.getAttribute('data-live-pose'), { title: (host.querySelector('img') || {}).alt || '' });
+      const rig = EagleRig.mount(host, host.getAttribute('data-live-pose'), {
+        title: (host.querySelector('img') || {}).alt || '',
+        canonicalIds: host.hasAttribute('data-canonical'),
+        plumage: host.hasAttribute('data-plumage') ? +host.getAttribute('data-plumage') : undefined,
+      });
       const key = host.getAttribute('data-proxy');
       if (key && proxies[key]) rig.extra = proxies[key];
       return rig;
@@ -225,6 +254,14 @@
       mountRigs(scene, {});
       if (scene.dataset.scene === '3') buildSpecks(scene);
       if (scene.dataset.scene === '4') buildCouncil(scene);
+      if (scene.dataset.scene === '6') {
+        const birds = buildRiverEagles(scene);
+        const hero = $('.s6-hero', scene);
+        mountTimeline(scene, false, (stage, i, on) => {
+          if (birds[i]) birds[i].style.opacity = on ? 1 : 0;
+          if (hero.__eagleRig) hero.__eagleRig.setPlumage(stage, false);
+        });
+      }
       if (scene.dataset.scene === '5') {
         const f = buildFeast(scene);
         f.salmon.forEach((el, i) => { el.style.opacity = i % 2 ? 0 : 1; el.style.transform = 'translateY(-60%) rotate(-20deg)'; });
@@ -255,11 +292,16 @@
       sib: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
       scruffy: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
       flyer: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 },
+      closeup: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0, wingL: 0 },
+      home: { x: 0, y: 0, rot: 0, headRot: 0, headY: 0, wingL: 0 },
     };
     $('.chick--runt').setAttribute('data-proxy', 'runt');
     $('.chick--sib').setAttribute('data-proxy', 'sib');
     $('.s2-eagle').setAttribute('data-proxy', 'scruffy');
     $('.s3-eagle').setAttribute('data-proxy', 'flyer');
+    $('.s6-hero').setAttribute('data-proxy', 'closeup');
+    $('.s7-hero').setAttribute('data-proxy', 'home');
+    $('.s7-hero').setAttribute('data-plumage', '6');
 
     const S = {}; // scene start times
     const ranges = [];
@@ -267,9 +309,9 @@
     const [s1, s2, s3] = scenes;
     const q = (sc, sel) => $(sel, sc);
     const words = (sc, line) => $$('.scene__copy > .hl .w' + (line != null ? '[data-line="' + line + '"]' : ''), sc);
-    const [, , , s4, s5] = scenes;
+    const [, , , s4, s5, s6, s7] = scenes;
 
-    gsap.set([s2, s3, s4, s5], { autoAlpha: 0 });
+    gsap.set([s2, s3, s4, s5, s6, s7], { autoAlpha: 0 });
 
     /* ---------------- SCENE 1 — THE NEST (0 → 2.3) ---------------- */
     S[1] = 0;
@@ -471,7 +513,63 @@
     ranges.push([s5, t5, t5 + D5, ['feaster']]);
     const HERO5 = [[t5 + 0.75, 'diving'], [t5 + 1.5, 'missing'], [t5 + 1.86, 'diving'], [Infinity, 'eating']];
 
-    tl.set({}, {}, t5 + D5); // room to breathe at the end of the feast
+
+    /* ---------------- SCENE 6 — THE HEAD TURNS (+ milestone timeline) ---------------- */
+    const t6 = (S[6] = t5 + 3.5);
+    const cam6 = q(s6, '.scene__cam');
+    const riverBirds = buildRiverEagles(s6);
+    const hero6 = q(s6, '.s6-hero');
+    const ms = mountTimeline(s6, true, (stage, i, on, fx) => {
+      if (hero6.__eagleRig) hero6.__eagleRig.setPlumage(stage, true);
+      if (riverBirds[i]) gsap.to(riverBirds[i], { opacity: on ? 1 : 0, y: on ? 0 : -20, duration: fx ? 0.5 : 0.2, ease: on ? 'back.out(3)' : 'power1.out', overwrite: true });
+    });
+    // close on him: the feast zooms into his face
+    tl.to(cam5, { scale: 1.6, transformOrigin: '50% 80%', duration: 0.5, ease: 'power2.in' }, t6 - 0.3);
+    tl.to(s6, { autoAlpha: 1, duration: 0.35 }, t6 - 0.05);
+    tl.to(s5, { autoAlpha: 0, duration: 0.25 }, t6 + 0.2);
+    tl.fromTo(cam6, { scale: 1.25, y: () => 0.06 * H() }, { scale: 1.05, y: 0, duration: 1.2, ease: 'power2.out' }, t6);
+    tl.to(cam6, { scale: 1, duration: 2.6 }, t6 + 1.2);
+    tl.fromTo(q(s6, '.s6-dock'), { yPercent: 130 }, { yPercent: 0, duration: 0.5, ease: 'back.out(1.6)' }, t6 + 0.3);
+    wordsIn(tl, words(s6, 0), t6 + 0.35, 0.5);
+    if (ms) {
+      const pm = { p: 0 };
+      tl.to(pm, { p: Math.min(1, ms.maxProgress + 0.03), duration: 2.5, ease: 'none', onUpdate: () => ms.setProgress(pm.p) }, t6 + 0.85);
+    }
+    tl.to(proxies.closeup, { headRot: -6, duration: 1.2, ease: 'sine.inOut' }, t6 + 1);
+    wordsIn(tl, words(s6, 1), t6 + 3.3, 0.5);
+    ranges.push([s6, t6, t6 + 4.3, ['closeup']]);
+
+    /* ---------------- SCENE 7 — BACK TO THE NEST ---------------- */
+    const t7 = (S[7] = t6 + 4.2);
+    const home = q(s7, '.s7-home');
+    const pano = q(s7, '.s7-pano');
+    const hero7 = q(s7, '.s7-hero');
+    gsap.set(pano, { opacity: 0 });
+    tl.to(q(s6, '.s6-dock'), { yPercent: 130, duration: 0.35, ease: 'power2.in' }, t7 - 0.35);
+    wordsOut(tl, words(s6), t7 - 0.35, 0.3);
+    tl.to(s7, { autoAlpha: 1, duration: 0.35 }, t7 - 0.05);
+    tl.to(s6, { autoAlpha: 0, duration: 0.3 }, t7 + 0.2);
+    // he flies home, white-headed, and lands at a nest of brown scruffy ones
+    tl.fromTo(hero7, { x: () => -0.8 * W(), y: () => -0.32 * H(), rotation: -10 }, { x: 0, y: 0, rotation: 0, duration: 0.9, ease: 'power2.out' }, t7 + 0.1);
+    tl.to(hero7, { scaleY: 0.84, scaleX: 1.1, duration: 0.05, transformOrigin: '50% 100%' }, t7 + 1.0).to(hero7, { scaleY: 1, scaleX: 1, duration: 0.15, ease: 'back.out(3)' }, t7 + 1.05);
+    $$('.s7-young', s7).forEach((el, i) => {
+      tl.to(el, { y: () => -0.03 * H(), duration: 0.08, ease: 'power2.out' }, t7 + 1.05 + i * 0.06).to(el, { y: 0, duration: 0.14, ease: 'bounce.out' }, t7 + 1.13 + i * 0.06);
+    });
+    // ...and points the way
+    tl.to(proxies.home, { wingL: 110, headRot: -8, duration: 0.35, ease: 'back.out(2)' }, t7 + 1.35);
+    // the camera pulls back to the full river — thousands of them
+    const nestOrigin = () => {
+      const n = q(s7, '.s7-nest'), sc = s7.getBoundingClientRect(), r = n.getBoundingClientRect();
+      return (((r.left + r.width / 2 - sc.left) / sc.width) * 100).toFixed(1) + '% ' + (((r.top + r.height / 2 - sc.top) / sc.height) * 100).toFixed(1) + '%';
+    };
+    tl.fromTo(home, { scale: 1, transformOrigin: nestOrigin }, { scale: 0.28, duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
+    tl.to(home, { opacity: 0, duration: 0.5 }, t7 + 2.8);
+    tl.fromTo(pano, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
+    wordsIn(tl, words(s7), t7 + 2.9, 0.7);
+    ranges.push([s7, t7, t7 + 4.6, ['home']]);
+    const HERO7_LAND = t7 + 0.97;
+
+    tl.set({}, {}, t7 + 4.6); // the final lock-up holds before the page scrolls on
 
     // Lazy init + pausing off-stage rigs + pose changes, driven by the playhead.
     const mounted = new Set();
@@ -494,6 +592,11 @@
       if (h5) {
         const want5 = HERO5.find((p) => t < p[0])[1];
         if (want5 !== h5.pose && !h5.pendingPose) h5.setPose(want5);
+      }
+      const h7 = hero7.__eagleRig;
+      if (h7) {
+        const want7 = t < HERO7_LAND ? 'flying-determined' : 'adult-white-head';
+        if (want7 !== h7.pose && !h7.pendingPose) h7.setPose(want7);
       }
       const fh = flyer.__eagleRig;
       if (fh) {

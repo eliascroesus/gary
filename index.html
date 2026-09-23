@@ -157,15 +157,60 @@
           </div>
         </section>
 
+        <!-- SCENE 6 — THE HEAD TURNS (milestone timeline docks here) -->
+        <section class="scene scene--6" data-scene="6" aria-labelledby="s6-title">
+          <div class="scene__sky" style="--sky: var(--sky-6)"></div>
+          <div class="scene__cam">
+            <div class="layer layer--back">
+              <img class="layer__fill" src="assets/scenes/s6-back.svg" alt="" width="1600" height="1000">
+              <div class="river-eagles" aria-hidden="true"></div>
+            </div>
+            <div class="layer layer--mid">
+              <div class="s6-hero rig-host" data-live-pose="scruffy" data-canonical data-hero><img src="assets/characters/scruffy.svg" alt="Close on the young eagle as white spreads across his head, feather by feather" width="420" height="450"></div>
+            </div>
+          </div>
+          <div class="scene__copy scene__copy--side">
+            <h2 class="hl" id="s6-title">Five years of brown.<br>Then everyone knows your name.</h2>
+          </div>
+          <div class="s6-dock">
+            <p class="s6-dock__title">The flight so far</p>
+            <div class="ms-host" data-milestones></div>
+          </div>
+        </section>
+
+        <!-- SCENE 7 — BACK TO THE NEST -->
+        <section class="scene scene--7" data-scene="7" aria-labelledby="s7-title">
+          <div class="scene__sky" style="--sky: var(--sky-7)"></div>
+          <div class="scene__cam s7-pano">
+            <img class="layer__fill" src="assets/scenes/s7-panorama.svg" alt="" width="1600" height="1000">
+          </div>
+          <div class="scene__cam s7-home">
+            <div class="s7-cliff">
+              <img class="s1-cliff__rock" src="assets/scenes/s1-cliff.svg" alt="" width="800" height="1000">
+              <div class="s1-nest s7-nest">
+                <img class="s1-nest__back" src="assets/scenes/s1-nest-back.svg" alt="" width="500" height="230">
+                <img class="s7-young s7-young--1" src="assets/sprites/crowd-brown.svg" alt="" width="130" height="140">
+                <img class="s7-young s7-young--2" src="assets/sprites/crowd-brown.svg" alt="" width="130" height="140">
+                <img class="s7-young s7-young--3" src="assets/sprites/crowd-brown.svg" alt="" width="130" height="140">
+                <div class="s7-hero rig-host" data-live-pose="adult-white-head" data-hero><img src="assets/characters/adult-white-head.svg" alt="Grown, white-headed and still a little goofy, he lands back at the nest and points the way for the young brown ones" width="420" height="460"></div>
+                <img class="s1-nest__front" src="assets/scenes/s1-nest-front.svg" alt="" width="500" height="260">
+              </div>
+            </div>
+          </div>
+          <div class="scene__copy scene__copy--final">
+            <h2 class="hl s7-lockup" id="s7-title">Nobody finds<br>the run alone.</h2>
+          </div>
+        </section>
+
       </div>
     </div>
 
     <!-- ============================================================ AFTER THE STORY (stages 4–6) -->
     <section class="after" id="after-story">
       <div class="after__inner">
-        <p class="t-micro">Stage 4 of 7</p>
-        <h2 class="t-h1">To be continued</h2>
-        <p class="t-lead">Scenes 6–7 — the head turning white, the milestone timeline and the flight home — land in the next stage.</p>
+        <p class="t-micro">Stage 5 of 7</p>
+        <h2 class="t-h1">The story’s done. The rest lands next.</h2>
+        <p class="t-lead">How to buy, the flock, post your flight, the FAQ and the footer land in stage 6.</p>
       </div>
     </section>
   </main>
@@ -181,6 +226,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
   <script src="js/eagle.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/milestones.js"></script>
   <script src="js/scenes.js"></script>
 </body>
 </html>

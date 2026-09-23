@@ -4,7 +4,7 @@ A single-page, scroll-driven cartoon story about a scruffy young eagle who can't
 catch a thing on his own — until he finds the river where thousands of eagles
 gather and everybody eats. Vanilla HTML/CSS/JS, no build step.
 
-> **Status: Stage 4 of 7 — scenes 1–5 of the story are live, for review.**
+> **Status: Stage 5 of 7 — the whole story (scenes 1–7) and the milestone timeline are live, for review.**
 > The full README (deploy, placeholders, adding a milestone) lands with stage 7.
 
 ## Preview
@@ -20,12 +20,13 @@ npx serve .            # or: python3 -m http.server 8000
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | The site: the scroll-driven story (scenes 1–5 so far) |
+| `index.html` | The site: the scroll-driven story, all seven scenes |
 | `design-system.html` | Colour tokens, type scale, button states, the full model sheet |
 | `css/style.css` | Every token and shared component — the site will use this file |
 | `js/eagle.js` | The character: every pose built from the same named SVG parts, plus the live rig |
 | `js/main.js` | Shared UI: headline outlines, elastic buttons, copy contract + toast, smooth scroll |
 | `js/scenes.js` | The story: one pinned stage, one scroll-scrubbed timeline |
+| `js/milestones.js` | **The milestones — edit this one file.** Data + the timeline component |
 | `assets/scenes/`, `assets/sprites/` | Scene layers, flock/crowd sprites, salmon + feather confetti, from `tools/export-scenes.js` |
 | `assets/characters/*.svg` | The 9 poses + the big sibling, exported from `js/eagle.js` |
 | `assets/characters/plumage/` | Head icons for plumage stages 0–6 (milestone timeline) |
@@ -69,6 +70,15 @@ animation loop runs only while a rig is on screen; under `prefers-reduced-motion
 nothing moves. Only one rig per page should use `canonicalIds` (`#eagle-body`, …);
 every rig carries `data-part` and `data-pivot` on each group.
 
+## Milestones
+
+Edit the `MILESTONES` array at the top of `js/milestones.js`. Each entry is
+`{ id, label, caption, timestamp, state: 'locked' | 'unlocked', plumageStage: 1–6 }`.
+Flip `state` to `'unlocked'` and the timeline in Scene 6 flies one node further,
+his head turns one stage whiter and one more eagle lands on the river. The same
+component can be mounted anywhere: `EGE.Milestones.mount(element)`.
+
 ## Placeholders used so far
 
-`{{TICKER}}`, `{{CONTRACT_ADDRESS}}` — the complete list ships with stage 7.
+`{{TICKER}}`, `{{CONTRACT_ADDRESS}}`, `{{MILESTONE_1_LABEL}}` … `{{MILESTONE_6_LABEL}}`,
+`{{MILESTONE_1_DATE}}` … `{{MILESTONE_6_DATE}}` — the complete list ships with stage 7.
