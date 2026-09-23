@@ -55,7 +55,6 @@ you replace it, the dashed styling disappears on its own.
 | `{{TOTAL_SUPPLY}}` | Total supply | `index.html` — The Flock |
 | `{{LIQUIDITY_STATUS}}` | `locked` or `burned` (and until when, if locked) | `index.html` — The Flock |
 | `{{LIQUIDITY_PROOF_URL}}` | Link to the lock/burn proof | `index.html` — The Flock |
-| `{{MILESTONE_1_LABEL}}` … `{{MILESTONE_6_LABEL}}` | Any number for that milestone — a story number, never a price or return | `js/milestones.js` |
 | `{{MILESTONE_1_DATE}}` … `{{MILESTONE_6_DATE}}` | The date each milestone was unlocked | `js/milestones.js` |
 
 Replace one everywhere from the project folder (on macOS use `sed -i ''`):
@@ -70,9 +69,6 @@ Then check nothing is left:
 grep -rn '{{' --include='*.html' --include='*.js' .
 ```
 
-(The only hit left should be the `{{MILESTONE_N_LABEL}}` example inside the
-comment at the top of `js/milestones.js`.)
-
 The Scene 5 counter ("eagles on the river") is an in-story number, set with
 `data-count-to="3742"` on `.counter__n` in `index.html`. It is never a price.
 
@@ -85,9 +81,8 @@ at the top:
 
 ```js
 {
-  id: 'first-branch',                 // unique, lowercase-with-dashes
-  label: 'The first branch',          // the story beat, shown as the title
-  caption: 'Somewhere to sit that isn’t mud. {{MILESTONE_1_LABEL}}',
+  id: 'leave-the-nest',               // unique, lowercase-with-dashes
+  label: 'Leave the nest',            // the step, shown as the title
   timestamp: '{{MILESTONE_1_DATE}}',  // shown once unlocked
   state: 'unlocked',                  // 'locked' | 'unlocked'
   plumageStage: 1,                    // 1–6: how white his head is here

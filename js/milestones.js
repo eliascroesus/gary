@@ -5,13 +5,11 @@
  * │ EDIT THE MILESTONES HERE. This is the only file you need to touch.  │
  * │ Each entry:                                                          │
  * │   id           unique, lowercase-with-dashes                         │
- * │   label        the story beat (shown as the title)                   │
- * │   caption      one or two short lines                                │
+ * │   label        the step, shown as the title (keep it short)          │
  * │   timestamp    shown once unlocked (e.g. "12 Oct 2026")              │
  * │   state        'locked' | 'unlocked'                                 │
- * │   plumageStage 1–6: how white his head is at this milestone          │
- * │ Numbers go in the {{MILESTONE_N_LABEL}} placeholders. Story beats    │
- * │ only — never prices, targets or returns.                             │
+ * │   plumageStage 1–6: how white the head is at this milestone          │
+ * │ Story steps only — never prices, targets or returns.                 │
  * └─────────────────────────────────────────────────────────────────────┘
  */
 (function () {
@@ -19,49 +17,43 @@
 
   const MILESTONES = [
     {
-      id: 'first-branch',
-      label: 'The first branch',
-      caption: 'Somewhere to sit that isn’t mud. {{MILESTONE_1_LABEL}}',
+      id: 'leave-the-nest',
+      label: 'Leave the nest',
       timestamp: '{{MILESTONE_1_DATE}}',
       state: 'unlocked',
       plumageStage: 1,
     },
     {
-      id: 'flock-forms',
-      label: 'The flock forms',
-      caption: 'Brown specks on every horizon, all flying the same way. {{MILESTONE_2_LABEL}}',
+      id: 'find-the-flock',
+      label: 'Find the flock',
       timestamp: '{{MILESTONE_2_DATE}}',
       state: 'unlocked',
       plumageStage: 2,
     },
     {
-      id: 'river-opens',
-      label: 'The river opens',
-      caption: 'Everybody finds the water at once. {{MILESTONE_3_LABEL}}',
+      id: 'reach-the-river',
+      label: 'Reach the river',
       timestamp: '{{MILESTONE_3_DATE}}',
       state: 'unlocked',
       plumageStage: 3,
     },
     {
-      id: 'six-to-a-branch',
-      label: 'Six to a branch',
-      caption: 'No room left on the tree. Nobody minds. {{MILESTONE_4_LABEL}}',
+      id: 'take-your-branch',
+      label: 'Take your branch',
       timestamp: '{{MILESTONE_4_DATE}}',
       state: 'locked',
       plumageStage: 4,
     },
     {
-      id: 'the-feast',
-      label: 'The feast',
-      caption: 'Salmon in the shallows. Eagles gon eat. {{MILESTONE_5_LABEL}}',
+      id: 'eat-together',
+      label: 'Eat together',
       timestamp: '{{MILESTONE_5_DATE}}',
       state: 'locked',
       plumageStage: 5,
     },
     {
-      id: 'head-turns',
-      label: 'The head turns',
-      caption: 'Five years of brown. Then white. {{MILESTONE_6_LABEL}}',
+      id: 'white-head',
+      label: 'Earn the white head',
       timestamp: '{{MILESTONE_6_DATE}}',
       state: 'locked',
       plumageStage: 6,
@@ -118,7 +110,7 @@
           '<div class="ms__card">' +
           '<span class="ms__time">' + (open ? esc(m.timestamp) : 'Locked') + '</span>' +
           '<h3 class="ms__label">' + esc(m.label) + '</h3>' +
-          '<p class="ms__cap">' + esc(m.caption) + '</p>' +
+          (m.caption ? '<p class="ms__cap">' + esc(m.caption) + '</p>' : '') +
           '<span class="visually-hidden">' + (open ? 'Unlocked. Plumage stage ' + m.plumageStage + ' of 6.' : 'Locked.') + '</span>' +
           '</div></li>';
       });

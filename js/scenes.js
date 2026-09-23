@@ -57,7 +57,7 @@
       const k = f[3] ? 'white' : 'brown';
       el.className = 'td-bird';
       el.style.cssText = 'left:' + f[0] + '%;top:' + f[1] + '%;--s:' + f[2] + ';--r:' + ((R() - 0.5) * 18).toFixed(1) + 'deg;--flap:' + (0.5 + R() * 0.35).toFixed(2) + 's;--d:-' + (R() * 3).toFixed(2) + 's';
-      el.innerHTML = '<span><img class="td-wings" src="assets/sprites/topdown-wings-' + k + '.svg" alt="" width="410" height="290"><img src="assets/sprites/topdown-body-' + k + '.svg" alt="" width="410" height="290"></span>';
+      el.innerHTML = '<span><img class="td-wings" src="assets/sprites/topdown-wings-' + k + '.svg" alt="" width="424" height="280"><img src="assets/sprites/topdown-body-' + k + '.svg" alt="" width="424" height="280"></span>';
       host.appendChild(el);
       return el;
     });
@@ -636,7 +636,8 @@
       tl.to(pm, { p: Math.min(1, ms.maxProgress + 0.03), duration: 2.5, ease: 'none', onUpdate: () => ms.setProgress(pm.p) }, t6 + 0.85);
     }
     tl.to(proxies.closeup, { headRot: -6, duration: 1.2, ease: 'sine.inOut' }, t6 + 1);
-    wordsIn(tl, words(s6, 1), t6 + 3.3, 0.5);
+    wordsIn(tl, words(s6, 1), t6 + 0.9, 0.5);
+    tl.fromTo(q(s6, '[data-sub]'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, t6 + 1.5);
     ranges.push([s6, t6, t6 + 4.3, ['closeup']]);
 
     /* ---------------- SCENE 7 — BACK TO THE NEST ---------------- */
@@ -657,14 +658,36 @@
     });
     // ...and points the way
     tl.to(proxies.home, { wingL: 110, headRot: -8, duration: 0.35, ease: 'back.out(2)' }, t7 + 1.35);
-    // the camera pulls back to the full river — thousands of them
-    const nestOrigin = () => {
-      const n = q(s7, '.s7-nest'), sc = s7.getBoundingClientRect(), r = n.getBoundingClientRect();
-      return (((r.left + r.width / 2 - sc.left) / sc.width) * 100).toFixed(1) + '% ' + (((r.top + r.height / 2 - sc.top) / sc.height) * 100).toFixed(1) + '%';
+    // the camera pulls back: he stands on the rock above the whole river at sunrise
+    const nestC = () => {
+      const n = q(s7, '.s7-nest'), c = q(s7, '.s7-cliff');
+      return [c.offsetLeft + n.offsetLeft + n.offsetWidth / 2, c.offsetTop + n.offsetTop + n.offsetHeight / 2];
     };
-    tl.fromTo(home, { scale: 1, transformOrigin: nestOrigin }, { scale: 0.28, duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
-    tl.to(home, { opacity: 0, duration: 0.5 }, t7 + 2.8);
-    tl.fromTo(pano, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
+    const homeScale = () => (mobile() ? 0.8 : 0.7);
+    tl.fromTo(home, { scale: 1, y: 0, transformOrigin: () => nestC()[0].toFixed(1) + 'px ' + nestC()[1].toFixed(1) + 'px' },
+      { scale: homeScale, y: () => (mobile() ? 0.62 : 0.57) * H() - nestC()[1], duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
+    // the sun comes up right behind him
+    const sunX = () => {
+      const c = q(s7, '.s7-cliff'), n = q(s7, '.s7-nest');
+      const hx = c.offsetLeft + n.offsetLeft + hero7.offsetLeft + hero7.offsetWidth / 2;
+      return nestC()[0] + (hx - nestC()[0]) * homeScale() - W() / 2;
+    };
+    tl.fromTo(pano, { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.inOut' }, t7 + 1.9);
+    // (CSS `translate`, so the rays' spin animation keeps its own transform)
+    const placeSun = () => $$('.s7-dawn > *', s7).forEach((el) => { el.style.translate = 'calc(-50% + ' + sunX().toFixed(1) + 'px) -50%'; });
+    placeSun();
+    window.ScrollTrigger.addEventListener('refresh', placeSun);
+    tl.fromTo(q(s7, '.s7-dawn'), { opacity: 0, y: () => 0.3 * H(), scale: 0.6 }, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power2.out' }, t7 + 2.1);
+    // wing down, chin up — king of the sky
+    tl.to(proxies.home, { wingL: 0, headRot: -12, duration: 0.4, ease: 'back.out(2)' }, t7 + 2.5);
+    // and the sky fills with eagles flying past him
+    const skyHost = q(s7, '.s7-sky');
+    const RS = seeded(717);
+    for (let i = 0; i < (mobile() ? 4 : 8); i++) {
+      const left = i % 2 === 1;
+      const el = makeFlyer(skyHost, 'top:' + (26 + RS() * 30).toFixed(1) + '%;width:' + (5 + RS() * 4).toFixed(1) + (mobile() ? 'vw' : 'vh') + ';--flap:' + (0.35 + RS() * 0.2).toFixed(2) + 's' + (left ? ';left:auto;right:-14%' : ''), RS() < 0.5, left ? 'is-left' : '');
+      tl.fromTo(el, { x: 0 }, { x: () => (left ? -1 : 1) * 1.35 * W(), duration: 1.6 + RS() * 0.4 }, t7 + 1.9 + i * 0.1);
+    }
     wordsIn(tl, words(s7), t7 + 2.9, 0.7);
     tl.fromTo(q(s7, '[data-sub]'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, t7 + 3.55);
     ranges.push([s7, t7, t7 + 4.6, ['home']]);

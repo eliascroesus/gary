@@ -291,7 +291,7 @@ const files = {};
   // flap on the compositor (scaleX) while the body stays still.
   const TD = require('../js/eagle.js').renderTopDown;
   const strip = (x) => x.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
-  const tdFile = (o) => svg(410, 290, '<g transform="translate(205 135)">' + strip(TD(o)) + '</g>');
+  const tdFile = (o) => svg(424, 280, '<g transform="translate(212 125)">' + strip(TD(o)) + '</g>');
   files['sprites/topdown-wings-brown.svg'] = tdFile({ part: 'wings' });
   files['sprites/topdown-wings-white.svg'] = tdFile({ part: 'wings', white: true });
   files['sprites/topdown-body-brown.svg'] = tdFile({ part: 'body' });
@@ -398,14 +398,33 @@ function crowdTree(x, y, s, seed, whiteShare) {
     dots += '<circle cx="' + r1(x + 0.6 * sc) + '" cy="' + r1(y - 5.4 * sc) + '" r="' + r1(2.6 * sc) + '" fill="' + (white ? HOME.bone : '#6B4128') + '"/>';
   }
   pano += '<g stroke="' + INK + '" stroke-width="1.2">' + dots + '</g>';
-  // and the sky full of them
-  let sky = '';
-  for (let i = 0; i < 420; i++) {
-    const x = R() * 1600, y = 40 + Math.pow(R(), 1.3) * 440, sc = 0.4 + R() * 1.1;
-    sky += '<path d="M ' + r1(x - 8 * sc) + ' ' + r1(y - 4 * sc) + ' q ' + r1(4 * sc) + ' ' + r1(5 * sc) + ' ' + r1(8 * sc) + ' ' + r1(4 * sc) + ' q ' + r1(4 * sc) + ' ' + r1(-1 * sc) + ' ' + r1(8 * sc) + ' ' + r1(-4 * sc) + '"/>';
-  }
-  pano += '<g fill="none" stroke="#4A2E1C" stroke-width="2.4" stroke-linecap="round">' + sky + '</g>';
   files['scenes/s7-panorama.svg'] = svg(1600, 1000, pano, ' preserveAspectRatio="xMidYMax slice"');
+
+  // SCENE 7: the rock — a lone promontory above the river, its flat top jutting
+  // out like a stage. The nest sits on the ledge at the same spot as in scene 1.
+  const rock = 'M 190 1010 C 210 860 160 720 196 610 C 214 540 130 480 70 440 C 36 418 12 390 18 356 C 140 332 380 326 560 336 C 640 342 694 392 704 470 C 722 640 744 820 796 1010 Z';
+  let rk = fillInk(rock, '#3C4553', 7);
+  rk += flat('M 196 610 C 214 540 130 480 70 440 C 120 470 190 520 240 600 C 260 700 250 860 270 1010 L 190 1010 C 210 860 160 720 196 610 Z', '#313946');
+  rk += flat('M 560 336 C 640 342 694 392 704 470 C 722 640 744 820 796 1010 L 700 1010 C 680 820 660 620 640 480 C 630 400 600 360 560 336 Z', '#313946');
+  rk += line('M 300 460 l 30 60 l -18 40 M 480 520 l -20 70 l 26 50 M 360 720 l 40 60 l -10 60 M 560 640 l -30 80', INK, 4);
+  // first light catching the top of the ledge
+  rk += line('M 30 352 C 150 332 380 326 556 338', '#FFD27A', 7);
+  [[120, 344], [470, 338], [540, 340]].forEach((p) => {
+    const d = 'M ' + p[0] + ' ' + p[1] + ' q -6 -22 -16 -30 M ' + p[0] + ' ' + p[1] + ' q 2 -26 10 -36 M ' + p[0] + ' ' + p[1] + ' q 12 -16 24 -20';
+    rk += line(d, INK, 9) + line(d, '#C9A86A', 4);
+  });
+  rk += fillInk(rock, 'none', 7);
+  files['scenes/s7-rock.svg'] = svg(800, 1000, rk, ' overflow="visible"');
+
+  // Sunrise behind the rock: a disc and a slowly turning crown of rays
+  let rays = '';
+  const NR = 24;
+  for (let i = 0; i < NR; i++) {
+    const a0 = (i / NR) * Math.PI * 2, a1 = ((i + 0.5) / NR) * Math.PI * 2;
+    rays += 'M 500 500 L ' + r1(500 + Math.cos(a0) * 520) + ' ' + r1(500 + Math.sin(a0) * 520) + ' L ' + r1(500 + Math.cos(a1) * 520) + ' ' + r1(500 + Math.sin(a1) * 520) + ' Z ';
+  }
+  files['scenes/s7-rays.svg'] = svg(1000, 1000, flat(rays, '#FFE28A', 0.32));
+  files['scenes/s7-sun.svg'] = svg(400, 400, '<circle cx="200" cy="200" r="190" fill="#FFE28A" opacity="0.35"/><circle cx="200" cy="200" r="150" fill="#FFD24D" stroke="' + INK + '" stroke-width="7"/><path d="M 110 150 C 130 110 170 90 210 88" fill="none" stroke="#FFF6E4" stroke-width="12" stroke-linecap="round"/>');
 }
 
 /* ------------------------------------------------------------------ SPRITES */

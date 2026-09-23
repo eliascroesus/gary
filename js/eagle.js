@@ -910,38 +910,84 @@
     o = o || {};
     const hero = !!o.hero, white = !!o.white;
     const uid = o.uid || 'td' + (++counter).toString(36);
-    const body = white ? C.chocolate : C.brown;
-    const dark = white ? '#3A2011' : C.brownDark;
-    const wingL = smooth([[-18, -14], [-60, -40], [-112, -46], [-168, -26], [-196, -6, 'c'], [-178, 4, 'c'], [-194, 20, 'c'], [-172, 26, 'c'], [-184, 44, 'c'], [-160, 44, 'c'], [-164, 62, 'c'], [-138, 56, 'c'], [-110, 60], [-60, 50], [-20, 34]]);
-    const wingR = wingL.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (m, x, y) => r1(-parseFloat(x)) + ' ' + y);
-    const tail = smooth([[-20, 70], [-38, 132, 'c'], [-22, 124, 'c'], [-12, 146, 'c'], [0, 128, 'c'], [12, 146, 'c'], [22, 124, 'c'], [38, 132, 'c'], [20, 70]]);
     const ctx = { uid: uid, defs: [], canonical: false, plumage: 0 };
-    let wingDetail = '';
-    if (hero) wingDetail = mottles(401, 9, [-190, -50, 180, 110], 6, 12, dark) + scallops(-120, -10, 5, 18, 9, dark) + '<path d="M -150 20 L -118 16 M -140 40 L -110 30"' + stroke(LINE_S) + '/>';
-    const wing = (side, d) => '<g class="td-wing td-wing-' + side + '">' + (hero ? shape(ctx, 'w' + side, d, body, side === 'l' ? wingDetail : wingDetail.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (m, x, y) => r1(-parseFloat(x)) + ' ' + y)) : '<path d="' + d + '" fill="' + body + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>') + '</g>';
+    const body = white ? C.chocolate : C.brown;
+    const dark = white ? '#33190C' : C.brownDark;
+    const light = white ? C.chocolateLight : C.brownLight;
+    const inked = (d, fill, w) => '<path d="' + d + '" fill="' + fill + '" stroke="' + C.ink + '" stroke-width="' + (w || LINE) + '" stroke-linejoin="round"/>';
+    const mirror = (str) => str.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (m, x, y) => r1(-parseFloat(x)) + ' ' + y);
+    // One long flight feather (a "finger"), base → tip.
+    const quill = (bx, by, tx, ty, w) => {
+      const dx = tx - bx, dy = ty - by, L = Math.hypot(dx, dy), nx = (-dy / L) * w / 2, ny = (dx / L) * w / 2;
+      const mx = bx + dx * 0.6, my = by + dy * 0.6, ex = tx - dx * 0.06, ey = ty - dy * 0.06;
+      return 'M ' + r1(bx + nx) + ' ' + r1(by + ny) + ' Q ' + r1(mx + nx * 1.2) + ' ' + r1(my + ny * 1.2) + ' ' + r1(ex + nx * 0.5) + ' ' + r1(ey + ny * 0.5) +
+        ' Q ' + r1(tx) + ' ' + r1(ty) + ' ' + r1(ex - nx * 0.5) + ' ' + r1(ey - ny * 0.5) + ' Q ' + r1(mx - nx * 1.2) + ' ' + r1(my - ny * 1.2) + ' ' + r1(bx - nx) + ' ' + r1(by - ny) + ' Z';
+    };
+
+    // --- one wing (left); the right is its mirror image
+    const FINGERS = [[-126, -36, -200, -52], [-132, -26, -205, -31], [-135, -14, -203, -9], [-135, -2, -196, 12], [-131, 9, -183, 30]];
+    let wl = FINGERS.map((f) => inked(quill(f[0], f[1], f[2], f[3], 22), dark, LINE_M)).join('');
+    // arm + secondaries, the trailing edge scalloped feather by feather
+    let trail = '';
+    const T0 = [-146, 14], T1 = [-22, 36], N = 7;
+    for (let i = 0; i < N; i++) {
+      const x0 = T0[0] + ((T1[0] - T0[0]) * i) / N, y0 = T0[1] + ((T1[1] - T0[1]) * i) / N;
+      const x1 = T0[0] + ((T1[0] - T0[0]) * (i + 1)) / N, y1 = T0[1] + ((T1[1] - T0[1]) * (i + 1)) / N;
+      trail += ' Q ' + r1((x0 + x1) / 2) + ' ' + r1((y0 + y1) / 2 + 16) + ' ' + r1(x1) + ' ' + r1(y1);
+    }
+    const arm = 'M -18 -24 C -50 -42 -96 -50 -136 -42 C -152 -36 -156 -10 -146 14' + trail + ' C -14 22 -12 -8 -18 -24 Z';
+    let armDetail = '<path d="M -18 -22 C -52 -38 -96 -45 -134 -38 C -128 -22 -92 -10 -24 0 Z" fill="' + light + '"/>'; // coverts, catching the light
+    armDetail += scallops(-136, -6, 6, 19, 8, dark, LINE_S);
+    for (let i = 1; i < N; i++) {
+      const x = T0[0] + ((T1[0] - T0[0]) * i) / N, y = T0[1] + ((T1[1] - T0[1]) * i) / N;
+      armDetail += '<path d="M ' + r1(x) + ' ' + r1(y - 2) + ' l 3 -16"' + stroke(2.5, dark) + '/>';
+    }
+    if (hero) armDetail += mottles(401, 6, [-130, -40, 110, 36], 5, 9, dark);
+    wl += shape(ctx, 'arm-l', arm, body, armDetail, LINE);
+    const wr = mirror(wl).split(uid + '-arm-l').join(uid + '-arm-r');
+    ctx.defs.push(mirror(ctx.defs[ctx.defs.length - 1]).split(uid + '-arm-l').join(uid + '-arm-r')); // its clip, mirrored
+    const wings = '<g class="td-wing td-wing-l">' + wl + '</g><g class="td-wing td-wing-r">' + wr + '</g>';
+
+    // --- tail: a fan of feathers
+    let tipD = '';
+    const TL = [-40, 132], TR = [40, 132];
+    for (let i = 0; i < 5; i++) {
+      const x0 = TL[0] + (80 * i) / 5, x1 = TL[0] + (80 * (i + 1)) / 5;
+      tipD += ' Q ' + r1((x0 + x1) / 2) + ' ' + (148 - Math.abs(i - 2) * 3) + ' ' + r1(x1) + ' 132';
+    }
+    const tail = 'M -16 64 C -28 88 -40 112 -40 132' + tipD + ' C 40 112 28 88 16 64 Z';
+    let tailDetail = '<path d="M -8 80 L -18 134 M 8 80 L 18 134 M 0 82 L 0 138"' + stroke(2.5, white ? C.whiteShade : dark) + '/>';
+    if (!white) tailDetail += '<path d="M -44 116 L 44 116 L 46 126 L -46 126 Z" fill="' + C.tan + '"/>';
+    let s = '';
     const part = o.part || 'all'; // 'wings' | 'body' | 'all' — split so wings can flap on the compositor
-    let s = '<path d="' + tail + '" fill="' + (white ? C.white : dark) + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>';
-    if (hero && !white) s += '<path d="M -26 100 L 26 100 L 30 112 L -30 112 Z" fill="' + C.tan + '"/>';
-    const wings = wing('l', wingL) + wing('r', wingR);
-    if (part === 'wings') s = wings;
-    else if (part === 'all') s += wings;
+    if (part !== 'wings') s += shape(ctx, 'tail', tail, white ? C.white : dark, tailDetail, LINE);
+    if (part !== 'body') s += wings;
     if (part !== 'wings') {
-      const bodyD = 'M 0 -40 C 26 -40 36 -6 34 30 C 32 64 18 86 0 86 C -18 86 -32 64 -34 30 C -36 -6 -26 -40 0 -40 Z';
-      s += hero ? shape(ctx, 'b', bodyD, body, mottles(402, 5, [-30, -30, 60, 110], 6, 10, dark)) : '<path d="' + bodyD + '" fill="' + body + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>';
-      // head, beak pointing up the screen, eyes on either side
+      // --- body, back feathers in rows
+      const bodyD = 'M 0 -42 C 26 -42 34 -8 32 28 C 30 62 16 84 0 86 C -16 84 -30 62 -32 28 C -34 -8 -26 -42 0 -42 Z';
+      let bodyDetail = scallops(-22, 0, 3, 15, 7, dark) + scallops(-18, 24, 3, 12, 7, dark) + scallops(-14, 48, 3, 9, 6, dark);
+      if (hero) bodyDetail += mottles(402, 4, [-26, -30, 52, 100], 5, 8, dark);
+      s += shape(ctx, 'body', bodyD, body, bodyDetail, LINE);
+      // --- head: beak forward, eyes bulging out on each side, a hard brow
       const headFill = white ? C.white : body;
-      s += '<g class="td-head">';
-      s += '<path d="M 0 -94 C 22 -94 32 -78 32 -60 C 32 -42 20 -32 0 -32 C -20 -32 -32 -42 -32 -60 C -32 -78 -22 -94 0 -94 Z" fill="' + headFill + '" stroke="' + C.ink + '" stroke-width="' + LINE + '" stroke-linejoin="round"/>';
-      s += '<path d="M -12 -90 C -10 -108 -4 -120 0 -126 C 4 -120 10 -108 12 -90 C 6 -84 -6 -84 -12 -90 Z" fill="' + (white ? C.beakAdult : C.beakJuv) + '" stroke="' + C.ink + '" stroke-width="' + LINE_M + '" stroke-linejoin="round"/>';
-      const eyes = '<ellipse cx="-19" cy="-70" rx="10" ry="12" fill="#fff" stroke="' + C.ink + '" stroke-width="3.5"/><ellipse cx="19" cy="-70" rx="10" ry="12" fill="#fff" stroke="' + C.ink + '" stroke-width="3.5"/>';
-      const pupils = '<circle cx="-19" cy="-72" r="5.5" fill="' + C.ink + '"/><circle cx="19" cy="-72" r="5.5" fill="' + C.ink + '"/><circle cx="-17" cy="-75" r="1.8" fill="#fff"/><circle cx="21" cy="-75" r="1.8" fill="#fff"/>';
+      s += '<g class="td-head"><g transform="translate(0 -52) scale(1.18) translate(0 52)">';
+      // his signature feather: one stray white feather sticking out of the side of his head
+      if (hero) s += inked(quill(-6, -62, -50, -92, 16), C.white, 3.5) + '<path d="M -10 -65 L -46 -89"' + stroke(2) + '/>';
+      s += inked('M -20 -46 L -30 -34 L -12 -40 Z M 20 -46 L 30 -34 L 12 -40 Z', headFill, LINE_M); // nape feathers
+      s += inked('M 0 -90 C 17 -90 25 -76 25 -61 C 25 -46 16 -38 0 -38 C -16 -38 -25 -46 -25 -61 C -25 -76 -17 -90 0 -90 Z', headFill, LINE);
+      const beakC = white ? C.beakAdult : C.beakJuv, cere = white ? C.cereAdult : C.cereJuv;
+      s += inked('M -10 -84 C -9 -98 -5 -110 0 -116 C 5 -110 9 -98 10 -84 C 5 -80 -5 -80 -10 -84 Z', beakC, LINE_M);
+      s += '<path d="M -9 -88 C -4 -92 4 -92 9 -88" fill="none" stroke="' + cere + '" stroke-width="5" stroke-linecap="round"/>';
+      s += '<path d="M -3 -108 Q 0 -104 3 -108"' + stroke(2.5) + '/>';
+      const eyes = '<ellipse cx="-21" cy="-66" rx="8.5" ry="10.5" transform="rotate(-14 -21 -66)" fill="#fff" stroke="' + C.ink + '" stroke-width="3.5"/><ellipse cx="21" cy="-66" rx="8.5" ry="10.5" transform="rotate(14 21 -66)" fill="#fff" stroke="' + C.ink + '" stroke-width="3.5"/>';
+      const pupils = '<circle cx="-21" cy="-70" r="5" fill="' + C.ink + '"/><circle cx="21" cy="-70" r="5" fill="' + C.ink + '"/><circle cx="-19.5" cy="-72.5" r="1.7" fill="#fff"/><circle cx="22.5" cy="-72.5" r="1.7" fill="#fff"/>';
       s += '<g class="td-eyes">' + eyes + '<g class="td-pupils">' + pupils + '</g></g>';
-      // signature feather: one stray white feather sticking out of the nape
-      if (hero) s += '<path d="M 18 -44 C 30 -44 46 -36 58 -22 C 44 -24 30 -30 16 -36 Z" fill="' + C.white + '" stroke="' + C.ink + '" stroke-width="3.5" stroke-linejoin="round"/><path d="M 20 -40 L 52 -25"' + stroke(2.5) + '/>';
-      s += '</g>';
+      s += '<path d="M -31 -80 L -12 -73 M 31 -80 L 12 -73"' + stroke(5.5) + '/>'; // brow ridge — the eagle scowl
+      // his signature feather: one stray white feather lying back across the crown
+      s += '</g></g>';
     }
     const title = o.title || '';
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-205 -135 410 290"' + (o.intrinsic ? ' width="410" height="290"' : '') + ' class="eagle-topdown" role="' + (title ? 'img' : 'presentation') + '"' + (title ? ' aria-label="' + title + '"' : ' aria-hidden="true"') + '>' + (title ? '<title>' + title + '</title>' : '') + '<defs>' + ctx.defs.join('') + '</defs>' + s + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-212 -125 424 280"' + (o.intrinsic ? ' width="424" height="280"' : '') + ' class="eagle-topdown" role="' + (title ? 'img' : 'presentation') + '"' + (title ? ' aria-label="' + title + '"' : ' aria-hidden="true"') + '>' + (title ? '<title>' + title + '</title>' : '') + '<defs>' + ctx.defs.join('') + '</defs>' + s + '</svg>';
   }
 
   // Head only — plumage icons for the milestone timeline (stage 0-6).

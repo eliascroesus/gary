@@ -757,11 +757,13 @@ html.lenis, html.lenis body { height: auto; }
   position: absolute;
   z-index: 6;
   left: var(--gutter);
-  top: 50%;
-  transform: translateY(-50%);
+  /* centred in the space above the "Scroll to follow him" pill, never behind it */
+  top: clamp(64px, 9vh, 96px);
+  bottom: calc(112px + env(safe-area-inset-bottom, 0px));
   width: min(560px, calc(100% - var(--gutter) * 2));
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  align-content: center;
   justify-items: start;
   gap: var(--s-5);
   color: var(--cream-100);
@@ -866,7 +868,7 @@ html.lenis, html.lenis body { height: auto; }
 .td-bird {
   position: absolute;
   width: calc(var(--hero-w) * var(--s, 0.25));
-  aspect-ratio: 410 / 290;
+  aspect-ratio: 424 / 280;
   translate: -50% -50%;
   will-change: transform;
 }
@@ -874,7 +876,7 @@ html.lenis, html.lenis body { height: auto; }
 .td-bird > span { position: absolute; inset: 0; rotate: var(--r, 0deg); animation: glide 5s ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
 .td-bird img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-.td-wings { transform-origin: 50% 42%; animation: td-flap var(--flap, 0.9s) ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+.td-wings { transform-origin: 50% 37%; animation: td-flap var(--flap, 0.9s) ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
 
 @keyframes td-flap {
   from { transform: scale(1, 1); }
@@ -891,7 +893,7 @@ html.lenis, html.lenis body { height: auto; }
   left: 50%;
   top: 64%;
   width: var(--hero-w);
-  aspect-ratio: 410 / 290;
+  aspect-ratio: 424 / 280;
   translate: -50% -50%;
   --flap: 1.5s;
 }
@@ -900,7 +902,7 @@ html.lenis, html.lenis body { height: auto; }
 .s3-eagle > img,
 .s3-eagle > .td { position: absolute; inset: 0; width: 100%; height: 100%; }
 .s3-eagle .td svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.s3-eagle .td--wings { transform-origin: 50% 42%; animation: td-flap var(--flap) ease-in-out infinite alternate; will-change: transform; }
+.s3-eagle .td--wings { transform-origin: 50% 37%; animation: td-flap var(--flap) ease-in-out infinite alternate; will-change: transform; }
 
 /* ---------------------------------------------------------------- scene 4 — the council grounds */
 .council {
@@ -1085,7 +1087,7 @@ html.lenis, html.lenis body { height: auto; }
 
 .ms.is-low .ms__card { top: auto; bottom: 40px; }
 .ms__time { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-400); }
-.ms__label { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.12rem; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; }
+.ms__label { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.3rem; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; }
 .ms__cap { margin: 0; font-size: 0.78rem; line-height: 1.35; color: var(--fog-100); }
 
 /* unlocked but not yet flown to / reached / locked */
@@ -1119,6 +1121,7 @@ html.lenis, html.lenis body { height: auto; }
 
 .scene__copy--side { right: auto; width: min(46vw, 640px); text-align: left; top: 9vh; }
 .scene__copy--side .hl { font-size: clamp(2.2rem, 4.8vw, 5rem); max-width: none; margin: 0; }
+.scene__copy--side .scene__sub { margin-left: 0; }
 
 .s6-dock {
   position: absolute;
@@ -1126,7 +1129,7 @@ html.lenis, html.lenis body { height: auto; }
   left: var(--gutter);
   right: var(--gutter);
   bottom: 3vh;
-  height: 330px;
+  height: 250px;
   padding: var(--s-3) var(--s-5) var(--s-2);
   border: var(--line) solid var(--ink);
   border-radius: var(--radius-l);
@@ -1143,11 +1146,27 @@ html.lenis, html.lenis body { height: auto; }
 .s7-cliff {
   --ch: 104vh;
   position: absolute;
-  right: 4vw;
+  left: 50%;
+  margin-left: calc(var(--ch) * 0.8 * -0.38); /* the nest sits centre-screen */
   bottom: -26vh;
   height: var(--ch);
   aspect-ratio: 800 / 1000;
 }
+
+/* sunrise behind the rock: the disc, and a crown of rays that slowly turns */
+.s7-dawn { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; }
+.is-static .s7-dawn { opacity: 1; }
+.s7-rays,
+.s7-sun { position: absolute; left: 50%; top: 50%; height: auto; max-width: none; translate: -50% -50%; }
+.s7-rays { width: 190vmax; animation: rays 90s linear infinite; will-change: transform; }
+.s7-sun { width: clamp(220px, 42vmin, 460px); }
+
+@keyframes rays {
+  to { transform: rotate(360deg); }
+}
+
+.s7-sky { position: absolute; inset: 0; pointer-events: none; }
+.s7-sky .flyer { left: -14%; }
 
 .s7-young { position: absolute; bottom: 30%; width: 19%; height: auto; }
 .s7-young--1 { left: 6%; }
@@ -1155,15 +1174,16 @@ html.lenis, html.lenis body { height: auto; }
 .s7-young--3 { left: 35%; width: 18%; }
 .s7-hero { position: absolute; left: 50%; bottom: 25%; width: 52%; }
 
-.scene__copy--final { top: 8vh; }
-.s7-lockup { font-size: var(--fs-mega) !important; max-width: none !important; }
+.scene__copy--final { top: max(7vh, 76px); }
+.s7-lockup { font-size: clamp(3rem, 9.5vw, 9rem) !important; max-width: none !important; }
 
 @media (max-width: 700px) {
   .s6-hero { left: 50%; top: 14vh; width: 78vw; margin-left: -39vw; }
-  .scene__copy--side { left: 0; right: 0; width: auto; text-align: center; top: 6vh; }
+  .scene__copy--side { left: 0; right: 0; width: auto; text-align: center; top: 76px; }
   .scene__copy--side .hl { font-size: clamp(1.6rem, 7.4vw, 2.4rem); margin-inline: auto; }
+  .scene__copy--side .scene__sub { margin-left: auto; }
   .s6-dock { top: 44%; bottom: 2vh; height: auto; padding: var(--s-2) var(--s-3); }
-  .s7-cliff { --ch: 84vh; right: auto; left: calc(50% - var(--ch) * 0.8 * 0.38); bottom: -30vh; }
+  .s7-cliff { --ch: 84vh; bottom: -30vh; }
 }
 
 /* ---------------------------------------------------------------- sections below the story */
@@ -1475,7 +1495,7 @@ html.lenis, html.lenis body { height: auto; }
   }
 
   .s1-bolt { left: 8%; }
-  .intro { top: 8%; transform: none; gap: var(--s-4); }
+  .intro { top: 64px; align-content: start; gap: var(--s-4); }
   .intro__lead { font-size: 1rem; }
   .intro .contract { padding-left: var(--s-4); }
   .scene__copy--low { bottom: 5vh; }
@@ -1489,6 +1509,6 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rain, .td-wings, .td-bird > span, .flyer__wing, .scroll-hint__chev svg { animation: none; }
+  .s7-rays, .rain, .td-wings, .td-bird > span, .flyer__wing, .scroll-hint__chev svg { animation: none; }
   .rain { opacity: 0.25; }
 }
