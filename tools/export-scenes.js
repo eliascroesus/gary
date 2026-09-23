@@ -214,6 +214,70 @@ const files = {};
   files['scenes/s3-front.svg'] = svg(W, 1000, fr);
 }
 
+
+/* ------------------------------------------------------------------ SCENES 4 + 5 (warm) */
+const WARM = {
+  amber: '#F2991E', amberDark: '#C9701A', rust: '#A9571C', gold: '#FFC83A', gold200: '#FFE28A', cream: '#FFF6E4',
+  teal700: '#0D5C5A', teal500: '#16968E', teal300: '#5CC8BA', salmon: '#FF7F6E', salmonDark: '#DE5A4B', salmonLight: '#FFC2B2',
+  bank: '#7A5A3A', bankDark: '#5E4330', snow: '#FFF6E4', bark: '#4A3423',
+};
+
+// A distant tree packed with perched eagles (tiny brown bodies, some white heads).
+function crowdTree(x, y, s, seed, whiteShare) {
+  const R = rng(seed);
+  const L = bareTree(x, y, s, seed);
+  let out = sticks(L, WARM.bark, 5 * s);
+  L.slice(1).forEach((b) => {
+    for (let i = 0; i < 3; i++) {
+      const t = 0.25 + i * 0.3 + R() * 0.1;
+      const bx = b[0] + (b[2] - b[0]) * t, by = b[1] + (b[3] - b[1]) * t;
+      out += '<ellipse cx="' + r1(bx) + '" cy="' + r1(by - 6 * s) + '" rx="' + r1(4.5 * s) + '" ry="' + r1(6.5 * s) + '" fill="#5A3A24" stroke="' + INK + '" stroke-width="' + r1(1.6 * s) + '"/>';
+      const white = R() < whiteShare;
+      out += '<circle cx="' + r1(bx + 1 * s) + '" cy="' + r1(by - 13 * s) + '" r="' + r1(3.4 * s) + '" fill="' + (white ? WARM.cream : '#6B4128') + '" stroke="' + INK + '" stroke-width="' + r1(1.4 * s) + '"/>';
+    }
+  });
+  return out;
+}
+
+{
+  // SCENE 4 back: low winter sun, warm hills, far bank crowded with eagles, the wide river
+  let b = '<circle cx="1180" cy="470" r="150" fill="' + WARM.gold200 + '" stroke="' + INK + '" stroke-width="6"/>';
+  b += fillInk(ridge(1600, 540, [40, 22, 10], 61, false, 1010, -40, 1640), WARM.amberDark, 6);
+  b += fillInk(ridge(1600, 600, [22, 12], 62, false, 1010, -40, 1640), WARM.rust, 6);
+  const R = rng(63);
+  for (let i = 0; i < 16; i++) b += crowdTree(40 + i * 102 + R() * 30, 640 - R() * 14, 0.9 + R() * 0.5, 64 + i, 0.4);
+  b += fillInk('M -20 648 L 1620 648 L 1620 1010 L -20 1010 Z', WARM.teal500, 6);
+  b += line('M 80 700 l 180 0 M 420 740 l 260 0 M 900 700 l 200 0 M 1250 760 l 240 0 M 200 820 l 220 0 M 760 860 l 300 0 M 1180 900 l 200 0', WARM.teal300, 7);
+  b += line('M 1060 690 l 120 0 M 1110 720 l 80 0', WARM.gold200, 7); // sun on the water
+  files['scenes/s4-back.svg'] = svg(1600, 1000, b, ' preserveAspectRatio="xMidYMax slice"');
+
+  // SCENE 4 front: the near bank — old snow, dead grass, a broken stick
+  let f = fillInk(smooth([[-40, 860], [300, 840], [700, 870], [1100, 846], [1640, 866], [1640, 1010, 'c'], [-40, 1010, 'c']]), WARM.bank, 7);
+  [[160, 900, 120, 22], [640, 930, 160, 24], [1320, 910, 140, 22]].forEach((p, i) => { f += fillInk(blob(p[0], p[1], p[2], p[3], 9, 0.18, 70 + i), WARM.snow, 5); });
+  for (let i = 0; i < 22; i++) {
+    const x = 30 + i * 74 + R() * 20, y = 866 + Math.sin(i) * 10;
+    f += line('M ' + r1(x) + ' ' + r1(y) + ' q -6 -26 -16 -34 M ' + r1(x) + ' ' + r1(y) + ' q 5 -30 12 -38', INK, 9) + line('M ' + r1(x) + ' ' + r1(y) + ' q -6 -26 -16 -34 M ' + r1(x) + ' ' + r1(y) + ' q 5 -30 12 -38', '#C49A5E', 4);
+  }
+  files['scenes/s4-front.svg'] = svg(1600, 1000, f, ' preserveAspectRatio="xMidYMax slice"');
+
+  // SCENE 5 back: salmon-pink sky side — far bank, every tree full
+  let b5 = fillInk(ridge(1600, 470, [34, 18], 81, false, 1010, -40, 1640), '#E0735F', 6);
+  b5 += fillInk(ridge(1600, 520, [20, 12], 82, false, 1010, -40, 1640), '#C4563F', 6);
+  const R5 = rng(83);
+  for (let i = 0; i < 20; i++) b5 += crowdTree(20 + i * 82 + R5() * 24, 560 - R5() * 12, 0.8 + R5() * 0.5, 84 + i, 0.45);
+  files['scenes/s5-back.svg'] = svg(1600, 1000, b5, ' preserveAspectRatio="xMidYMax slice"');
+
+  // SCENE 5 water: the shallows where the salmon run
+  let w = fillInk(smooth([[-40, 560], [400, 548], [800, 566], [1200, 546], [1640, 560], [1640, 1010, 'c'], [-40, 1010, 'c']]), WARM.teal500, 7);
+  w += line('M 60 620 l 200 0 M 520 640 l 240 0 M 980 610 l 220 0 M 1300 660 l 200 0 M 180 760 l 260 0 M 700 800 l 300 0 M 1180 780 l 260 0 M 360 920 l 280 0 M 980 940 l 300 0', WARM.teal300, 8);
+  [[240, 700, 90, 36], [1330, 720, 110, 40], [820, 900, 130, 44], [120, 930, 100, 40], [1500, 940, 120, 46]].forEach((r, i) => {
+    w += fillInk(blob(r[0], r[1], r[2], r[3], 9, 0.14, 90 + i), '#6F604F', 6);
+    w += flat(blob(r[0] - r[2] * 0.25, r[1] - r[3] * 0.35, r[2] * 0.4, r[3] * 0.25, 7, 0.2, 95 + i), '#9A8A75');
+    w += line('M ' + (r[0] - r[2] - 20) + ' ' + (r[1] + r[3] * 0.6) + ' q ' + (r[2] + 20) + ' 18 ' + (2 * r[2] + 40) + ' 0', WARM.cream, 6);
+  });
+  files['scenes/s5-water.svg'] = svg(1600, 1000, w, ' preserveAspectRatio="xMidYMax slice"');
+}
+
 /* ------------------------------------------------------------------ SPRITES */
 {
   // A far-off eagle: brown, wings up, flying right. Readable at 24px.
@@ -222,6 +286,39 @@ const files = {};
   files['sprites/speck.svg'] = svg(64, 36, fillInk(wingUp, '#5A3A24', 3) + fillInk(body, '#6B4128', 3) + fillInk('M 6 22 L 16 20 L 16 28 Z', '#4A2E1C', 2.5));
   const wingDown = 'M 30 24 C 26 32 20 36 12 36 C 18 32 22 28 24 24 Z M 38 24 C 42 32 48 36 56 36 C 50 32 46 28 44 24 Z';
   files['sprites/speck-down.svg'] = svg(64, 40, fillInk(body, '#6B4128', 3) + fillInk(wingDown, '#5A3A24', 3) + fillInk('M 6 22 L 16 20 L 16 28 Z', '#4A2E1C', 2.5));
+
+
+  // Crowd eagles — deliberately simple (≈15 shapes) so dozens stay cheap.
+  // No signature feather: only the hero has one.
+  const crowdBird = (head, body, fish) => {
+    const beak = head === '#FFFDF6' ? '#FFBE1A' : '#5C534F';
+    let g = fillInk('M 40 104 L 22 128 L 44 122 L 52 130 L 60 106 Z', body === '#4A2916' ? '#FFFDF6' : '#55301A', 4);
+    g += fillInk('M 60 44 C 88 44 100 72 98 96 C 96 116 80 124 60 124 C 40 124 24 116 24 96 C 22 70 34 44 60 44 Z', body, 5);
+    g += flat('M 48 78 C 62 74 76 84 76 100 C 76 112 66 118 56 116 C 46 112 42 92 48 78 Z', body === '#4A2916' ? '#633A21' : '#C99A5E');
+    g += fillInk('M 34 64 C 20 74 18 100 26 118 L 40 108 C 42 90 42 74 34 64 Z', body === '#4A2916' ? '#3A2011' : '#5E3A20', 4);
+    g += line('M 44 126 l -8 8 M 46 126 l 0 10 M 48 126 l 8 8 M 72 126 l -8 8 M 74 126 l 0 10 M 76 126 l 8 8', INK, 9) + line('M 44 126 l -8 8 M 46 126 l 0 10 M 48 126 l 8 8 M 72 126 l -8 8 M 74 126 l 0 10 M 76 126 l 8 8', '#F5B82E', 4);
+    g += fillInk('M 60 6 C 84 6 98 22 98 40 C 98 58 82 68 62 68 C 40 68 26 56 26 38 C 26 20 40 6 60 6 Z', head, 5);
+    g += fillInk('M 86 28 C 104 24 118 34 118 48 C 118 58 110 62 106 56 C 104 50 98 48 90 48 C 86 44 84 34 86 28 Z', beak, 4);
+    g += '<ellipse cx="72" cy="34" rx="10" ry="12" fill="#fff" stroke="' + INK + '" stroke-width="3.5"/><circle cx="75" cy="36" r="6" fill="' + INK + '"/><circle cx="77" cy="33" r="2" fill="#fff"/>';
+    if (fish) g += fillInk('M 104 52 L 124 40 L 120 54 L 128 66 Z', WARM.salmon, 3.5);
+    return svg(130, 140, g);
+  };
+  files['sprites/crowd-brown.svg'] = crowdBird('#7B4A2A', '#7B4A2A', false);
+  files['sprites/crowd-white.svg'] = crowdBird('#FFFDF6', '#4A2916', false);
+  files['sprites/crowd-brown-eat.svg'] = crowdBird('#7B4A2A', '#7B4A2A', true);
+  files['sprites/crowd-white-eat.svg'] = crowdBird('#FFFDF6', '#4A2916', true);
+  // A jumping salmon, and feather confetti
+  let sal = fillInk('M 8 40 C 40 12 120 10 164 34 L 196 14 L 190 44 L 202 72 L 164 56 C 124 78 40 74 8 40 Z', WARM.salmon, 5);
+  sal += flat('M 30 48 C 70 62 120 62 160 50 C 120 70 60 70 30 48 Z', WARM.salmonLight);
+  sal += line('M 50 30 C 80 22 120 22 148 32', WARM.salmonDark, 4);
+  sal += fillInk('M 90 22 q 14 -18 30 -2 Z', WARM.salmonDark, 4);
+  sal += '<circle cx="34" cy="36" r="6" fill="#fff" stroke="' + INK + '" stroke-width="3"/><circle cx="35" cy="36" r="2.6" fill="' + INK + '"/>';
+  files['sprites/salmon.svg'] = svg(210, 86, sal);
+  const quill = (fill) => svg(40, 64, fillInk('M 20 4 C 34 16 34 40 20 58 C 6 40 6 16 20 4 Z', fill, 3.5) + line('M 20 10 L 20 62', INK, 3) + line('M 11 30 l 8 4 M 29 24 l -8 4', INK, 2.5));
+  files['sprites/feather-white.svg'] = quill(WARM.cream);
+  files['sprites/feather-brown.svg'] = quill('#7B4A2A');
+  files['sprites/feather-gold.svg'] = quill(WARM.gold);
+  files['sprites/splash.svg'] = svg(160, 90, fillInk('M 10 86 C 20 50 30 40 40 20 C 46 44 52 50 60 34 C 66 54 72 58 80 8 C 88 58 94 54 100 34 C 108 50 114 44 120 20 C 130 40 140 50 150 86 Z', WARM.cream, 5) + line('M 30 70 l 0 -10 M 80 60 l 0 -14 M 128 70 l 0 -10', WARM.teal300, 4));
 }
 
 let n = 0;

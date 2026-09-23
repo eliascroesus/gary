@@ -876,6 +876,131 @@ html.lenis, html.lenis body { height: auto; }
   width: clamp(240px, 34vw, 500px);
 }
 
+
+/* ---------------------------------------------------------------- scene 4 — the council grounds */
+.council {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  height: 90%;
+  aspect-ratio: 1000 / 900;
+  transform: translateX(-50%);
+}
+
+.council__tree { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+.perch {
+  position: absolute;
+  height: 0;
+  will-change: transform;
+  transform-origin: 50% 0;
+}
+
+.perch > img,
+.perch > svg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+}
+
+.perch.is-flipped > img { transform: scaleX(-1); }
+
+.perch--hero { z-index: 2; }
+.perch--hero > img,
+.perch--hero > svg { bottom: -9%; }
+.perch--hero [data-part='prop'] { display: none; }
+
+/* ---------------------------------------------------------------- scene 5 — the feast */
+.overhead,
+.feast,
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+
+.overhead > *,
+.feast > *,
+.confetti > * {
+  position: absolute;
+  height: auto;
+  will-change: transform;
+}
+
+.s5-hero {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: clamp(220px, 36vh, 420px);
+  margin-left: calc(clamp(220px, 36vh, 420px) / -2);
+  z-index: 3;
+}
+
+.s5-splash {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  width: clamp(160px, 26vh, 300px);
+  height: auto;
+  margin-left: calc(clamp(160px, 26vh, 300px) / -2);
+  z-index: 4;
+  opacity: 0;
+}
+
+.scene__copy--feast .hl { font-size: clamp(3rem, 11vw, 9.5rem); }
+
+.scene__ghost {
+  position: absolute;
+  inset: 0;
+  padding-inline: var(--gutter);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scene__ghost .hl { --hl-drop: transparent; }
+.scene__ghost .w::before { display: none; }
+.scene__ghost--a .hl { --hl-fill: var(--teal-500); }
+.scene__ghost--b .hl { --hl-fill: var(--salmon-500); }
+
+.chroma { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.chroma span { position: absolute; inset: 0; opacity: 0; }
+.chroma__a { background: var(--teal-300); }
+.chroma__b { background: var(--salmon-300); }
+
+.counter {
+  display: inline-grid;
+  justify-items: center;
+  gap: 2px;
+  margin: var(--s-4) auto 0;
+  padding: 0.55em 1.1em 0.5em;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-wonky);
+  background: var(--ink);
+  color: var(--gold-400);
+  box-shadow: 0 6px 0 var(--salmon-500);
+  transform: rotate(-2deg);
+}
+
+.counter__n {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.counter__label {
+  font-size: var(--fs-micro);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cream-100);
+}
+
+@media (max-width: 700px) {
+  .council { height: 74%; bottom: 8%; }
+  .s5-hero { bottom: 12%; width: 56vw; margin-left: -28vw; }
+  .s5-splash { width: 44vw; margin-left: -22vw; }
+}
+
 /* ---------------------------------------------------------------- after the story */
 .after {
   position: relative;

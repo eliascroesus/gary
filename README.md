@@ -4,7 +4,7 @@ A single-page, scroll-driven cartoon story about a scruffy young eagle who can't
 catch a thing on his own — until he finds the river where thousands of eagles
 gather and everybody eats. Vanilla HTML/CSS/JS, no build step.
 
-> **Status: Stage 3 of 7 — scenes 1–3 of the story are live, for review.**
+> **Status: Stage 4 of 7 — scenes 1–5 of the story are live, for review.**
 > The full README (deploy, placeholders, adding a milestone) lands with stage 7.
 
 ## Preview
@@ -20,13 +20,13 @@ npx serve .            # or: python3 -m http.server 8000
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | The site: the scroll-driven story (scenes 1–3 so far) |
+| `index.html` | The site: the scroll-driven story (scenes 1–5 so far) |
 | `design-system.html` | Colour tokens, type scale, button states, the full model sheet |
 | `css/style.css` | Every token and shared component — the site will use this file |
 | `js/eagle.js` | The character: every pose built from the same named SVG parts, plus the live rig |
 | `js/main.js` | Shared UI: headline outlines, elastic buttons, copy contract + toast, smooth scroll |
 | `js/scenes.js` | The story: one pinned stage, one scroll-scrubbed timeline |
-| `assets/scenes/`, `assets/sprites/` | Scene layers + flock sprites, from `tools/export-scenes.js` |
+| `assets/scenes/`, `assets/sprites/` | Scene layers, flock/crowd sprites, salmon + feather confetti, from `tools/export-scenes.js` |
 | `assets/characters/*.svg` | The 9 poses + the big sibling, exported from `js/eagle.js` |
 | `assets/characters/plumage/` | Head icons for plumage stages 0–6 (milestone timeline) |
 | `tools/export-characters.js` | Re-exports the SVG files after you edit the art |
@@ -46,6 +46,9 @@ One pinned stage holds every scene; one GSAP timeline is scrubbed by scroll
 of scrolling — and each scene's block in `js/scenes.js` says where it starts.
 Scenes hand over with a camera move and a cross-fade, never a hard cut. Eagles
 and flocks are mounted just before their scene and paused when off stage.
+
+The Scene 5 counter is an in-story number (eagles on the river) — change it with
+`data-count-to` on `.counter__n` in `index.html`. It is never a price.
 
 With `prefers-reduced-motion` (or if GSAP fails to load) the same markup renders
 as still frames that simply fade in. If Lenis fails to load, native scrolling
