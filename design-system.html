@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Eagles Gon Eat Design System</title>
+  <meta name="description" content="Colour tokens, type scale, button states and the full character model sheet for EAGLES GON EAT.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Luckiest+Guy&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Layout for this reference page only — the tokens and components live in css/style.css */
+    .ds { overflow-x: hidden; }
+    .ds p, .ds h1, .ds h2, .ds h3, .ds figure { margin: 0; }
+    .ds-wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+    .ds code, .ds .mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 0.86em; font-weight: 600; }
+
+    /* top bar */
+    .ds-top { position: sticky; top: 0; z-index: 50; background: var(--ink); color: var(--cream-100); border-bottom: var(--line) solid var(--ink); }
+    .ds-top .ds-wrap { display: flex; align-items: center; gap: var(--s-5); min-height: 60px; }
+    .ds-top__brand { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; white-space: nowrap; padding-top: 0.15em; }
+    .ds-top__brand span { color: var(--gold-400); }
+    .ds-top nav { display: flex; gap: var(--s-2); overflow-x: auto; scrollbar-width: none; margin-left: auto; }
+    .ds-top nav::-webkit-scrollbar { display: none; }
+    .ds-top nav a { flex: none; padding: 0.5em 0.9em 0.4em; border-radius: var(--radius-pill); font-weight: 800; font-size: var(--fs-micro); letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+    .ds-top nav a:hover { background: var(--gold-400); color: var(--ink); }
+
+    /* hero */
+    .ds-hero { position: relative; background: linear-gradient(180deg, #0A1734 0%, #14295C 70%, #23448F 100%); color: var(--cream-100); border-bottom: var(--line) solid var(--ink); overflow: hidden; }
+    .ds-hero__grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: var(--s-6); align-items: end; padding-block: var(--s-8) 0; }
+    .ds-hero__copy { padding-bottom: var(--s-8); display: grid; gap: var(--s-5); justify-items: start; }
+    .ds-hero__eyebrow { color: var(--gold-400); }
+    .wordmark { font-size: clamp(3.4rem, 10vw, 8.6rem); transform: rotate(-2.5deg); transform-origin: 0 100%; margin: 0; }
+    .wordmark .w:nth-child(n) { transform: none; }
+    .ticker-badge { display: inline-flex; align-items: center; gap: 0.1em; padding: 0.5em 0.9em 0.36em; border: var(--line) solid var(--ink); border-radius: var(--radius-pill); background: var(--gold-400); color: var(--ink); box-shadow: var(--shadow-s); font-family: var(--font-display); font-size: 1.6rem; line-height: 1; transform: rotate(3deg); }
+    .ticker-badge .ph { font-size: 0.62em; margin-left: 0.15em; }
+    .ds-hero__lead { color: var(--cream-100); max-width: 30em; }
+    .ds-hero__cast { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: clamp(0px, 1vw, 16px); min-height: 100%; padding-top: var(--s-6); }
+    .ds-hero__cast figure { margin: 0; display: grid; justify-items: center; gap: var(--s-2); position: relative; z-index: 1; }
+    .ds-hero__cast img { width: auto; }
+    .ds-hero__cast .c-runt img { height: clamp(90px, 13vw, 150px); }
+    .ds-hero__cast .c-juv img { height: clamp(170px, 25vw, 320px); }
+    .ds-hero__cast .c-adult img { height: clamp(176px, 26vw, 334px); }
+    .ds-hero__cast figcaption { font-size: var(--fs-micro); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); padding-bottom: var(--s-3); }
+    .ds-hero__ground { position: absolute; left: -10%; right: -10%; bottom: 0; height: 64px; background: var(--cream-300); border-top: var(--line) solid var(--ink); border-radius: 50% 50% 0 0 / 34px 34px 0 0; }
+
+    /* palette journey */
+    .journey { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-bottom: var(--line) solid var(--ink); }
+    .journey li { position: relative; min-height: 132px; padding: var(--s-4) var(--s-3); background: var(--sky); color: var(--bone); display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-2); }
+    .journey li + li { border-left: var(--line) solid var(--ink); }
+    .journey b { font-family: var(--font-display); font-weight: 400; font-size: 2.1rem; line-height: 0.8; color: var(--bone); -webkit-text-stroke: 1.5px var(--ink); text-shadow: 2px 3px 0 var(--ink); }
+    .journey span { align-self: flex-start; padding: 0.4em 0.65em 0.32em; border-radius: var(--radius-pill); background: var(--ink); color: var(--cream-100); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.2; }
+
+    /* sections */
+    .ds-section { padding-block: clamp(56px, 8vw, 104px); }
+    .ds-section + .ds-section { border-top: var(--line) dashed rgba(23, 17, 13, 0.18); }
+    .ds-head { display: grid; gap: var(--s-4); margin-bottom: var(--s-7); max-width: 52rem; }
+    .ds-head .t-micro { color: var(--mud-500); }
+    .ds-sub { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-3) var(--s-5); margin: var(--s-8) 0 var(--s-5); }
+    .ds-sub h3 { margin: 0; }
+    .ds-sub p { margin: 0; color: var(--ink-soft); max-width: 44em; }
+    .ds-card { min-width: 0; grid-template-columns: minmax(0, 1fr); background: var(--bone); border: var(--line) solid var(--ink); border-radius: var(--radius-m); box-shadow: var(--shadow-m); }
+
+    /* rules */
+    .rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); }
+    .rules .ds-card { padding: var(--s-6); }
+    .rules h3 { margin-bottom: var(--s-4); }
+    .rules ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-3); }
+    .rules li { position: relative; padding-left: 2.1em; font-weight: 600; }
+    .rules li::before { content: ''; position: absolute; left: 0; top: 0.12em; width: 1.35em; height: 1.35em; border: 3px solid var(--ink); border-radius: 50%; background: var(--teal-300); }
+    .rules .never li::before { background: var(--salmon-500); }
+    .rules .never li::after { content: ''; position: absolute; left: 0.3em; top: 0.72em; width: 0.75em; height: 3px; background: var(--ink); border-radius: 2px; }
+    .rules .always li::after { content: ''; position: absolute; left: 0.42em; top: 0.44em; width: 0.32em; height: 0.6em; border: solid var(--ink); border-width: 0 3px 3px 0; transform: rotate(40deg); }
+
+    /* colour */
+    .act { margin-top: var(--s-7); border: var(--line) solid var(--ink); border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-m); background: var(--bone); }
+    .act__head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--s-2) var(--s-5); padding: var(--s-6) var(--s-5) var(--s-5); background: var(--sky); color: var(--bone); border-bottom: var(--line) solid var(--ink); }
+    .act__head h3 { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; font-size: var(--fs-h2); line-height: 0.95; margin: 0; -webkit-text-stroke: 1.5px var(--ink); text-shadow: 3px 4px 0 var(--ink); }
+    .act__head p { margin: 0; font-weight: 700; max-width: 32em; text-shadow: 0 1px 0 rgba(23, 17, 13, 0.5); }
+    .act--warm .act__head { color: var(--ink); }
+    .act--warm .act__head h3 { color: var(--bone); }
+    .act--warm .act__head p { text-shadow: none; }
+    .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: var(--s-5); padding: var(--s-5); }
+    .sw { display: grid; gap: var(--s-2); margin: 0; }
+    .sw i { display: block; aspect-ratio: 4 / 3; border: var(--line) solid var(--ink); border-radius: var(--radius-wonky); background: var(--c); box-shadow: var(--shadow-s); }
+    .sw b { font-weight: 800; line-height: 1.2; }
+    .sw small { display: block; color: var(--ink-soft); font-size: 0.8rem; line-height: 1.35; }
+    .sw code { color: var(--mud-700); font-size: 0.74rem; overflow-wrap: anywhere; }
+
+    /* type */
+    .type-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); }
+    .type-pair .ds-card { padding: var(--s-6); display: grid; gap: var(--s-4); align-content: start; }
+    .specimen-display { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(3rem, 7vw, 5.5rem); line-height: 0.9; }
+    .specimen-glyphs { font-family: var(--font-display); font-size: 1.45rem; line-height: 1.25; letter-spacing: 0.04em; word-break: break-all; }
+    .specimen-body { font-size: clamp(2.6rem, 6vw, 4.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+    .ds-note { color: var(--ink-soft); font-size: var(--fs-small); margin: 0; }
+    .scale { display: grid; border: var(--line) solid var(--ink); border-radius: var(--radius-m); overflow: hidden; background: var(--bone); box-shadow: var(--shadow-m); }
+    .scale__row { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: var(--s-5); align-items: center; padding: var(--s-4) var(--s-5); }
+    .scale__row + .scale__row { border-top: 3px solid var(--ink); }
+    .scale__row dt { display: grid; gap: 2px; }
+    .scale__row dt code { color: var(--mud-700); }
+    .scale__row dt span { font-size: 0.8rem; color: var(--ink-soft); }
+    .scale__row dd { margin: 0; min-width: 0; overflow: hidden; }
+    .scale__row dd > * { white-space: nowrap; overflow: hidden; text-overflow: clip; }
+    .banners { display: grid; gap: var(--s-5); }
+    .banner { border: var(--line) solid var(--ink); border-radius: var(--radius-l); box-shadow: var(--shadow-m); background: var(--sky); padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px); overflow: hidden; }
+    .banner .hl { font-size: var(--fs-h1); }
+    .banner small { display: inline-block; margin-top: var(--s-5); padding: 0.45em 0.8em 0.36em; border-radius: var(--radius-pill); background: var(--ink); color: var(--cream-100); font-size: var(--fs-micro); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+    .lockups { display: grid; grid-template-columns: 1.3fr 1.3fr 0.8fr; gap: var(--s-5); }
+    .lockup { display: grid; place-items: center; min-height: 230px; padding: var(--s-6); border: var(--line) solid var(--ink); border-radius: var(--radius-l); box-shadow: var(--shadow-m); background: var(--bg, var(--bone)); text-align: center; }
+    .lockup .hl { font-size: clamp(2.4rem, 4.4vw, 3.6rem); transform: rotate(-2deg); }
+    .lockup .hl .w:nth-child(n) { transform: none; }
+    .badge-mark { width: 150px; height: 150px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--gold-400); box-shadow: var(--shadow-m); display: grid; place-items: center; overflow: hidden; }
+    .badge-mark img { width: 86%; height: auto; transform: translate(3%, 4%); }
+
+    /* buttons */
+    .states { border: var(--line) solid var(--ink); border-radius: var(--radius-l); background: var(--bone); box-shadow: var(--shadow-m); overflow-x: auto; }
+    .states table { width: 100%; min-width: 880px; border-collapse: collapse; }
+    .states th, .states td { padding: var(--s-5) var(--s-4); text-align: center; vertical-align: middle; }
+    .states thead th { font-size: var(--fs-micro); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 3px solid var(--ink); }
+    .states tbody th { text-align: left; font-weight: 800; white-space: nowrap; }
+    .states tbody tr + tr th, .states tbody tr + tr td { border-top: 2px dashed rgba(23, 17, 13, 0.2); }
+    .states .btn { pointer-events: none; }
+    .states .btn:not(.btn--icon) { font-size: 1.05rem; min-height: 50px; padding: 0.72em 1.1em 0.58em; }
+    .playground { margin-top: var(--s-6); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--s-6); align-items: start; }
+    .playground .ds-card { padding: var(--s-6); }
+    .play-row { display: flex; flex-wrap: wrap; gap: var(--s-5); align-items: center; padding-block: var(--s-3); }
+    .specs { margin: 0; display: grid; gap: var(--s-3); font-size: var(--fs-small); }
+    .specs div { display: grid; grid-template-columns: 88px 1fr; gap: var(--s-3); }
+    .specs dt { font-weight: 800; }
+    .specs dd { margin: 0; color: var(--ink-soft); }
+    .components { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); margin-top: var(--s-6); }
+    .components .ds-card { padding: var(--s-6); display: grid; gap: var(--s-4); align-content: start; }
+    .components .t-micro { color: var(--mud-500); }
+    .full-bleed { margin-top: var(--s-6); margin-inline: calc(var(--gutter) * -1); }
+
+    /* cast */
+    #cast { --k: 0.62; }
+    .sheet { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
+    .pose { display: grid; grid-template-rows: auto 1fr; margin: 0; border: var(--line) solid var(--ink); border-radius: var(--radius-l); overflow: hidden; background: var(--bone); box-shadow: var(--shadow-m); }
+    .pose__stage { position: relative; height: 350px; background: var(--sky); border-bottom: var(--line) solid var(--ink); display: flex; align-items: flex-end; justify-content: center; padding: var(--s-3) var(--s-3) 22px; overflow: hidden; }
+    .pose__stage::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: var(--ground, var(--mud-500)); border-top: 4px solid var(--ink); }
+    .pose__stage.is-air { align-items: center; padding-bottom: 12px; }
+    .pose__stage.is-air::after { display: none; }
+    .pose__stage img { position: relative; z-index: 1; width: auto; height: calc(var(--vbh) * var(--scale, 1) * var(--k) * 1px); max-width: 100%; object-fit: contain; object-position: bottom; }
+    .pose__stage.is-perch { padding-bottom: 0; }
+    .pose__stage.is-perch::after { display: none; }
+    .pose__meta { padding: var(--s-5); display: grid; gap: var(--s-2); align-content: start; }
+    .pose__meta h3 { margin: 0; }
+    .pose__meta .t-micro { color: var(--mud-500); }
+    .pose__meta p { margin: 0; }
+    .pose__meta code { color: var(--mud-700); overflow-wrap: anywhere; }
+    .supporting { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--s-6); align-items: stretch; }
+    .plumage { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--s-3); padding: var(--s-5); background: var(--deep-700); border: var(--line) solid var(--ink); border-radius: var(--radius-l); box-shadow: var(--shadow-m); }
+    .plumage figure { margin: 0; display: grid; justify-items: center; gap: var(--s-2); text-align: center; }
+    .plumage img { width: 100%; max-width: 128px; height: auto; }
+    .plumage figcaption { color: var(--bone); font-size: 0.78rem; font-weight: 700; line-height: 1.25; }
+    .plumage figcaption b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.4rem; letter-spacing: 0.04em; -webkit-text-stroke: 1px var(--ink); text-shadow: 2px 2px 0 var(--ink); }
+    .silhouettes { display: flex; flex-wrap: wrap; gap: var(--s-5) var(--s-6); align-items: flex-end; padding: var(--s-6); }
+    .silhouettes figure { margin: 0; display: grid; justify-items: center; gap: var(--s-2); }
+    .silhouettes img { height: 100px; width: auto; filter: brightness(0); }
+    .silhouettes figcaption { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+    .anatomy { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--s-6); align-items: center; padding: var(--s-6); }
+    .anatomy img { width: 100%; max-width: 380px; height: auto; margin-inline: auto; }
+    .parts { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-3); }
+    .parts li { display: grid; grid-template-columns: 230px 1fr; gap: var(--s-3); align-items: baseline; font-size: var(--fs-small); }
+    .parts .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .parts code { justify-self: start; white-space: nowrap; padding: 0.15em 0.55em; border: 2px solid var(--ink); border-radius: var(--radius-pill); background: var(--gold-200); }
+
+    /* texture + line */
+    .texture { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+    .texture .ds-card { overflow: hidden; display: grid; grid-template-rows: 170px auto; }
+    .texture__demo { position: relative; border-bottom: var(--line) solid var(--ink); display: grid; place-items: center; overflow: hidden; }
+    .texture__meta { padding: var(--s-4) var(--s-5) var(--s-5); display: grid; gap: var(--s-1); }
+    .texture__meta p { margin: 0; font-size: var(--fs-small); color: var(--ink-soft); }
+    .lines { display: grid; gap: 14px; width: 78%; }
+    .lines i { display: block; border-radius: 99px; background: var(--ink); }
+    .grain-demo { position: absolute; inset: 0; background-image: var(--grain); background-size: 180px 180px; opacity: 0.45; }
+    .halftone-demo { position: absolute; inset: 0; background-image: var(--halftone); background-size: 10px 10px; opacity: 0.35; }
+    .wonky-demo { width: 70%; height: 62%; border: var(--line) solid var(--ink); border-radius: var(--radius-wonky); background: var(--salmon-500); box-shadow: var(--shadow-m); transform: rotate(-3deg); }
+    .motion { border: var(--line) solid var(--ink); border-radius: var(--radius-m); background: var(--bone); box-shadow: var(--shadow-m); overflow-x: auto; margin-top: var(--s-6); }
+    .motion table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: var(--fs-small); }
+    .motion th, .motion td { padding: var(--s-3) var(--s-5); text-align: left; vertical-align: top; }
+    .motion thead th { font-size: var(--fs-micro); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 3px solid var(--ink); }
+    .motion tbody tr + tr td { border-top: 2px dashed rgba(23, 17, 13, 0.2); }
+
+    /* footer */
+    .ds-foot { background: var(--ink); color: var(--cream-100); padding-block: var(--s-8); border-top: var(--line) solid var(--ink); }
+    .ds-foot .ds-wrap { display: grid; gap: var(--s-5); }
+    .ds-foot p { margin: 0; color: var(--fog-200); font-size: var(--fs-small); }
+
+    @media (max-width: 1000px) {
+      .sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .texture { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .lockups { grid-template-columns: 1fr 1fr; }
+      .lockups .lockup:last-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 820px) {
+      .ds-hero__grid { grid-template-columns: minmax(0, 1fr); padding-top: var(--s-7); }
+      .ds-hero__copy { padding-bottom: 0; }
+      .journey { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .journey li { min-height: 110px; }
+      .journey li:nth-child(5) { border-left: 0; }
+      .journey li:nth-child(n + 5) { border-top: var(--line) solid var(--ink); }
+      .rules, .type-pair, .playground, .components, .supporting, .anatomy { grid-template-columns: minmax(0, 1fr); }
+      .plumage { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .scale__row { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
+    }
+
+    @media (max-width: 600px) {
+      #cast { --k: 0.56; }
+      .sheet { grid-template-columns: minmax(0, 1fr); }
+      .pose__stage { height: 300px; }
+      .texture, .lockups { grid-template-columns: minmax(0, 1fr); }
+      .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .journey li:nth-child(n) { border-left: 0; border-top: var(--line) solid var(--ink); }
+      .journey li:nth-child(1), .journey li:nth-child(2) { border-top: 0; }
+      .journey li:nth-child(2n) { border-left: var(--line) solid var(--ink); }
+      .journey li:last-child { grid-column: 1 / -1; }
+      .parts li { grid-template-columns: minmax(0, 1fr); gap: var(--s-1); }
+      .ds-top__brand span { display: none; }
+    }
+  </style>
+</head>
+<body class="ds">
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="ds-top">
+    <div class="ds-wrap">
+      <a class="ds-top__brand" href="#top">EGE <span>Design system</span></a>
+      <nav aria-label="Sections">
+        <a href="#rules">Rules</a>
+        <a href="#colour">Colour</a>
+        <a href="#type">Type</a>
+        <a href="#buttons">Buttons</a>
+        <a href="#cast">Cast</a>
+        <a href="#texture">Texture</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="ds-hero" id="top">
+    <div class="ds-wrap ds-hero__grid">
+      <div class="ds-hero__copy">
+        <p class="t-micro ds-hero__eyebrow">Design system · Stage 1 of 7 · For review</p>
+        <h1 class="hl wordmark">Eagles<br>gon eat</h1>
+        <span class="ticker-badge">$<span class="ph">{{TICKER}}</span></span>
+        <p class="t-lead ds-hero__lead">A warm, funny cartoon about a scruffy young eagle who can’t catch a thing on his own — until he finds the river where thousands of eagles gather and everybody eats. Every colour, word and feather on the site comes from this page.</p>
+      </div>
+      <div class="ds-hero__cast" aria-label="The young eagle across the story: runt, juvenile, adult">
+        <div class="ds-hero__ground" aria-hidden="true"></div>
+        <figure class="c-runt"><img src="assets/characters/runt.svg" width="300" height="320" alt="The young eagle as a tiny, shivering runt chick"><figcaption>Scene 1</figcaption></figure>
+        <figure class="c-juv"><img src="assets/characters/scruffy.svg" width="420" height="450" alt="The young eagle as a scruffy brown juvenile with one white feather"><figcaption>Scene 2</figcaption></figure>
+        <figure class="c-adult"><img src="assets/characters/adult-white-head.svg" width="420" height="460" alt="The young eagle grown up, with a white head, still a little goofy"><figcaption>Scene 6</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <ol class="journey" aria-label="Palette journey across the seven scenes">
+    <li style="--sky: var(--sky-1)"><b>1</b><span>The Nest</span></li>
+    <li style="--sky: var(--sky-2)"><b>2</b><span>The Scraps</span></li>
+    <li style="--sky: var(--sky-3)"><b>3</b><span>The Long Flight</span></li>
+    <li class="is-warm" style="--sky: var(--sky-4)"><b>4</b><span>The Council Grounds</span></li>
+    <li class="is-warm" style="--sky: var(--sky-5)"><b>5</b><span>Eagles Gon Eat</span></li>
+    <li style="--sky: var(--sky-6)"><b>6</b><span>The Head Turns</span></li>
+    <li style="--sky: var(--sky-7)"><b>7</b><span>Back to the Nest</span></li>
+  </ol>
+
+  <main>
+    <!-- RULES -->
+    <section class="ds-section" id="rules">
+      <div class="ds-wrap">
+        <div class="ds-head">
+          <p class="t-micro">Art direction</p>
+          <h2 class="t-h1">House rules</h2>
+          <p class="t-lead">He is a warm, funny cartoon bird. Not a national symbol, not an alpha crest. When in doubt, make him scruffier.</p>
+        </div>
+        <div class="rules">
+          <div class="ds-card always">
+            <h3 class="t-h3">Always</h3>
+            <ul>
+              <li>Thick solid ink outlines — 6px on the art, 5px on the UI.</li>
+              <li>Flat, saturated fills. The only gradients are skies.</li>
+              <li>Chunky, rounded, slightly wonky. Nothing ruler-straight.</li>
+              <li>Big expressive eyes with large black pupils.</li>
+              <li>Readable as a silhouette at 100px.</li>
+              <li>The single white feather, in every pose, every frame.</li>
+              <li>Cold to warm: storm, then river, then sunrise.</li>
+            </ul>
+          </div>
+          <div class="ds-card never">
+            <h3 class="t-h3">Never</h3>
+            <ul>
+              <li>Photorealism, heraldic crests, spread-wing flag poses.</li>
+              <li>Red-white-blue, stars and stripes, stone or metal textures.</li>
+              <li>Military or tactical styling. Grindset energy.</li>
+              <li>Majestic or intimidating. He’s scruffy and lovable.</li>
+              <li>Real photos, real people, brands, logos, film references.</li>
+              <li>Any hint that buying makes money. The eagle eats. The visitor is promised nothing.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLOUR -->
+    <section class="ds-section" id="colour">
+      <div class="ds-wrap">
+        <div class="ds-head">
+          <p class="t-micro">Colour tokens</p>
+          <h2 class="t-h1">Cold to warm</h2>
+          <p class="t-lead">The page travels from storm to sunrise. Each act owns its palette; ink and the character colours travel through all of them.</p>
+        </div>
+
+        <div class="act" style="--sky: var(--sky-1)">
+          <div class="act__head"><h3>Act I · Storm</h3><p>Scenes 1–3. Desaturated slate blue, cold grey, muddy brown.</p></div>
+          <div class="swatches">
+            <figure class="sw" style="--c: var(--storm-900)"><i></i><b>Storm night</b><code>--storm-900</code><small>#1B2330</small></figure>
+            <figure class="sw" style="--c: var(--storm-700)"><i></i><b>Thundercloud</b><code>--storm-700</code><small>#2E3A4B</small></figure>
+            <figure class="sw" style="--c: var(--storm-500)"><i></i><b>Slate</b><code>--storm-500</code><small>#4A5A6E</small></figure>
+            <figure class="sw" style="--c: var(--storm-300)"><i></i><b>Drizzle</b><code>--storm-300</code><small>#7D8A9A</small></figure>
+            <figure class="sw" style="--c: var(--fog-200)"><i></i><b>Cold fog</b><code>--fog-200</code><small>#B3BCC5</small></figure>
+            <figure class="sw" style="--c: var(--fog-100)"><i></i><b>Mist</b><code>--fog-100</code><small>#D9DFE4</small></figure>
+            <figure class="sw" style="--c: var(--mud-700)"><i></i><b>Deep mud</b><code>--mud-700</code><small>#4B3F33</small></figure>
+            <figure class="sw" style="--c: var(--mud-500)"><i></i><b>Mudflat</b><code>--mud-500</code><small>#6F604F</small></figure>
+            <figure class="sw" style="--c: var(--mud-300)"><i></i><b>Dry silt</b><code>--mud-300</code><small>#9A8A75</small></figure>
+          </div>
+        </div>
+
+        <div class="act act--warm" style="--sky: var(--sky-4)">
+          <div class="act__head"><h3>Act II · River</h3><p>Scenes 4–5. Amber, warm gold, teal river, salmon pink.</p></div>
+          <div class="swatches">
+            <figure class="sw" style="--c: var(--amber-500)"><i></i><b>Amber</b><code>--amber-500</code><small>#F2991E</small></figure>
+            <figure class="sw" style="--c: var(--amber-300)"><i></i><b>Late sun</b><code>--amber-300</code><small>#FFB547</small></figure>
+            <figure class="sw" style="--c: var(--gold-400)"><i></i><b>Gold</b><code>--gold-400</code><small>#FFC83A · primary buttons</small></figure>
+            <figure class="sw" style="--c: var(--gold-200)"><i></i><b>Butter light</b><code>--gold-200</code><small>#FFE28A</small></figure>
+            <figure class="sw" style="--c: var(--teal-700)"><i></i><b>Deep river</b><code>--teal-700</code><small>#0D5C5A</small></figure>
+            <figure class="sw" style="--c: var(--teal-500)"><i></i><b>River teal</b><code>--teal-500</code><small>#16968E · focus ring</small></figure>
+            <figure class="sw" style="--c: var(--teal-300)"><i></i><b>Shallows</b><code>--teal-300</code><small>#5CC8BA</small></figure>
+            <figure class="sw" style="--c: var(--salmon-500)"><i></i><b>Salmon</b><code>--salmon-500</code><small>#FF7F6E</small></figure>
+            <figure class="sw" style="--c: var(--salmon-300)"><i></i><b>Salmon belly</b><code>--salmon-300</code><small>#FFB2A4</small></figure>
+          </div>
+        </div>
+
+        <div class="act" style="--sky: var(--sky-6)">
+          <div class="act__head"><h3>Act III · Home</h3><p>Scenes 6–7. Sunrise cream and white against deep blue.</p></div>
+          <div class="swatches">
+            <figure class="sw" style="--c: var(--deep-900)"><i></i><b>Before dawn</b><code>--deep-900</code><small>#0A1734</small></figure>
+            <figure class="sw" style="--c: var(--deep-700)"><i></i><b>Deep blue</b><code>--deep-700</code><small>#14295C</small></figure>
+            <figure class="sw" style="--c: var(--deep-500)"><i></i><b>Blue hour</b><code>--deep-500</code><small>#23448F</small></figure>
+            <figure class="sw" style="--c: var(--cream-300)"><i></i><b>Sunrise</b><code>--cream-300</code><small>#FBE2B6</small></figure>
+            <figure class="sw" style="--c: var(--cream-100)"><i></i><b>Cream</b><code>--cream-100</code><small>#FFF6E4 · page</small></figure>
+            <figure class="sw" style="--c: var(--bone)"><i></i><b>Bone white</b><code>--bone</code><small>#FFFDF6 · cards</small></figure>
+          </div>
+        </div>
+
+        <div class="act" style="--sky: linear-gradient(180deg, #55301A, #7B4A2A)">
+          <div class="act__head"><h3>The young eagle</h3><p>Travels through every act. The beak ripens from slate to yellow as the head turns white.</p></div>
+          <div class="swatches">
+            <figure class="sw" style="--c: var(--eagle-brown)"><i></i><b>Juvenile brown</b><code>--eagle-brown</code><small>#7B4A2A</small></figure>
+            <figure class="sw" style="--c: var(--eagle-brown-dark)"><i></i><b>Mottle</b><code>--eagle-brown-dark</code><small>#55301A</small></figure>
+            <figure class="sw" style="--c: var(--eagle-tan)"><i></i><b>Belly tan</b><code>--eagle-tan</code><small>#C99A5E</small></figure>
+            <figure class="sw" style="--c: var(--chick-down)"><i></i><b>Chick down</b><code>--chick-down</code><small>#8D8279</small></figure>
+            <figure class="sw" style="--c: var(--beak-juvenile)"><i></i><b>Young beak</b><code>--beak-juvenile</code><small>#5C534F</small></figure>
+            <figure class="sw" style="--c: var(--talon)"><i></i><b>Talon yellow</b><code>--talon</code><small>#F5B82E</small></figure>
+            <figure class="sw" style="--c: var(--eagle-chocolate)"><i></i><b>Adult chocolate</b><code>--eagle-chocolate</code><small>#4A2916</small></figure>
+            <figure class="sw" style="--c: var(--eagle-white)"><i></i><b>White head</b><code>--eagle-white</code><small>#FFFDF6 · the feather</small></figure>
+            <figure class="sw" style="--c: var(--beak-adult)"><i></i><b>Grown beak</b><code>--beak-adult</code><small>#FFBE1A</small></figure>
+            <figure class="sw" style="--c: var(--ink)"><i></i><b>Ink</b><code>--ink</code><small>#17110D · every outline</small></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TYPE -->
+    <section class="ds-section" id="type">
+      <div class="ds-wrap">
+        <div class="ds-head">
+          <p class="t-micro">Typography</p>
+          <h2 class="t-h1">Loud words, plain words</h2>
+          <p class="t-lead">Luckiest Guy shouts the story. Inter explains everything else, in plain language that reads at 375px.</p>
+        </div>
+
+        <div class="type-pair">
+          <div class="ds-card">
+            <p class="t-micro">Display · Luckiest Guy · 400</p>
+            <p class="specimen-display">Eagles gon eat</p>
+            <p class="specimen-glyphs">ABCDEFGHIJKLM NOPQRSTUVWXYZ 0123456789 ?!.,’★</p>
+            <p class="ds-note">Always uppercase. Tight leading (0.94). Headlines only — never paragraphs. Fallback: Bowlby One, Arial Black.</p>
+          </div>
+          <div class="ds-card">
+            <p class="t-micro">Body · Inter · 400 / 600 / 800</p>
+            <p class="specimen-body">Aa Bb 123</p>
+            <p class="t-body">Post where you flew in from and how far out you still are. Nobody here is promising you anything — the eagle eats, that’s the whole story.</p>
+            <p class="ds-note">Body 17px / 1.55. Lines stay under ~65 characters. Weight 800 for labels, 600 for emphasis.</p>
+          </div>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Type scale</h3><p>Fluid <code>clamp()</code> sizes — smallest value at 375px, largest on desktop.</p></div>
+        <dl class="scale">
+          <div class="scale__row"><dt><code>--fs-mega</code><span>52 → 192px · final lock-up only</span></dt><dd><p class="t-mega">Alone.</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-hero</code><span>40 → 120px · scene headlines</span></dt><dd><p class="t-hero">We eating.</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-h1</code><span>34 → 76px · section titles</span></dt><dd><p class="t-h1">How to buy</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-h2</code><span>26 → 48px · big facts, card titles</span></dt><dd><p class="t-h2">No presale.</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-h3</code><span>20 → 28px · small titles, FAQ</span></dt><dd><p class="t-h3">Where did you fly in from?</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-lead</code><span>18 → 22px · intros</span></dt><dd><p class="t-lead">He wasn’t the only one struggling.</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-body</code><span>17px · everything else</span></dt><dd><p class="t-body">Plain, friendly, and never a promise.</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-small</code><span>15px · captions, disclaimer</span></dt><dd><p class="t-small">Nothing on this site is financial advice.</p></dd></div>
+          <div class="scale__row"><dt><code>--fs-micro</code><span>12px · labels, eyebrows</span></dt><dd><p class="t-micro">Scene 3 · The long flight</p></dd></div>
+        </dl>
+
+        <div class="ds-sub"><h3 class="t-h3">Headline treatment</h3><p>Fill + fat ink outline + hard drop, every word tilted a hair. Class <code>.hl</code>, fill colour via <code>.hl--gold</code>, <code>.hl--fog</code>, <code>.hl--cream</code>.</p></div>
+        <div class="banners">
+          <div class="banner" style="--sky: var(--sky-1)"><h3 class="hl hl--fog">Most of them don’t make it out.</h3><small>Scene 1 · Storm palette</small></div>
+          <div class="banner banner--warm" style="--sky: var(--sky-4)"><h3 class="hl">Six to a branch.</h3><small>Scene 4 · River palette</small></div>
+          <div class="banner" style="--sky: var(--sky-7)"><h3 class="hl hl--gold">Nobody finds the run alone.</h3><small>Scene 7 · Home palette</small></div>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Lock-ups</h3><p>Wordmark stacked two lines, tilted −2°. The badge mark is his head, stage 0 — also the favicon.</p></div>
+        <div class="lockups">
+          <div class="lockup"><p class="hl hl--gold">Eagles<br>gon eat</p></div>
+          <div class="lockup" style="--bg: var(--storm-700)"><p class="hl">Eagles<br>gon eat</p></div>
+          <div class="lockup" style="--bg: var(--cream-300)"><div class="badge-mark"><img src="assets/characters/plumage/stage-0.svg" width="232" height="236" alt="Badge mark: the young eagle’s head"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="ds-section" id="buttons">
+      <div class="ds-wrap">
+        <div class="ds-head">
+          <p class="t-micro">Buttons + components</p>
+          <h2 class="t-h1">Squishy on purpose</h2>
+          <p class="t-lead">Scale on hover, squash on press, elastic spring on release. Chunky pills, 5px ink outline, a hard drop underneath.</p>
+        </div>
+
+        <div class="states">
+          <table>
+            <thead>
+              <tr><th scope="col"><span class="visually-hidden">Variant</span></th><th scope="col">Rest</th><th scope="col">Hover</th><th scope="col">Pressed</th><th scope="col">Focus</th><th scope="col">Disabled</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Primary</th>
+                <td><span class="btn" aria-hidden="true">Copy contract</span></td>
+                <td><span class="btn is-hover" aria-hidden="true">Copy contract</span></td>
+                <td><span class="btn is-active" aria-hidden="true">Copy contract</span></td>
+                <td><span class="btn is-focus" aria-hidden="true">Copy contract</span></td>
+                <td><span class="btn is-disabled" aria-hidden="true">Copy contract</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Secondary</th>
+                <td><span class="btn btn--secondary" aria-hidden="true">How to buy</span></td>
+                <td><span class="btn btn--secondary is-hover" aria-hidden="true">How to buy</span></td>
+                <td><span class="btn btn--secondary is-active" aria-hidden="true">How to buy</span></td>
+                <td><span class="btn btn--secondary is-focus" aria-hidden="true">How to buy</span></td>
+                <td><span class="btn btn--secondary is-disabled" aria-hidden="true">How to buy</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Dark</th>
+                <td><span class="btn btn--dark" aria-hidden="true">Open the DEX</span></td>
+                <td><span class="btn btn--dark is-hover" aria-hidden="true">Open the DEX</span></td>
+                <td><span class="btn btn--dark is-active" aria-hidden="true">Open the DEX</span></td>
+                <td><span class="btn btn--dark is-focus" aria-hidden="true">Open the DEX</span></td>
+                <td><span class="btn btn--dark is-disabled" aria-hidden="true">Open the DEX</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Icon</th>
+                <td><span class="btn btn--secondary btn--icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 9.5h4l5-4.5v14l-5-4.5h-4z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span></td>
+                <td><span class="btn btn--secondary btn--icon is-hover" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 9.5h4l5-4.5v14l-5-4.5h-4z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span></td>
+                <td><span class="btn btn--secondary btn--icon is-active" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 9.5h4l5-4.5v14l-5-4.5h-4z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span></td>
+                <td><span class="btn btn--secondary btn--icon is-focus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 9.5h4l5-4.5v14l-5-4.5h-4z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span></td>
+                <td><span class="btn btn--secondary btn--icon is-disabled" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 9.5h4l5-4.5v14l-5-4.5h-4z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="playground">
+          <div class="ds-card">
+            <p class="t-micro">Live — hover, press, tab to them</p>
+            <div class="play-row">
+              <button class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12.5" rx="3" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M4.5 15.5V6.5a3 3 0 0 1 3-3h8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Copy contract</button>
+              <button class="btn btn--secondary" type="button">How to buy</button>
+              <button class="btn btn--dark" type="button">Open the DEX</button>
+              <button class="btn btn--secondary btn--icon" type="button" aria-pressed="false" aria-label="Sound is off"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5h4l5-4.5v14l-5-4.5h-4z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+              <button class="btn btn--small btn--salmon" type="button">Small</button>
+              <button class="btn" type="button" disabled>Disabled</button>
+            </div>
+          </div>
+          <div class="ds-card">
+            <p class="t-micro">Spec</p>
+            <dl class="specs">
+              <div><dt>Hover</dt><dd>Lift 3px, scale 1.06, drop grows to 9px. 420ms <code>--ease-elastic</code>.</dd></div>
+              <div><dt>Press</dt><dd>Squash to 110% × 86%, drop collapses. 120ms.</dd></div>
+              <div><dt>Release</dt><dd>GSAP <code>elastic.out(1.1, 0.32)</code> spring from 116% × 80% back to 1. CSS keyframes if GSAP is missing.</dd></div>
+              <div><dt>Focus</dt><dd>4px river-teal ring, 5px offset. Always visible on keyboard focus.</dd></div>
+              <div><dt>Disabled</dt><dd>Mist fill, drizzle outline, no motion.</dd></div>
+              <div><dt>Motion</dt><dd>Transform only. Off under reduced motion.</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="components">
+          <div class="ds-card">
+            <p class="t-micro">Contract chip</p>
+            <div class="contract"><span class="contract__addr"><span class="ph">{{CONTRACT_ADDRESS}}</span></span><span class="btn btn--small" aria-hidden="true">Copy</span></div>
+            <p class="ds-note">Address in mono, truncates with an ellipsis on small screens. Copy sits inside the pill.</p>
+          </div>
+          <div class="ds-card">
+            <p class="t-micro">Toast</p>
+            <div><span class="toast"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21C5.5 13.5 9 6.5 18.5 3c1 6.5-3 13-10.5 16.5z" fill="#FFFDF6" stroke="#FFC83A" stroke-width="2" stroke-linejoin="round"/><path d="M5 22.5L15 9" stroke="#FFC83A" stroke-width="2" stroke-linecap="round"/></svg>Copied. We eating.</span></div>
+            <p class="ds-note">Appears after COPY CONTRACT, with a feather burst. Ink on gold drop. Announced politely to screen readers.</p>
+          </div>
+          <div class="ds-card" style="grid-column: 1 / -1">
+            <p class="t-micro">Disclaimer — always visible in the footer</p>
+            <div class="disclaimer"><strong>Read this</strong>$<span class="ph">{{TICKER}}</span> is a meme coin with no utility and no expectation of profit. Nothing on this site is financial advice. You can lose everything you put in.</div>
+          </div>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Marquee strip</h3><p>Runs between sections below the story. Stops under reduced motion.</p></div>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span></span>
+          <span>EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAST -->
+    <section class="ds-section" id="cast">
+      <div class="ds-wrap">
+        <div class="ds-head">
+          <p class="t-micro">Character</p>
+          <h2 class="t-h1">The young eagle</h2>
+          <p class="t-lead">A juvenile bald eagle: mottled brown all over, feathers sticking out at wrong angles, talons clearly too big for him, a permanently hungry stare. One white feather from the very first frame.</p>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Model sheet</h3><p>Nine poses in story order, all at one world scale — the runt really is that small. Each sits on the sky of the scene it lives in.</p></div>
+        <div class="sheet">
+          <figure class="pose">
+            <div class="pose__stage" style="--sky: var(--sky-1); --ground: var(--mud-700)"><img src="assets/characters/runt.svg" width="300" height="320" style="--vbh: 320; --scale: 0.62" alt="Runt pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Runt</h3><p class="t-micro">Scene 1 · The Nest</p><p>Hunched, tiny, hugging himself against the storm. Shivering.</p><code>assets/<wbr>characters/<wbr>runt.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage" style="--sky: var(--sky-2); --ground: var(--mud-500)"><img src="assets/characters/scruffy.svg" width="420" height="450" style="--vbh: 450" alt="Scruffy pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Scruffy</h3><p class="t-micro">Scene 2 · The Scraps</p><p>Standing, sunken shoulders, drooling a little. Permanently hungry.</p><code>assets/<wbr>characters/<wbr>scruffy.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage is-air" style="--sky: var(--sky-3)"><img src="assets/characters/flying-tired.svg" width="460" height="400" style="--vbh: 400" alt="Flying, tired pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Flying — tired</h3><p class="t-micro">Scene 3 · The Long Flight</p><p>Wings heavy, legs dangling, tongue out. Losing feathers.</p><code>assets/<wbr>characters/<wbr>flying-tired.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage is-air" style="--sky: var(--sky-3)"><img src="assets/characters/flying-determined.svg" width="460" height="360" style="--vbh: 360" alt="Flying, determined pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Flying — determined</h3><p class="t-micro">Scenes 3 + 7</p><p>Second wind. Big up-stroke, talons tucked, eyes on the horizon.</p><code>assets/<wbr>characters/<wbr>flying-determined.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage is-perch" style="--sky: var(--sky-4)"><img src="assets/characters/landed.svg" width="460" height="470" style="--vbh: 470" alt="Landed pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Landed</h3><p class="t-micro">Scene 4 · The Council Grounds</p><p>First branch. Wings still settling, can’t believe how many of them there are.</p><code>assets/<wbr>characters/<wbr>landed.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage is-air" style="--sky: var(--sky-5)"><img src="assets/characters/diving.svg" width="520" height="470" style="--vbh: 470" alt="Diving pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Diving</h3><p class="t-micro">Scene 5 · Eagles Gon Eat</p><p>Locked on. Wings swept back, talons thrown forward.</p><code>assets/<wbr>characters/<wbr>diving.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage" style="--sky: var(--sky-5); --ground: var(--teal-500)"><img src="assets/characters/missing.svg" width="420" height="450" style="--vbh: 450" alt="Missing pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Missing</h3><p class="t-micro">Scene 5 · Eagles Gon Eat</p><p>Empty talons, dripping. Annoyed. Going again.</p><code>assets/<wbr>characters/<wbr>missing.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage" style="--sky: var(--sky-5); --ground: var(--teal-500)"><img src="assets/characters/eating.svg" width="440" height="450" style="--vbh: 450" alt="Eating pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Eating</h3><p class="t-micro">Scene 5 · Eagles Gon Eat</p><p>Mouth full, cheeks pink, happiest bird on the river.</p><code>assets/<wbr>characters/<wbr>eating.svg</code></figcaption>
+          </figure>
+          <figure class="pose">
+            <div class="pose__stage" style="--sky: var(--sky-6); --ground: var(--cream-300)"><img src="assets/characters/adult-white-head.svg" width="420" height="460" style="--vbh: 460; --scale: 1.04" alt="Adult with white head pose"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Adult — white head</h3><p class="t-micro">Scenes 6 + 7</p><p>Proud, chest out — still a little goofy. Grew into the talons. Kept the feather.</p><code>assets/<wbr>characters/<wbr>adult-white-head.svg</code></figcaption>
+          </figure>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Plumage stages</h3><p>Scene 6 and the milestone timeline. Each unlocked milestone turns one more patch white — crown, brow, back, eyes, nape, throat — and the beak ripens to yellow.</p></div>
+        <div class="plumage">
+          <figure><img src="assets/characters/plumage/stage-0.svg" width="232" height="236" alt="Plumage stage 0: all brown"><figcaption><b>0</b>All brown</figcaption></figure>
+          <figure><img src="assets/characters/plumage/stage-1.svg" width="232" height="236" alt="Plumage stage 1: white crown"><figcaption><b>1</b>Crown</figcaption></figure>
+          <figure><img src="assets/characters/plumage/stage-2.svg" width="232" height="236" alt="Plumage stage 2: white brow"><figcaption><b>2</b>Brow</figcaption></figure>
+          <figure><img src="assets/characters/plumage/stage-3.svg" width="232" height="236" alt="Plumage stage 3: white back of the head"><figcaption><b>3</b>Back</figcaption></figure>
+          <figure><img src="assets/characters/plumage/stage-4.svg" width="232" height="236" alt="Plumage stage 4: white around the eyes"><figcaption><b>4</b>Eyes</figcaption></figure>
+          <figure><img src="assets/characters/plumage/stage-5.svg" width="232" height="236" alt="Plumage stage 5: white nape"><figcaption><b>5</b>Nape</figcaption></figure>
+          <figure><img src="assets/characters/plumage/stage-6.svg" width="232" height="236" alt="Plumage stage 6: the full white head"><figcaption><b>6</b>White head</figcaption></figure>
+        </div>
+
+        <div class="supporting" style="margin-top: var(--s-6)">
+          <figure class="pose">
+            <div class="pose__stage" style="--sky: var(--sky-1); --ground: var(--mud-700); height: 260px"><img src="assets/characters/sibling.svg" width="320" height="320" style="--vbh: 320; --scale: 0.78" alt="The big sibling chick"></div>
+            <figcaption class="pose__meta"><h3 class="t-h3">Big sibling</h3><p class="t-micro">Supporting cast · Scene 1</p><p>Bigger, fluffier, smug. No white feather. The flock sprites for scenes 3–7 follow in stage 3.</p></figcaption>
+          </figure>
+          <div class="ds-card">
+            <div class="silhouettes" aria-label="Silhouette test at 100 pixels">
+              <figure><img src="assets/characters/runt.svg" alt="" width="300" height="320" style="height: 62px"><figcaption>Runt</figcaption></figure>
+              <figure><img src="assets/characters/scruffy.svg" alt="" width="420" height="450"><figcaption>Scruffy</figcaption></figure>
+              <figure><img src="assets/characters/flying-tired.svg" alt="" width="460" height="400"><figcaption>Tired</figcaption></figure>
+              <figure><img src="assets/characters/flying-determined.svg" alt="" width="460" height="360"><figcaption>Determined</figcaption></figure>
+              <figure><img src="assets/characters/landed.svg" alt="" width="460" height="470"><figcaption>Landed</figcaption></figure>
+              <figure><img src="assets/characters/diving.svg" alt="" width="520" height="470"><figcaption>Diving</figcaption></figure>
+              <figure><img src="assets/characters/missing.svg" alt="" width="420" height="450"><figcaption>Missing</figcaption></figure>
+              <figure><img src="assets/characters/eating.svg" alt="" width="440" height="450"><figcaption>Eating</figcaption></figure>
+              <figure><img src="assets/characters/adult-white-head.svg" alt="" width="420" height="460"><figcaption>Adult</figcaption></figure>
+            </div>
+            <p class="ds-note" style="padding: 0 var(--s-6) var(--s-6)">Silhouette test at 100px: every pose reads as a bird, and the signature feather survives in all nine.</p>
+          </div>
+        </div>
+
+        <div class="ds-sub"><h3 class="t-h3">Rig anatomy</h3><p>Every pose is built from the same named, layered SVG groups in <code>js/eagle.js</code>. Each group carries <code>data-part</code> and its hinge in <code>data-pivot</code>. Blink, breathing, head tilt, pupil tracking and feather lag get wired in stage 2.</p></div>
+        <div class="ds-card anatomy">
+          <img src="assets/characters/scruffy.svg" width="420" height="450" alt="The scruffy pose, used as the rig reference">
+          <ul class="parts">
+            <li><code>#eagle-head</code><span>Hinges at the neck. Tilts toward the cursor.</span></li>
+            <li><code>#eagle-signature-feather</code><span>The one white feather. Lags and overshoots on every move.</span></li>
+            <li><code>#eagle-headfeathers</code><span>Six white patches, <code>.hf-1</code> … <code>.hf-6</code>, one per milestone.</span></li>
+            <li><code>#eagle-eyes</code><span>Whites, lids, brows. Blinks every 3–5s.</span></li>
+            <li><code>#eagle-pupils</code><span>Clipped to the whites; track the cursor in every scene.</span></li>
+            <li><code>#eagle-beak</code><span>Upper + hinged lower mandible. Ripens to yellow.</span></li>
+            <li><span class="chips"><code>#eagle-wing-l</code><code>#eagle-wing-r</code></span><span>Rotate from the shoulder pivot.</span></li>
+            <li><code>#eagle-body</code><span>Torso, belly patch, neck ruff. 2s breathing loop.</span></li>
+            <li><code>#eagle-talons</code><span>Legs and feet. Too big, on purpose.</span></li>
+            <li><code>#eagle-tail</code><span>Behind everything, wags on landings.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEXTURE -->
+    <section class="ds-section" id="texture">
+      <div class="ds-wrap">
+        <div class="ds-head">
+          <p class="t-micro">Line, texture, motion</p>
+          <h2 class="t-h1">Ink and grain</h2>
+          <p class="t-lead">A fine grain sits over the whole page; halftone dots only in shadows. Both flat — no gloss, no bevels, no metal.</p>
+        </div>
+        <div class="texture">
+          <div class="ds-card">
+            <div class="texture__demo" style="background: var(--fog-100)"><div class="lines"><i style="height: 6px"></i><i style="height: 5px"></i><i style="height: 3px"></i></div></div>
+            <div class="texture__meta"><b>Line weights</b><p>6px art outline · 5px UI outline · 3px interior detail.</p></div>
+          </div>
+          <div class="ds-card">
+            <div class="texture__demo" style="background: var(--fog-100)"><div class="grain-demo"></div></div>
+            <div class="texture__meta"><b>Grain</b><p><code>.grain</code> — fixed over the whole page at 12%. Shown here at 45%.</p></div>
+          </div>
+          <div class="ds-card">
+            <div class="texture__demo" style="background: var(--amber-300)"><div class="halftone-demo"></div></div>
+            <div class="texture__meta"><b>Halftone</b><p><code>.halftone</code> — cast shadows and headline drops only.</p></div>
+          </div>
+          <div class="ds-card">
+            <div class="texture__demo" style="background: var(--cream-300)"><div class="wonky-demo"></div></div>
+            <div class="texture__meta"><b>Wonky radius</b><p><code>--radius-wonky</code> — every corner a little different.</p></div>
+          </div>
+        </div>
+
+        <div class="motion">
+          <table>
+            <thead><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Used for</th></tr></thead>
+            <tbody>
+              <tr><td><code>--ease-out</code></td><td><code>cubic-bezier(.22, 1, .36, 1)</code></td><td>Headlines landing, fades, parallax settle</td></tr>
+              <tr><td><code>--ease-elastic</code></td><td><code>cubic-bezier(.34, 1.8, .5, 1)</code> · GSAP <code>elastic.out(1, .35)</code></td><td>Hover, pops, milestone unlocks</td></tr>
+              <tr><td><code>--ease-squash</code></td><td><code>cubic-bezier(.5, 0, .3, 1.6)</code></td><td>Landings, hops, the “EAT” easter egg</td></tr>
+              <tr><td><code>--dur-1 … --dur-4</code></td><td>120 · 220 · 420 · 700ms</td><td>Press · hover · pops · springs</td></tr>
+              <tr><td>Scroll</td><td>Scrubbed to scroll, never autoplay</td><td>All seven scenes; reduced motion swaps to simple fades</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ds-foot">
+    <div class="ds-wrap">
+      <div class="disclaimer"><strong>Read this</strong>$<span class="ph">{{TICKER}}</span> is a meme coin with no utility and no expectation of profit. Nothing on this site is financial advice. You can lose everything you put in.</div>
+      <p>Design system for review · stage 1 of 7. Every character here is original, hand-authored SVG generated from <code>js/eagle.js</code>.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
