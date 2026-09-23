@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EAGLES GON EAT (${{TICKER}})</title>
+  <meta name="description" content="A scroll-driven cartoon about a scruffy young eagle who struggles alone, then flies to a river where thousands of eagles gather and everybody eats.">
+  <meta property="og:title" content="EAGLES GON EAT">
+  <meta property="og:description" content="Nobody finds the run alone.">
+  <meta name="theme-color" content="#131A25">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Luckiest+Guy&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="site">
+  <div class="grain" aria-hidden="true"></div>
+  <a class="skip-link" href="#after-story">Skip the story</a>
+
+  <main>
+    <!-- ============================================================ STORY -->
+    <div class="story" id="story">
+      <div class="story__stage">
+
+        <!-- SCENE 1 — THE NEST -->
+        <section class="scene scene--1" data-scene="1" aria-labelledby="s1-title">
+          <div class="scene__sky" style="--sky: var(--sky-1)"></div>
+          <div class="scene__cam">
+            <div class="layer layer--back">
+              <img class="layer__fill" src="assets/scenes/s1-back.svg" alt="" width="1600" height="1000">
+              <img class="s1-bolt" src="assets/scenes/s1-bolt.svg" alt="" width="300" height="540">
+            </div>
+            <div class="layer layer--mid">
+              <div class="s1-cliff">
+                <img class="s1-cliff__rock" src="assets/scenes/s1-cliff.svg" alt="" width="800" height="1000">
+                <div class="s1-nest">
+                  <img class="s1-nest__back" src="assets/scenes/s1-nest-back.svg" alt="" width="500" height="230">
+                  <div class="chick chick--sib rig-host" data-live-pose="sibling"><img src="assets/characters/sibling.svg" alt="" width="320" height="320"></div>
+                  <div class="chick chick--runt rig-host" data-live-pose="runt" data-hero><img src="assets/characters/runt.svg" alt="The young eagle as a tiny runt chick, shivering in a storm-battered nest" width="300" height="320"></div>
+                  <img class="s1-nest__front" src="assets/scenes/s1-nest-front.svg" alt="" width="500" height="260">
+                </div>
+              </div>
+            </div>
+            <div class="layer layer--front">
+              <div class="rain"></div>
+              <img class="leaf leaf--1" src="assets/scenes/leaf.svg" alt="" width="40" height="40">
+              <img class="leaf leaf--2" src="assets/scenes/leaf.svg" alt="" width="40" height="40">
+              <img class="leaf leaf--3" src="assets/scenes/leaf.svg" alt="" width="40" height="40">
+            </div>
+          </div>
+          <div class="flash" aria-hidden="true"></div>
+
+          <div class="intro">
+            <h1 class="hl intro__mark">Eagles<br>gon eat</h1>
+            <span class="ticker-badge">$<span class="ph">{{TICKER}}</span></span>
+            <p class="intro__lead">A cartoon about a scruffy young eagle. Scroll to follow him.</p>
+            <div class="contract">
+              <span class="contract__addr"><span class="ph">{{CONTRACT_ADDRESS}}</span></span>
+              <button class="btn btn--small" type="button" data-copy-contract data-contract="{{CONTRACT_ADDRESS}}">Copy contract</button>
+            </div>
+            <span class="scroll-cue" aria-hidden="true">Scroll <svg viewBox="0 0 24 24"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+
+          <div class="scene__copy">
+            <h2 class="hl hl--fog" id="s1-title">Most of them don’t make it out.</h2>
+          </div>
+        </section>
+
+        <!-- SCENE 2 — THE SCRAPS -->
+        <section class="scene scene--2" data-scene="2" aria-labelledby="s2-title">
+          <div class="scene__sky" style="--sky: var(--sky-2)"></div>
+          <div class="scene__cam">
+            <div class="layer layer--back">
+              <img class="layer__fill" src="assets/scenes/s2-back.svg" alt="" width="1600" height="1000">
+            </div>
+            <div class="layer layer--mid">
+              <img class="s2-mud" src="assets/scenes/s2-mud.svg" alt="" width="1600" height="560">
+              <div class="s2-spot">
+                <img class="s2-scraps" src="assets/scenes/s2-scraps.svg" alt="" width="280" height="130">
+                <div class="s2-eagle rig-host" data-live-pose="scruffy" data-hero><img src="assets/characters/scruffy.svg" alt="The young eagle, scruffy and brown, pecking at scraps on a grey mudflat" width="420" height="450"></div>
+              </div>
+            </div>
+            <div class="taunts" aria-hidden="true">
+              <span class="taunt taunt--1">“that’s not an eagle”</span>
+              <span class="taunt taunt--2">“that’s a hawk”</span>
+              <span class="taunt taunt--3">“looks like a pigeon”</span>
+            </div>
+            <div class="layer layer--front">
+              <img class="layer__fill" src="assets/scenes/s2-front.svg" alt="" width="1600" height="1000">
+            </div>
+          </div>
+          <div class="scene__copy">
+            <h2 class="hl hl--fog" id="s2-title">He doesn’t even look like an eagle yet.</h2>
+          </div>
+        </section>
+
+        <!-- SCENE 3 — THE LONG FLIGHT -->
+        <section class="scene scene--3" data-scene="3" aria-labelledby="s3-title">
+          <div class="scene__sky" style="--sky: var(--sky-3)"></div>
+          <div class="scene__glow" aria-hidden="true"></div>
+          <div class="scene__cam">
+            <div class="strip strip--clouds"></div>
+            <div class="strip strip--far"></div>
+            <div class="specks specks--far" data-band="far" aria-hidden="true"></div>
+            <div class="strip strip--mid"></div>
+            <div class="specks specks--mid" data-band="mid" aria-hidden="true"></div>
+            <div class="s3-eagle rig-host" data-live-pose="flying-tired" data-hero><img src="assets/characters/flying-tired.svg" alt="The young eagle on a long flight, tired, wings heavy" width="460" height="400"></div>
+            <div class="specks specks--near" data-band="near" aria-hidden="true"></div>
+            <div class="strip strip--front"></div>
+          </div>
+          <div class="scene__copy">
+            <h2 class="hl hl--fog" id="s3-title">He wasn’t the only one struggling.<br>He just couldn’t see them yet.</h2>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- ============================================================ AFTER THE STORY (stages 4–6) -->
+    <section class="after" id="after-story">
+      <div class="after__inner">
+        <p class="t-micro">Stage 3 of 7</p>
+        <h2 class="t-h1">To be continued</h2>
+        <p class="t-lead">Scenes 4–7 — the council grounds, the feast, the head turning white and the flight home — land in the next stages.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="disclaimer"><strong>Read this</strong>$<span class="ph">{{TICKER}}</span> is a meme coin with no utility and no expectation of profit. Nothing on this site is financial advice. You can lose everything you put in.</div>
+  </footer>
+
+  <div class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
+  <script src="js/eagle.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/scenes.js"></script>
+</body>
+</html>

@@ -978,7 +978,7 @@
 
     function ensureLoop() {
       if (raf || !running()) return;
-      for (const r of rigs) if (r.visible) { lastT = performance.now(); raf = requestAnimationFrame(frame); return; }
+      for (const r of rigs) if (r.visible && !r.paused) { lastT = performance.now(); raf = requestAnimationFrame(frame); return; }
     }
 
     function frame(now) {
@@ -986,7 +986,7 @@
       const dt = Math.min(0.05, (now - lastT) / 1000) || 0.016;
       lastT = now;
       let any = false;
-      for (const r of rigs) if (r.visible) { r.step(now, dt); any = true; }
+      for (const r of rigs) if (r.visible && !r.paused) { r.step(now, dt); any = true; }
       if (any && running()) raf = requestAnimationFrame(frame);
     }
 
@@ -1028,6 +1028,9 @@
       this.gaze = { x: { x: 0, v: 0 }, y: { x: 0, v: 0 } };
       this.prevHead = 0;
       this.prevY = 0;
+      this.paused = false;
+      // scroll-driven offsets (tweened by scenes.js): body x/y, head rotation/drop
+      this.extra = { x: 0, y: 0, rot: 0, headRot: 0, headY: 0 };
       host.__eagleRig = this;
       this.build();
       rigs.add(this);
@@ -1097,7 +1100,8 @@
         else this.swapStart = -1;
       }
       const P2 = this.parts;
-      if (P2.rig) setTf(P2.rig.el, P2.rig.p, rx, y, 0, sx, sy);
+      const X = this.extra;
+      if (P2.rig) setTf(P2.rig.el, P2.rig.p, rx + X.x, y + X.y, X.rot, sx, sy);
       const velY = (y - this.prevY) / dt;
       this.prevY = y;
 
@@ -1133,7 +1137,7 @@
         else hs = 1 + 0.14 * Math.exp(-4.5 * u) * Math.cos(u * 14);
       }
       const chew = M.chew ? Math.max(0, Math.sin(t * 9)) * 2.5 : 0;
-      if (P2.head) setTf(P2.head.el, P2.head.p, 0, br * 1.4 + chew, hr, hs, hs);
+      if (P2.head) setTf(P2.head.el, P2.head.p, 0, br * 1.4 + chew + X.headY, hr + X.headRot, hs, hs);
 
       // 4. Pupils: ease toward the gaze, clipped to the whites.
       const px = spring(this.gaze.x, gx * 7, 90, 16, dt);
@@ -1212,6 +1216,11 @@
       delay ? setTimeout(go, delay) : go();
     };
 
+    LiveRig.prototype.setPaused = function (v) {
+      this.paused = !!v;
+      if (!v) ensureLoop();
+    };
+
     LiveRig.prototype.blink = function () {
       this.blinkAt = performance.now();
       ensureLoop();
@@ -1241,6 +1250,8 @@
     },
     render: render,
     renderHead: renderHead,
+    // shared drawing vocabulary (used by tools/export-scenes.js)
+    draw: { smooth: smooth, blob: blob, fluff: fluff, rng: rng, mottles: mottles, tuft: tuft, claw: claw, r1: r1 },
     // live rig (browser only): EagleRig.mount(el, 'scruffy', { canonicalIds, plumage })
     mount: LiveRuntime ? LiveRuntime.mount : null,
     hopAll: LiveRuntime ? LiveRuntime.hopAll : function () {},

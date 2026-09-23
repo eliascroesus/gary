@@ -520,6 +520,7 @@ a {
   background-image: var(--grain);
   background-size: 180px 180px;
   opacity: 0.12;
+  transform: translateZ(0); /* its own static layer — never repainted */
 }
 
 .halftone {
@@ -555,4 +556,384 @@ svg.eagle {
   .marquee__track {
     animation: none;
   }
+}
+
+/* ==========================================================================
+   SITE — the story (scenes 1–7) and everything around it
+   Default = static frames stacked (no JS, reduced motion). html.is-motion =
+   one pinned stage, scenes stacked absolutely, scrubbed by js/scenes.js.
+   ========================================================================== */
+
+.skip-link {
+  position: absolute;
+  left: var(--s-4);
+  top: -80px;
+  z-index: 100;
+  padding: 0.6em 1em;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--gold-400);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.skip-link:focus { top: var(--s-4); }
+
+/* Lenis smooth scroll (its recommended base rules) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+.story { position: relative; background: var(--storm-900); }
+
+.scene {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 540px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.is-motion .story__stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.is-motion .scene {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  height: auto;
+}
+
+.is-motion .scene:not(.scene--1) { visibility: hidden; }
+
+.scene__sky,
+.scene__cam,
+.layer,
+.flash {
+  position: absolute;
+  inset: 0;
+}
+
+.scene__sky { background: var(--sky); }
+
+.scene__cam { will-change: transform; transform-origin: 50% 60%; }
+
+.layer { pointer-events: none; will-change: transform; }
+
+.layer__fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
+}
+
+.rig-host > img,
+.rig-host > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* scene copy — the headline for each scene */
+.scene__copy {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  top: clamp(72px, 11vh, 120px);
+  padding-inline: var(--gutter);
+  text-align: center;
+  pointer-events: none;
+}
+
+.scene__copy--low { top: auto; bottom: clamp(40px, 9vh, 96px); }
+
+.scene__copy .hl {
+  font-size: var(--fs-hero);
+  max-width: 16ch;
+  margin-inline: auto;
+}
+
+.scene--3 .scene__copy .hl { font-size: clamp(1.9rem, 5vw, 4.4rem); max-width: 24ch; }
+
+/* parallax room: backgrounds are oversized so a moving layer never shows an edge */
+.is-motion .layer__fill { inset: -8%; width: 116%; height: 116%; max-width: none; }
+.is-motion .s2-mud { left: -8%; right: auto; width: 116%; max-width: none; }
+
+/* reduced motion / no JS: each still frame simply fades in */
+.scene.fade-ready { opacity: 0; transition: opacity 0.7s ease !important; }
+.scene.fade-ready.is-in { opacity: 1; }
+
+/* ---------------------------------------------------------------- scene 1 */
+.s1-bolt {
+  position: absolute;
+  left: 22%;
+  top: 4%;
+  width: clamp(90px, 11vw, 170px);
+  height: auto;
+  opacity: 0;
+}
+
+.s1-cliff {
+  --ch: 104vh;
+  position: absolute;
+  right: -2vw;
+  bottom: -26vh;
+  height: var(--ch);
+  aspect-ratio: 800 / 1000;
+}
+
+.s1-cliff__rock { width: 100%; height: 100%; }
+
+.s1-nest {
+  position: absolute;
+  left: 2%;
+  top: 16.3%;
+  width: 72%;
+  aspect-ratio: 500 / 230;
+}
+
+.s1-nest__back,
+.s1-nest__front {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
+}
+
+.s1-nest__front { top: 0; }
+
+.chick { position: absolute; bottom: 30%; }
+.chick--sib { left: 8%; width: 48%; }
+.chick--runt { left: 55%; width: 33%; }
+
+.rain {
+  position: absolute;
+  top: -240px;
+  left: 0;
+  right: -80px;
+  bottom: 0;
+  background: url('../assets/scenes/s1-rain.svg') 0 0 / 240px 240px repeat;
+  will-change: transform;
+  opacity: 0.8;
+  animation: rain 0.55s linear infinite;
+}
+
+@keyframes rain {
+  to { transform: translate3d(-72px, 240px, 0); }
+}
+
+.leaf { position: absolute; width: clamp(22px, 2.4vw, 36px); height: auto; }
+.leaf--1 { left: 12%; top: 30%; }
+.leaf--2 { left: 48%; top: 58%; }
+.leaf--3 { left: 80%; top: 18%; }
+
+.flash { z-index: 4; background: var(--cream-100); opacity: 0; pointer-events: none; }
+
+.intro {
+  position: absolute;
+  z-index: 6;
+  left: var(--gutter);
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(560px, calc(100% - var(--gutter) * 2));
+  display: grid;
+  justify-items: start;
+  gap: var(--s-5);
+  color: var(--cream-100);
+}
+
+.intro__mark { font-size: clamp(3.4rem, 9vw, 7.4rem); transform: rotate(-2.5deg); transform-origin: 0 100%; }
+.intro__mark .w:nth-child(n) { transform: none; }
+.intro__lead { margin: 0; font-size: var(--fs-lead); font-weight: 600; max-width: 26em; text-shadow: 0 2px 0 var(--ink); }
+.intro .contract { max-width: 100%; color: var(--ink); }
+
+.ticker-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5em 0.9em 0.36em;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--gold-400);
+  color: var(--ink);
+  box-shadow: var(--shadow-s);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  transform: rotate(3deg);
+}
+
+.ticker-badge .ph { font-size: 0.62em; margin-left: 0.15em; }
+
+.scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: var(--fs-micro);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.scroll-cue svg { width: 20px; height: 20px; animation: cue 1.4s var(--ease-out) infinite; }
+
+@keyframes cue {
+  50% { transform: translateY(6px); }
+}
+
+/* ---------------------------------------------------------------- scene 2 */
+.s2-mud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 44%;
+  object-fit: cover;
+  object-position: 50% 0;
+}
+
+.s2-spot {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  width: clamp(320px, 54vh, 580px);
+  transform: translateX(-38%);
+}
+
+.s2-eagle { position: relative; width: 78%; }
+.s2-scraps { position: absolute; left: 62%; bottom: -2%; width: 50%; height: auto; }
+
+.taunts { position: absolute; inset: 0; pointer-events: none; }
+
+.taunt {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 2.4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--fog-100);
+  opacity: 0.5;
+  white-space: nowrap;
+  text-shadow: 0 3px 0 rgba(23, 17, 13, 0.35);
+}
+
+.taunt--1 { left: 8%; top: 38%; transform: rotate(-4deg); }
+.taunt--2 { right: 8%; top: 50%; transform: rotate(3deg); }
+.taunt--3 { left: 18%; top: 62%; transform: rotate(-2deg); }
+
+/* ---------------------------------------------------------------- scene 3 */
+.scene__glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(242, 153, 30, 0) 40%, rgba(242, 153, 30, 0.55) 80%, rgba(255, 226, 138, 0.8) 100%);
+  opacity: 0;
+}
+
+.strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(100% + 160vh + 40px); /* one viewport + one tile (tiles are 1.6:1) — wrapped by scenes.js */
+  height: 100%;
+  background-repeat: repeat-x;
+  background-size: auto 100vh;
+  background-size: auto 100svh;
+  background-position: 0 100%;
+  will-change: transform;
+}
+
+/* each strip is cropped to the band its art occupies — far less to composite */
+.strip--clouds { top: 0; height: 48%; background-position: 0 0; background-image: url('../assets/scenes/s3-clouds.svg'); }
+.strip--far { top: auto; bottom: 0; height: 60%; background-image: url('../assets/scenes/s3-far.svg'); }
+.strip--mid { top: auto; bottom: 0; height: 40%; background-image: url('../assets/scenes/s3-mid.svg'); }
+.strip--front { top: auto; bottom: 0; height: 15%; background-image: url('../assets/scenes/s3-front.svg'); }
+
+.specks { position: absolute; inset: 0; pointer-events: none; }
+
+.speck { position: absolute; width: var(--w, 28px); height: auto; }
+.speck img { display: block; width: 100%; height: auto; animation: flap var(--flap, 0.9s) ease-in-out infinite alternate; animation-delay: var(--delay, 0s); transform-origin: 50% 70%; }
+
+@keyframes flap {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(-0.35) translateY(-6px); }
+}
+
+.specks--far .speck { opacity: 0.7; }
+
+.s3-eagle {
+  position: absolute;
+  left: 30%;
+  top: 44%;
+  width: clamp(240px, 34vw, 500px);
+}
+
+/* ---------------------------------------------------------------- after the story */
+.after {
+  position: relative;
+  padding: clamp(80px, 14vh, 160px) var(--gutter);
+  background: var(--cream-100);
+  border-top: var(--line) solid var(--ink);
+}
+
+.after__inner { max-width: var(--max); margin-inline: auto; display: grid; gap: var(--s-4); }
+.after__inner p { margin: 0; }
+
+.site-foot {
+  padding: var(--s-6) var(--gutter);
+  background: var(--ink);
+}
+
+.site-foot .disclaimer { max-width: var(--max); margin-inline: auto; }
+
+/* ---------------------------------------------------------------- toast + feather burst */
+.toast-region {
+  position: fixed;
+  z-index: 80;
+  left: 50%;
+  bottom: clamp(20px, 6vh, 56px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.toast-region .toast { opacity: 0; }
+
+.feather-burst {
+  position: fixed;
+  z-index: 85;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- small screens: simpler parallax */
+@media (max-width: 700px) {
+  .s1-cliff {
+    --ch: 84vh;
+    right: auto;
+    left: calc(50% - var(--ch) * 0.8 * 0.38);
+    bottom: -34vh;
+  }
+
+  .s1-bolt { left: 8%; }
+  .intro { top: 8%; transform: none; gap: var(--s-4); }
+  .intro__lead { font-size: 1rem; }
+  .intro .contract { padding-left: var(--s-4); }
+  .scene__copy--low { bottom: 5vh; }
+  .s2-spot { width: min(78vw, 360px); bottom: 18%; transform: translateX(-46%); }
+  .taunt--2 { right: 4%; }
+  .s3-eagle { width: 76vw; left: 10%; top: 46%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rain, .scroll-cue svg, .speck img { animation: none; }
 }
