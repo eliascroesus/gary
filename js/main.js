@@ -184,6 +184,30 @@
     return lenis;
   };
 
+  /* Sections below the story rise in as they arrive (transform + opacity).
+     Without JS, or with reduced motion, everything is simply there. */
+  EGE.initReveal = function () {
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) return;
+    const groups = document.querySelectorAll('.section__head, .steps, .facts, .posts, .faq');
+    if (!groups.length) return;
+    document.documentElement.classList.add('js-reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    groups.forEach((g) => {
+      const kids = g.matches('.section__head') ? [g] : Array.from(g.children);
+      kids.forEach((el, i) => {
+        el.classList.add('reveal');
+        el.style.setProperty('--delay', (i * 0.08).toFixed(2) + 's');
+        io.observe(el);
+      });
+    });
+  };
+
   EGE.initUI = function (root) {
     EGE.splitHeadlines(root);
     EGE.bindButtons(root);
@@ -194,6 +218,7 @@
     EGE.initUI();
     EGE.initScroll();
     if (EGE.scenes && EGE.scenes.init) EGE.scenes.init();
+    EGE.initReveal();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

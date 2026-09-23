@@ -353,6 +353,34 @@ function crowdTree(x, y, s, seed, whiteShare) {
   files['sprites/crowd-white.svg'] = crowdBird('#FFFDF6', '#4A2916', false);
   files['sprites/crowd-brown-eat.svg'] = crowdBird('#7B4A2A', '#7B4A2A', true);
   files['sprites/crowd-white-eat.svg'] = crowdBird('#FFFDF6', '#4A2916', true);
+
+  // How to buy — four spot illustrations (no brands, no coins, no money imagery)
+  const head = (x, y, sc, white) =>
+    '<g transform="translate(' + x + ' ' + y + ') scale(' + sc + ')">' +
+    fillInk('M 0 -24 C 20 -24 30 -10 30 4 C 30 18 18 26 2 26 C -16 26 -28 16 -28 2 C -28 -12 -16 -24 0 -24 Z', white ? '#FFFDF6' : '#7B4A2A', 4) +
+    fillInk('M 22 -4 C 36 -8 46 0 46 10 C 46 18 40 20 37 16 C 35 12 30 10 24 10 C 20 6 20 0 22 -4 Z', white ? '#FFBE1A' : '#5C534F', 3.5) +
+    '<ellipse cx="10" cy="-4" rx="8" ry="9" fill="#fff" stroke="' + INK + '" stroke-width="3"/><circle cx="12" cy="-2" r="4.6" fill="' + INK + '"/>' +
+    fillInk('M -4 -22 C -12 -34 -14 -44 -8 -54 C -2 -46 2 -36 2 -22 Z', '#FFFDF6', 3) + '</g>';
+  files['sprites/howto-wallet.svg'] = svg(200, 160,
+    fillInk('M 66 16 L 134 16 C 142 16 148 22 148 30 L 148 138 C 148 146 142 152 134 152 L 66 152 C 58 152 52 146 52 138 L 52 30 C 52 22 58 16 66 16 Z', '#2E3A4B', 5) +
+    fillInk('M 64 34 L 136 34 L 136 128 L 64 128 Z', '#FFE28A', 4) +
+    fillInk('M 100 52 C 116 62 116 90 100 110 C 84 90 84 62 100 52 Z', '#FFFDF6', 3.5) + line('M 100 58 L 100 116', INK, 3) +
+    '<circle cx="100" cy="141" r="5" fill="#7D8A9A"/>' + head(162, 118, 0.9, false));
+  files['sprites/howto-fill.svg'] = svg(200, 160,
+    fillInk('M 60 30 L 140 30 L 136 44 C 150 58 152 90 150 120 C 148 144 132 152 100 152 C 68 152 52 144 50 120 C 48 90 50 58 64 44 Z', '#D9DFE4', 5) +
+    fillInk('M 53 104 C 80 96 120 112 147 102 C 148 108 149 114 149 120 C 147 142 132 148 100 148 C 68 148 53 142 51 120 Z', '#16968E', 4) +
+    fillInk('M 56 20 L 144 20 L 144 32 L 56 32 Z', '#7B4A2A', 4) +
+    line('M 72 80 l 0 20 M 64 92 l 16 0', '#FFFDF6', 5) + '<text x="100" y="80" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="13" fill="' + INK + '">A LITTLE</text>' + head(170, 60, 0.75, false));
+  files['sprites/howto-paste.svg'] = svg(200, 160,
+    fillInk('M 50 24 L 150 24 L 150 150 L 50 150 Z', '#FFFDF6', 5) +
+    fillInk('M 78 12 L 122 12 L 126 34 L 74 34 Z', '#7B4A2A', 4) +
+    line('M 66 60 L 134 60 M 66 82 L 120 82 M 66 104 L 134 104 M 66 126 L 104 126', '#9A8A75', 7) +
+    '<rect x="60" y="94" width="80" height="20" rx="6" fill="none" stroke="#FFC83A" stroke-width="5"/>' +
+    fillInk('M 158 30 C 176 50 176 90 150 128 C 134 96 136 58 158 30 Z', '#FFFDF6', 4) + line('M 156 38 L 146 140', INK, 3.5));
+  files['sprites/howto-swap.svg'] = svg(200, 160,
+    fillInk('M 60 54 C 70 28 110 16 138 34 L 146 22 L 156 62 L 116 56 L 128 46 C 110 34 84 40 76 58 Z', '#FFC83A', 4.5) +
+    fillInk('M 140 106 C 130 132 90 144 62 126 L 54 138 L 44 98 L 84 104 L 72 114 C 90 126 116 120 124 102 Z', '#FF7F6E', 4.5) +
+    head(100, 84, 0.8, false));
   // A jumping salmon, and feather confetti
   let sal = fillInk('M 8 40 C 40 12 120 10 164 34 L 196 14 L 190 44 L 202 72 L 164 56 C 124 78 40 74 8 40 Z', WARM.salmon, 5);
   sal += flat('M 30 48 C 70 62 120 62 160 50 C 120 70 60 70 30 48 Z', WARM.salmonLight);

@@ -4,7 +4,7 @@ A single-page, scroll-driven cartoon story about a scruffy young eagle who can't
 catch a thing on his own — until he finds the river where thousands of eagles
 gather and everybody eats. Vanilla HTML/CSS/JS, no build step.
 
-> **Status: Stage 5 of 7 — the whole story (scenes 1–7) and the milestone timeline are live, for review.**
+> **Status: Stage 6 of 7 — story, milestone timeline and every section below it are live, for review.**
 > The full README (deploy, placeholders, adding a milestone) lands with stage 7.
 
 ## Preview
@@ -20,7 +20,7 @@ npx serve .            # or: python3 -m http.server 8000
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | The site: the scroll-driven story, all seven scenes |
+| `index.html` | The site: the seven-scene story, then How to Buy, The Flock, Post Your Flight, FAQ, footer |
 | `design-system.html` | Colour tokens, type scale, button states, the full model sheet |
 | `css/style.css` | Every token and shared component — the site will use this file |
 | `js/eagle.js` | The character: every pose built from the same named SVG parts, plus the live rig |
@@ -80,5 +80,7 @@ component can be mounted anywhere: `EGE.Milestones.mount(element)`.
 
 ## Placeholders used so far
 
-`{{TICKER}}`, `{{CONTRACT_ADDRESS}}`, `{{MILESTONE_1_LABEL}}` … `{{MILESTONE_6_LABEL}}`,
-`{{MILESTONE_1_DATE}}` … `{{MILESTONE_6_DATE}}` — the complete list ships with stage 7.
+`{{TICKER}}`, `{{CONTRACT_ADDRESS}}`, `{{CHAIN_NAME}}`, `{{DEX_URL}}`, `{{X_URL}}`,
+`{{TELEGRAM_URL}}`, `{{LAUNCH_DATE}}`, `{{TOTAL_SUPPLY}}`, `{{LIQUIDITY_STATUS}}`,
+`{{LIQUIDITY_PROOF_URL}}`, `{{MILESTONE_1_LABEL}}` … `{{MILESTONE_6_LABEL}}`,
+`{{MILESTONE_1_DATE}}` … `{{MILESTONE_6_DATE}}` — with a table of where each lives in stage 7.

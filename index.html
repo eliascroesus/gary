@@ -205,18 +205,193 @@
       </div>
     </div>
 
-    <!-- ============================================================ AFTER THE STORY (stages 4–6) -->
-    <section class="after" id="after-story">
-      <div class="after__inner">
-        <p class="t-micro">Stage 5 of 7</p>
-        <h2 class="t-h1">The story’s done. The rest lands next.</h2>
-        <p class="t-lead">How to buy, the flock, post your flight, the FAQ and the footer land in stage 6.</p>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track"><span>EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span></span><span>EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span></span></div>
+    </div>
+
+    <!-- ============================================================ HOW TO BUY -->
+    <section class="section section--buy" id="after-story" aria-labelledby="buy-title">
+      <div class="section__inner">
+        <header class="section__head">
+          <p class="t-micro">How to buy</p>
+          <h2 class="hl hl--gold section__title" id="buy-title">Four flaps.</h2>
+          <p class="t-lead">No jargon. If a step feels confusing, stop and ask in the Telegram — a real person will help, and nobody should ever ask for your secret phrase.</p>
+        </header>
+        <ol class="steps">
+          <li class="step">
+            <img class="step__art" src="assets/sprites/howto-wallet.svg" alt="" width="200" height="160">
+            <span class="step__n">1</span>
+            <h3 class="t-h3">Get a wallet</h3>
+            <p>Download a wallet app that works on <span class="ph">{{CHAIN_NAME}}</span>. Write your secret phrase on paper. Never type it into a website, never share it.</p>
+          </li>
+          <li class="step">
+            <img class="step__art" src="assets/sprites/howto-fill.svg" alt="" width="200" height="160">
+            <span class="step__n">2</span>
+            <h3 class="t-h3">Add a little</h3>
+            <p>Move some <span class="ph">{{CHAIN_NAME}}</span> into it. Only an amount you would be completely fine losing. Seriously.</p>
+          </li>
+          <li class="step">
+            <img class="step__art" src="assets/sprites/howto-paste.svg" alt="" width="200" height="160">
+            <span class="step__n">3</span>
+            <h3 class="t-h3">Paste the contract</h3>
+            <p>Open the DEX and paste the address below. Check the first and last few characters match before anything else.</p>
+            <div class="contract"><span class="contract__addr"><span class="ph">{{CONTRACT_ADDRESS}}</span></span><button class="btn btn--small" type="button" data-copy-contract data-contract="{{CONTRACT_ADDRESS}}">Copy</button></div>
+          </li>
+          <li class="step">
+            <img class="step__art" src="assets/sprites/howto-swap.svg" alt="" width="200" height="160">
+            <span class="step__n">4</span>
+            <h3 class="t-h3">Swap</h3>
+            <p>Swap for $<span class="ph">{{TICKER}}</span> and confirm in your wallet. Then post your flight.</p>
+            <a class="btn btn--dark btn--small" href="{{DEX_URL}}" target="_blank" rel="noopener">Open the DEX</a>
+          </li>
+        </ol>
       </div>
     </section>
+
+    <!-- ============================================================ THE FLOCK -->
+    <section class="section section--flock" aria-labelledby="flock-title">
+      <div class="section__inner">
+        <header class="section__head">
+          <p class="t-micro">The flock</p>
+          <h2 class="hl section__title" id="flock-title">Everybody came in the same way.</h2>
+        </header>
+        <ul class="facts">
+          <li class="fact"><b>No presale.</b><span>Nobody got in early.</span></li>
+          <li class="fact"><b>No team allocation.</b><span>No wallet was set aside for anyone.</span></li>
+          <li class="fact"><b>Liquidity <span class="ph">{{LIQUIDITY_STATUS}}</span>.</b><span>Locked or burned — the real status goes here, with a link to proof: <span class="ph">{{LIQUIDITY_PROOF_URL}}</span></span></li>
+          <li class="fact fact--small"><b><span class="ph">{{TOTAL_SUPPLY}}</span></b><span>Total supply</span></li>
+          <li class="fact fact--small"><b><span class="ph">{{LAUNCH_DATE}}</span></b><span>Launch date</span></li>
+        </ul>
+        <p class="note"><span class="ph">DASHED</span> = a placeholder. Every dashed box on this page is swapped for the real value before launch; see the README.</p>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track"><span>POST YOUR FLIGHT <span class="star">★</span> NOBODY FINDS THE RUN ALONE <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> POST YOUR FLIGHT <span class="star">★</span> NOBODY FINDS THE RUN ALONE <span class="star">★</span> EAGLES GON EAT <span class="star">★</span></span><span>POST YOUR FLIGHT <span class="star">★</span> NOBODY FINDS THE RUN ALONE <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> POST YOUR FLIGHT <span class="star">★</span> NOBODY FINDS THE RUN ALONE <span class="star">★</span> EAGLES GON EAT <span class="star">★</span></span></div>
+    </div>
+
+    <!-- ============================================================ POST YOUR FLIGHT -->
+    <section class="section section--flight" aria-labelledby="flight-title">
+      <div class="section__inner">
+        <header class="section__head">
+          <p class="t-micro">Post your flight</p>
+          <h2 class="hl hl--gold section__title" id="flight-title">Where did you fly in from?</h2>
+          <p class="t-lead">The ritual: post where you flew in from, and how far out you still are. Not your wallet. Not your numbers. Your flight. Tag it <b>#PostYourFlight</b> — somebody on the same river is reading.</p>
+          <a class="btn" href="{{X_URL}}" target="_blank" rel="noopener">Post your flight on X</a>
+        </header>
+        <div class="posts">
+          <article class="post">
+            <header class="post__head"><img src="assets/characters/plumage/stage-0.svg" alt="" width="232" height="236"><div><b>@mudflat.morris</b><span>3 months</span></div></header>
+            <dl class="post__body">
+              <div><dt>Flew in from</dt><dd>a cold apartment and a night-shift schedule</dd></div>
+              <div><dt>How far out</dt><dd>further than I’d like. Still flying.</dd></div>
+            </dl>
+            <p class="post__tag">#PostYourFlight</p>
+          </article>
+          <article class="post">
+            <header class="post__head"><img src="assets/characters/plumage/stage-1.svg" alt="" width="232" height="236"><div><b>@shiftwork_sal</b><span>forever, it feels like</span></div></header>
+            <dl class="post__body">
+              <div><dt>Flew in from</dt><dd>a town with one bus a day</dd></div>
+              <div><dt>How far out</dt><dd>a long way. Saw the specks though.</dd></div>
+            </dl>
+            <p class="post__tag">#PostYourFlight</p>
+          </article>
+          <article class="post">
+            <header class="post__head"><img src="assets/characters/plumage/stage-2.svg" alt="" width="232" height="236"><div><b>@quietcrow</b><span>last winter</span></div></header>
+            <dl class="post__body">
+              <div><dt>Flew in from</dt><dd>the back row of every group chat</dd></div>
+              <div><dt>How far out</dt><dd>closer than I was. Not close.</dd></div>
+            </dl>
+            <p class="post__tag">#PostYourFlight</p>
+          </article>
+          <article class="post">
+            <header class="post__head"><img src="assets/characters/plumage/stage-0.svg" alt="" width="232" height="236"><div><b>@notapigeon</b><span>this spring</span></div></header>
+            <dl class="post__body">
+              <div><dt>Flew in from</dt><dd>people telling me I looked like a hawk</dd></div>
+              <div><dt>How far out</dt><dd>miles. Wings still heavy.</dd></div>
+            </dl>
+            <p class="post__tag">#PostYourFlight</p>
+          </article>
+          <article class="post">
+            <header class="post__head"><img src="assets/characters/plumage/stage-3.svg" alt="" width="232" height="236"><div><b>@riverdad</b><span>a while</span></div></header>
+            <dl class="post__body">
+              <div><dt>Flew in from</dt><dd>raising two kids on a lot of coffee</dd></div>
+              <div><dt>How far out</dt><dd>a branch or two. Sharing it.</dd></div>
+            </dl>
+            <p class="post__tag">#PostYourFlight</p>
+          </article>
+          <article class="post">
+            <header class="post__head"><img src="assets/characters/plumage/stage-1.svg" alt="" width="232" height="236"><div><b>@runt.of.the.litter</b><span>day one</span></div></header>
+            <dl class="post__body">
+              <div><dt>Flew in from</dt><dd>the smallest nest on the cliff</dd></div>
+              <div><dt>How far out</dt><dd>the whole river. One flap at a time.</dd></div>
+            </dl>
+            <p class="post__tag">#PostYourFlight</p>
+          </article>
+        </div>
+        <p class="note">Example posts, written for this page. Handles are made up.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ FAQ -->
+    <section class="section section--faq" aria-labelledby="faq-title">
+      <div class="section__inner section__inner--narrow">
+        <header class="section__head">
+          <p class="t-micro">Questions</p>
+          <h2 class="hl section__title" id="faq-title">Asked on the branch.</h2>
+        </header>
+        <div class="faq">
+          <details class="faq__item">
+            <summary><span>What is $<span class="ph">{{TICKER}}</span>?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></summary>
+            <div class="faq__answer"><p>A meme coin with a cartoon attached. It’s a story about a scruffy young eagle who can’t make it on his own, and a flock that finds the river together. That’s it — it has no utility and nothing is promised.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary><span>Is this an investment?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></summary>
+            <div class="faq__answer"><p>No. $<span class="ph">{{TICKER}}</span> has no utility and no expectation of profit. Nothing on this site is financial advice. Meme coins can go to zero, fast. Only put in what you can lose completely and still feel fine.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary><span>Did the team keep a share?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></summary>
+            <div class="faq__answer"><p>No. There was no presale and no team allocation. The launch details are in the Flock section above; anything in a dashed box is a placeholder until the real value is filled in.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary><span>How do I know I have the real contract?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></summary>
+            <div class="faq__answer"><p>Only copy it from this site or the official links in the footer. Anyone DMing you a different address, a “support” link or a giveaway is not us. We will never message you first.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary><span>Why does his head turn white?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></summary>
+            <div class="faq__answer"><p>Real bald eagles are brown for their first few years; the white head comes with age. On this site it turns white one patch at a time as the community reaches its story milestones.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary><span>What’s #PostYourFlight?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></summary>
+            <div class="faq__answer"><p>A ritual: post where you flew in from and how far out you still are. Not your wallet, not your numbers — your story. The flock reads every one.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track"><span>EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span></span><span>EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span> EAGLES GON EAT <span class="star">★</span> SIX TO A BRANCH <span class="star">★</span> WE AIN’T EATEN YET <span class="star">★</span></span></div>
+    </div>
   </main>
 
   <footer class="site-foot">
-    <div class="disclaimer"><strong>Read this</strong>$<span class="ph">{{TICKER}}</span> is a meme coin with no utility and no expectation of profit. Nothing on this site is financial advice. You can lose everything you put in.</div>
+    <div class="site-foot__inner">
+      <div class="site-foot__brand">
+        <p class="hl site-foot__mark">Eagles<br>gon eat</p>
+        <img src="assets/characters/plumage/stage-3.svg" alt="" width="232" height="236">
+      </div>
+      <nav class="site-foot__links" aria-label="Official links">
+        <a class="btn btn--secondary btn--small" href="{{X_URL}}" target="_blank" rel="noopener">X</a>
+        <a class="btn btn--secondary btn--small" href="{{TELEGRAM_URL}}" target="_blank" rel="noopener">Telegram</a>
+        <a class="btn btn--small" href="{{DEX_URL}}" target="_blank" rel="noopener">DEX</a>
+      </nav>
+      <div class="site-foot__contract">
+        <p class="t-micro">Contract — only ever copy it from here</p>
+        <div class="contract"><span class="contract__addr"><span class="ph">{{CONTRACT_ADDRESS}}</span></span><button class="btn btn--small" type="button" data-copy-contract data-contract="{{CONTRACT_ADDRESS}}">Copy contract</button></div>
+      </div>
+      <div class="disclaimer"><strong>Read this</strong>$<span class="ph">{{TICKER}}</span> is a meme coin with no utility and no expectation of profit. Nothing on this site is financial advice. You can lose everything you put in.</div>
+      <p class="site-foot__small">An original cartoon. Every eagle on this site is hand-drawn SVG. No real eagles were rushed.</p>
+    </div>
   </footer>
 
   <div class="toast-region" aria-live="polite" aria-atomic="true"></div>
